@@ -10,9 +10,9 @@
 | Field | Value |
 |---|---|
 | **Current Phase** | Phase 1 — MVP: Core Expense Tracking |
-| **Current Sub-Phase** | 1.1 — Project Setup |
-| **Status** | In Progress |
-| **Last Updated** | 2026-03-02 |
+| **Current Sub-Phase** | 1.5 — Daily Ledger View |
+| **Status** | Phase 1 Complete (pending DB setup) |
+| **Last Updated** | 2026-03-03 |
 
 ---
 
@@ -22,48 +22,53 @@
 
 - [x] Created initial project documentation (PRD, Tech Stack, Implementation Plan, Requirements)
 - [x] Set up `.gitignore` for Next.js project
-- [x] Restructured project folders:
-  - Moved documentation into `docs/` with kebab-case naming
-  - Created `src/` directory with App Router structure (`app/`, `components/`, `lib/`, `server/`, `hooks/`, `types/`, `config/`)
-  - Created route groups: `(auth)/login`, `(auth)/register`, `(dashboard)/ledger`, `(dashboard)/summary`, `(dashboard)/analytics`, `(dashboard)/settings`
-  - Created component directories: `ui/`, `layout/`, `ledger/`, `transaction/`, `analytics/`
-  - Created `prisma/` directory with placeholder schema
-  - Created `tests/` directory with `unit/`, `integration/`, `e2e/` sub-folders
-  - Created `public/icons/` for PWA assets
-  - Created `.env.example` with required environment variables
-- [x] Generated `.github/copilot-instructions.md` — comprehensive AI coding guidelines
-- [x] Generated `docs/memory.md` — this file (progress tracker)
-- [x] Generated `docs/journal.md` — decision log and learning journal
-- [x] Updated `README.md` with new folder structure and quick-start guide
+- [x] Restructured project folders (docs/, src/, route groups, component dirs)
+- [x] Generated `.github/copilot-instructions.md`, `docs/memory.md`, `docs/journal.md`
+- [x] Updated `README.md` with new folder structure
+
+### Session 2 — 2026-03-03 (Phase 1 Full Implementation)
+
+- [x] `pnpm install` — all dependencies installed
+- [x] `prisma/schema.prisma` — complete domain model (User, Family, Person, Transaction, CategoryTag, PaymentMode, DailyBalance, LoanBalance)
+- [x] `prisma/seed.ts` — demo data seeder with demo user, family, persons, tags, modes
+- [x] `src/app/globals.css` — Tailwind 4 + CSS vars (light/dark, domain colors)
+- [x] `src/lib/utils.ts`, `validators.ts`, `db.ts`, `auth.ts`, `balance.ts`
+- [x] `src/config/constants.ts`, `src/types/index.ts`
+- [x] `src/middleware.ts`, `src/app/api/auth/[...nextauth]/route.ts`
+- [x] Root layout, root redirect page
+- [x] Dashboard layout (Sidebar + Header + BottomNav)
+- [x] Login page + Register page (full client implementations with useActionState)
+- [x] Auth server actions (loginAction, registerAction with atomic DB transaction)
+- [x] Person server actions (create, update, delete — ADMIN only)
+- [x] Transaction server actions (create, update, delete + balance recalculation)
+- [x] Server queries: getDailyLedger, getPersons, getCategoryTags, getPaymentModes
+- [x] 9 UI components (button, input, card, label, select, dialog, badge, separator, textarea)
+- [x] 3 Layout components (Header, Sidebar, BottomNav)
+- [x] Transaction components: TransactionForm, TransactionCard
+- [x] Ledger components: TransactionGroup, BalanceCard, DateNav, LedgerAddButton
+- [x] Ledger page (`/ledger`) — main home page
+- [x] Settings page (`/settings`) — PersonList (add/edit/delete)
+- [x] Summary + Analytics placeholder pages
 
 ---
 
-## In Progress
+## In Progress / Blockers
 
-- [ ] Phase 1.1: Initialize Next.js 15 project with TypeScript, Tailwind, pnpm (`pnpm create next-app`)
-- [ ] Phase 1.1: Install and configure shadcn/ui
-- [ ] Phase 1.1: Set up ESLint, Prettier, Husky, lint-staged
-- [ ] Phase 1.1: Set up PostgreSQL database (Supabase or Neon)
-- [ ] Phase 1.1: Initialize Prisma with full schema
-- [ ] Phase 1.1: Run first migration
-- [ ] Phase 1.1: Deploy skeleton app to Vercel
+- [ ] **DATABASE_URL** — User must provision a PostgreSQL database (Supabase or Neon) and add `DATABASE_URL` to `.env.local`
+- [ ] Run `pnpm prisma generate` — generates Prisma client types (resolves all TS type errors)
+- [ ] Run `pnpm prisma migrate dev --name init` — creates DB tables
+- [ ] (Optional) Run `pnpm db:seed` — seeds demo data
+- [ ] Deploy to Vercel and set production env vars
 
 ---
 
-## Blockers
+## Next Up (Phase 2)
 
-_None currently._
-
----
-
-## Next Up (Queue)
-
-1. Complete Phase 1.1 — Project Setup (initialize Next.js, install deps, configure tooling)
-2. Phase 1.2 — Authentication (Auth.js v5 setup, login/register pages)
-3. Phase 1.3 — Family & Person Setup (auto-create family, add person form, seed data)
-4. Phase 1.4 — Transaction CRUD (add/edit/delete transaction form + server actions)
-5. Phase 1.5 — Daily Ledger View (home page with grouped transactions)
-6. Phase 1.6 — Balance & Loan Calculation (the core business logic engine)
+1. Monthly summary page with person-level aggregates
+2. Category tag management in settings
+3. Payment mode management in settings
+4. Date range filtering
+5. Export to CSV
 
 ---
 
