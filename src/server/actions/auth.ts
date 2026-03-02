@@ -1,7 +1,6 @@
 "use server"
 
 import bcrypt from "bcryptjs"
-import { redirect } from "next/navigation"
 import { signIn } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { registerSchema, loginSchema } from "@/lib/validators"

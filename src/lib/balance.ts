@@ -15,9 +15,6 @@ import { Decimal } from "@prisma/client/runtime/library"
 import type {
   Transaction,
   PaymentMode,
-  Person,
-  PaidTowards,
-  TransactionType,
 } from "@prisma/client"
 import { db } from "@/lib/db"
 
