@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+/* ── Design tokens (CSS vars) — used by @theme and swapped for dark mode ── */
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -22,7 +23,6 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 221.2 83.2% 53.3%;
     --radius: 0.5rem;
-    /* Domain-specific colours */
     --debit: 0 84.2% 60.2%;
     --debit-foreground: 0 0% 100%;
     --debit-muted: 0 93% 94%;
@@ -32,8 +32,6 @@
     --payment: 221.2 83.2% 53.3%;
     --payment-foreground: 0 0% 100%;
     --payment-muted: 214 95% 93%;
-    --font-sans: "Inter", system-ui, sans-serif;
-    --font-mono: "JetBrains Mono", monospace;
   }
 
   .dark {
@@ -74,8 +72,43 @@
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
-    font-family: var(--font-sans);
+    font-family: var(--font-sans, system-ui, sans-serif);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+}
+
+/* ── Tailwind v4 @theme — maps CSS vars to utility classes ── */
+@theme {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-debit: hsl(var(--debit));
+  --color-debit-foreground: hsl(var(--debit-foreground));
+  --color-debit-muted: hsl(var(--debit-muted));
+  --color-credit: hsl(var(--credit));
+  --color-credit-foreground: hsl(var(--credit-foreground));
+  --color-credit-muted: hsl(var(--credit-muted));
+  --color-payment: hsl(var(--payment));
+  --color-payment-foreground: hsl(var(--payment-foreground));
+  --color-payment-muted: hsl(var(--payment-muted));
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
 }

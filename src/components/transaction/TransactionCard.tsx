@@ -8,7 +8,6 @@ import { TransactionForm } from "./TransactionForm"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { formatCurrency } from "@/lib/utils"
-import { TRANSACTION_TYPE_LABELS } from "@/config/constants"
 import type {
   TransactionWithRelations,
   Person,
