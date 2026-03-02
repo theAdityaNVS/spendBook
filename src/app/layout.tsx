@@ -1,2 +1,19 @@
-// Root layout — will be implemented in Phase 1.1
-// This file defines the root HTML structure, fonts, and global providers.
+import type { Metadata } from "next";
+import "./globals.css";
+
+export const metadata: Metadata = {
+  title: "SpendBook",
+  description: "Family expense tracker",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en">
+      <body>{children}</body>
+    </html>
+  );
+}
