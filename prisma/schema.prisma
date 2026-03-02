@@ -1,0 +1,12 @@
+// Prisma schema — Phase 1.1
+// Full schema will be defined when project is initialized.
+// See docs/PRD.md §7 for the data model.
+
+// generator client {
+//   provider = "prisma-client-js"
+// }
+
+// datasource db {
+//   provider = "postgresql"
+//   url      = env("DATABASE_URL")
+// }
