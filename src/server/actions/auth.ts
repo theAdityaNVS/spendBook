@@ -49,9 +49,14 @@ export async function registerAction(
   const { name, email, password, familyName } = parsed.data
 
   // Check for existing user
-  const existing = await db.user.findUnique({ where: { email } })
-  if (existing) {
-    return { success: false, error: "An account with this email already exists" }
+  try {
+    const existing = await db.user.findUnique({ where: { email } })
+    if (existing) {
+      return { success: false, error: "An account with this email already exists" }
+    }
+  } catch (error) {
+    console.error("registerAction - findUnique error:", error)
+    return { success: false, error: "Failed to check existing user" }
   }
 
   try {
@@ -102,20 +107,34 @@ export async function registerAction(
     })
 
     // Sign in the newly registered user
-    await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    })
+    try {
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      })
+      
+      if (!result) {
+        console.error("registerAction - signIn returned null/undefined")
+        return { success: false, error: "Failed to sign in after registration" }
+      }
+    } catch (signInError) {
+      console.error("registerAction - signIn error:", signInError instanceof Error ? signInError.message : signInError)
+      // Even if signIn fails, the account was created successfully
+      // Client can redirect to login page manually
+      return { success: true, data: undefined }
+    }
 
     return { success: true, data: undefined }
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error)
-    console.error("registerAction failed:", { errorMessage, name: error instanceof Error ? error.name : "Unknown" })
-    // If database URL is not set, provide specific error message
-    if (!process.env.DATABASE_URL) {
-      console.error("DATABASE_URL is not configured")
-    }
+    const errorName = error instanceof Error ? error.name : "Unknown"
+    console.error("registerAction failed:", { 
+      message: errorMessage, 
+      name: errorName,
+      type: typeof error,
+      code: (error as Record<string, unknown>)?.code,
+    })
     return { success: false, error: "Failed to create account. Please try again." }
   }
 }
