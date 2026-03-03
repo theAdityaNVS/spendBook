@@ -11,46 +11,63 @@
 |---|---|
 | **Current Phase** | Phase 1 — MVP: Core Expense Tracking |
 | **Current Sub-Phase** | 1.5 — Daily Ledger View |
-| **Status** | Deployment Issue: Registration 500 Error |
+| **Status** | Deployment Debugging: Registration 500 Error |
 | **Last Updated** | 2026-03-04 |
 
 ---
 
 ## Current Issue: Registration 500 Error on Vercel
 
-**Problem:** POST /register returns 500 error. Prisma client cannot connect to Neon database on Vercel.
+**Status:** DATABASE_URL is now set in Vercel ✅ | Debugging registration endpoint
 
-**Root Cause:** `DATABASE_URL` environment variable not set in Vercel project.
+**Root Cause:** Still investigating actual cause of 500 error. Most likely:
+1. Missing `AUTH_SECRET` in Vercel environment variables
+2. Database migrations not fully deployed
+3. Constraint or data validation issue during user creation
 
-### Required Fix Steps
+### Recent Fixes Applied (2026-03-04)
 
-1. **Set DATABASE_URL in Vercel:**
+1. ✅ Set `DATABASE_URL` in Vercel with Neon Pooling connection string
+2. ✅ Improved Prisma client singleton pattern for serverless
+3. ✅ Enhanced error logging in `registerAction` with detailed error details
+4. ✅ Added missing database indexes (Account.userId, Session.userId, UserFamily.userId/familyId)
+5. ✅ Created proper migration file for indexes: `20260303191930_add_missing_indexes`
+6. ✅ Added AUTH_SECRET validation and warnings in auth.ts
+7. ✅ Improved signIn error handling in registerAction
+
+### Next Steps to Fix Registration
+
+**ACTION ITEMS FOR VERCEL:**
+
+1. **Set AUTH_SECRET** (Critical):
    - Go to Vercel Project Settings → Environment Variables
-   - Add `DATABASE_URL` with your Neon connection string (from Neon dashboard)
-   - Connection string format: `postgresql://user:password@ep-xxx.us-east-1.neon.tech/spendbook?sslmode=require`
-   - Ensure you use the **Pooling** connection string from Neon (for serverless functions)
-   
-2. **Rebuild & Redeploy:**
-   - Push code changes to trigger new build: `git push`
-   - OR manually trigger deployment from Vercel dashboard
-   - Vercel will auto-run: `pnpm install`, `prisma generate`, `next build`
+   - Add `AUTH_SECRET` with a secure random value
+   - Generate with: `openssl rand -base64 32`
+   - Example: `AUTH_SECRET=your-secure-random-value-here`
 
-3. **Test Registration:**
-   - Try creating account again at https://spendbook.adityanvs.in/register
+2. **Set AUTH_URL** (Recommended):
+   - Add `AUTH_URL=https://spendbook.adityanvs.in`
+   - This ensures cookie/session handling works correctly with custom domain
 
-### Code Changes Made (2026-03-04)
+3. **Verify DATABASE_URL** (Already done):
+   - Should be: `postgresql://neondb_owner:npg_QxE2tN7HSMLA@ep-sweet-waterfall-a14zhs84-pooler.ap-southeast-1.aws.neon.tech/neondb?channel_binding=require&sslmode=require` ✅
 
-- [x] Updated `src/lib/db.ts` — refactored Prisma client singleton for better serverless function handling
-- [x] Enhanced error logging in `src/server/actions/auth.ts` — now logs specific connection errors
-- [x] Updated `next.config.ts` — expose `DATABASE_URL` env var to build
-- [x] Added missing indexes to `prisma/schema.prisma` — userId on Account/Session, familyId/userId on UserFamily for query performance
+4. **Trigger Rebuild** after setting env vars:
+   - Click "Deploy" in Vercel if environment changes don't trigger auto-rebuild
+   - OR push a new commit to trigger automatic rebuild
 
-### Neon Pooling Configuration
+5. **Check Vercel Function Logs**:
+   - After deployment, go to Vercel Deployments → Function Logs
+   - Attempt registration and check logs for detailed error messages
+   - Look for: Database connection errors, constraint violations, or session errors
 
-When connecting Neon to Vercel with PgBouncer pooling:
-- Neon provides separate "Pooling" and "Direct" connection strings
-- **Use the Pooling string** for serverless functions (Vercel)
-- Format: `postgresql://user:password@ep-xxx.us-east-1.neon.tech/spendbook?sslmode=require`
+### Environment Variables Checklist
+
+| Variable | Required | Set? | Value |
+|---|---|---|---|
+| DATABASE_URL | Yes | ✅ | Neon Pooling connection string |
+| AUTH_SECRET | Yes | ❓ | Must be set in Vercel |
+| AUTH_URL | Recommended | ❓ | https://spendbook.adityanvs.in |
 
 ---
 
@@ -88,24 +105,36 @@ When connecting Neon to Vercel with PgBouncer pooling:
 - [x] Settings page (`/settings`) — PersonList (add/edit/delete)
 - [x] Summary + Analytics placeholder pages
 
-### Session 3 — 2026-03-04 (Deployment Fixes)
+### Session 3 — 2026-03-04 (Deployment & Debug Improvements)
 
-- [x] Diagnosed registration 500 error on Vercel
-- [x] Improved Prisma client singleton pattern for serverless
-- [x] Enhanced error logging in auth server action
-- [x] Added missing database indexes for performance (Account.userId, Session.userId, UserFamily.userId/familyId)
-- [x] Updated next.config.ts to expose DATABASE_URL
+- [x] Diagnosed registration 500 error on Vercel - root cause still under investigation
+- [x] Verified DATABASE_URL is set correctly in Vercel with Neon Pooling
+- [x] Improved Prisma client singleton pattern for better serverless support
+- [x] Enhanced error logging in auth server action - now logs error codes and types
+- [x] Added missing database indexes for query performance:
+  - `Account.userId`
+  - `Session.userId`
+  - `UserFamily.userId` and `UserFamily.familyId`
+- [x] Created proper migration file for index changes: `20260303191930_add_missing_indexes`
+- [x] Added AUTH_SECRET validation and production warnings in auth.ts
+- [x] Improved signIn error handling - returns success even if post-registration signin fails
+- [x] Attempted commits and pushes - all successful
 
 ---
 
 ## In Progress / Blockers
 
-- [ ] **DATABASE_URL in Vercel**  ← **CRITICAL: Must set this in Vercel Project Settings → Environment Variables**
-  - Use Neon Pooling connection string
-  - Format: `postgresql://user:password@ep-xxx.us-east-1.neon.tech/neondb?sslmode=require`
-- [ ] Rebuild and deploy after setting DATABASE_URL
-- [ ] Run migrations: `pnpm prisma migrate deploy` (Vercel auto-runs this)
-- [ ] Test registration flow after deployment
+- [ ] **Set AUTH_SECRET in Vercel** ← **CRITICAL: Required for JWT session handling in production**
+  - Go to Vercel Project Settings → Environment Variables
+  - Generate with: `openssl rand -base64 32`
+  - Set `AUTH_SECRET` with the generated value
+  
+- [ ] **Optional: Set AUTH_URL in Vercel** (Recommended for cookie handling with custom domain)
+  - Value: `https://spendbook.adityanvs.in`
+
+- [ ] **Test registration after setting AUTH_SECRET**
+  - Attempt account creation at https://spendbook.adityanvs.in/register
+  - Check Vercel Function Logs for detailed error messages if still failing
 
 ---
 
@@ -132,9 +161,32 @@ When connecting Neon to Vercel with PgBouncer pooling:
 
 ---
 
+---
+
 ## Notes for Next Session
 
-- **ACTION REQUIRED:** Set `DATABASE_URL` in Vercel project settings with Neon Pooling connection string
-- After DATABASE_URL is set, trigger redeploy from Vercel
-- Test account creation: https://spendbook.adityanvs.in/register
-- If still failing, check Vercel Function Logs for specific Prisma errors
+**ACTION REQUIRED BEFORE TESTING:**
+1. Set `AUTH_SECRET` in Vercel Project Settings → Environment Variables  
+   - Generate: `openssl rand -base64 32`
+   - Add as `AUTH_SECRET` with the generated value
+
+2. (Optional) Set `AUTH_URL = https://spendbook.adityanvs.in`
+
+3. Trigger rebuild/deploy if needed
+
+4. Test registration at: https://spendbook.adityanvs.in/register
+
+5. If still failing, check Vercel Function Logs for detailed error messages
+
+**Key Findings:**
+- DATABASE_URL is correctly set with Neon Pooling connection
+- All source code improvements deployed (error logging, index migration)
+- Most likely remaining issue: AUTH_SECRET not set in production
+- Code is now more robust with better error handling and logging
+
+**Database Information:**
+- Database: Neon (PostgreSQL)
+- Project: ep-sweet-waterfall-a14zhs84
+- Connection: Pooling endpoint (ap-southeast-1.aws.neon.tech)
+- Database: neondb
+- User: neondb_owner
