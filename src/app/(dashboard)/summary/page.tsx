@@ -1,8 +1,8 @@
 export default function SummaryPage() {
   return (
-    <main className="p-8">
+    <div className="mx-auto max-w-2xl px-4 py-6">
       <h1 className="text-2xl font-bold">Summary</h1>
-      <p className="text-gray-500 mt-2">Coming soon — Phase 2</p>
-    </main>
-  );
+      <p className="mt-2 text-muted-foreground">Monthly summary — coming in Phase 2.</p>
+    </div>
+  )
 }

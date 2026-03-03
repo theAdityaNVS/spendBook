@@ -10,10 +10,9 @@
 | Field | Value |
 |---|---|
 | **Current Phase** | Phase 1 — MVP: Core Expense Tracking |
-| **Current Sub-Phase** | 1.2 — Authentication |
-| **Status** | In Progress |
+| **Current Sub-Phase** | 1.5 — Daily Ledger View |
+| **Status** | Phase 1 Complete (pending DB setup) |
 | **Last Updated** | 2026-03-03 |
-| **Production URL** | https://spendbook-eight.vercel.app |
 
 ---
 
@@ -23,69 +22,53 @@
 
 - [x] Created initial project documentation (PRD, Tech Stack, Implementation Plan, Requirements)
 - [x] Set up `.gitignore` for Next.js project
-- [x] Restructured project folders:
-  - Moved documentation into `docs/` with kebab-case naming
-  - Created `src/` directory with App Router structure (`app/`, `components/`, `lib/`, `server/`, `hooks/`, `types/`, `config/`)
-  - Created route groups: `(auth)/login`, `(auth)/register`, `(dashboard)/ledger`, `(dashboard)/summary`, `(dashboard)/analytics`, `(dashboard)/settings`
-  - Created component directories: `ui/`, `layout/`, `ledger/`, `transaction/`, `analytics/`
-  - Created `prisma/` directory with placeholder schema
-  - Created `tests/` directory with `unit/`, `integration/`, `e2e/` sub-folders
-  - Created `public/icons/` for PWA assets
-  - Created `.env.example` with required environment variables
-- [x] Generated `.github/copilot-instructions.md` — comprehensive AI coding guidelines
-- [x] Generated `docs/memory.md` — this file (progress tracker)
-- [x] Generated `docs/journal.md` — decision log and learning journal
-- [x] Updated `README.md` with new folder structure and quick-start guide
+- [x] Restructured project folders (docs/, src/, route groups, component dirs)
+- [x] Generated `.github/copilot-instructions.md`, `docs/memory.md`, `docs/journal.md`
+- [x] Updated `README.md` with new folder structure
 
-### Session 2 — 2026-03-03 (Project Initialization & Vercel Deployment)
+### Session 2 — 2026-03-03 (Phase 1 Full Implementation)
 
-- [x] Created `package.json` with all dependencies (Next.js 15, Tailwind v4, Prisma v6, Auth.js v5, Zod, Sonner, clsx, tailwind-merge)
-- [x] Created `next.config.ts`, `tsconfig.json`, `postcss.config.mjs`, `eslint.config.mjs`, `vercel.json`
-- [x] Updated `prisma/schema.prisma` with valid generator + datasource blocks
-- [x] Updated all `src/` placeholder files to valid Next.js components
-- [x] Updated `src/app/globals.css` with Tailwind v4 `@import "tailwindcss"` directive
-- [x] Updated `src/lib/db.ts` with Prisma singleton pattern, `src/lib/utils.ts` with `cn()` and `formatCurrency()`
-- [x] Ran `pnpm install` — all dependencies installed; `pnpm build` — 10 static pages generated
-- [x] Installed Vercel CLI, linked GitHub repo to `theadityanvs-projects/spendbook`
-- [x] Upgraded Next.js 15.1.7 → 15.5.12 (security vulnerability fix)
-- [x] Deployed to Vercel production: **https://spendbook-eight.vercel.app**
-
----
-
-## In Progress
-
-- [ ] Phase 1.2: Provision PostgreSQL database (Neon) and set `DATABASE_URL` in Vercel env vars
-- [ ] Phase 1.2: Auth.js v5 setup (Prisma adapter, credentials provider, `src/lib/auth.ts`)
-- [ ] Phase 1.2: Login / Register pages with forms and Zod validation
+- [x] `pnpm install` — all dependencies installed
+- [x] `prisma/schema.prisma` — complete domain model (User, Family, Person, Transaction, CategoryTag, PaymentMode, DailyBalance, LoanBalance)
+- [x] `prisma/seed.ts` — demo data seeder with demo user, family, persons, tags, modes
+- [x] `src/app/globals.css` — Tailwind 4 + CSS vars (light/dark, domain colors)
+- [x] `src/lib/utils.ts`, `validators.ts`, `db.ts`, `auth.ts`, `balance.ts`
+- [x] `src/config/constants.ts`, `src/types/index.ts`
+- [x] `src/middleware.ts`, `src/app/api/auth/[...nextauth]/route.ts`
+- [x] Root layout, root redirect page
+- [x] Dashboard layout (Sidebar + Header + BottomNav)
+- [x] Login page + Register page (full client implementations with useActionState)
+- [x] Auth server actions (loginAction, registerAction with atomic DB transaction)
+- [x] Person server actions (create, update, delete — ADMIN only)
+- [x] Transaction server actions (create, update, delete + balance recalculation)
+- [x] Server queries: getDailyLedger, getPersons, getCategoryTags, getPaymentModes
+- [x] 9 UI components (button, input, card, label, select, dialog, badge, separator, textarea)
+- [x] 3 Layout components (Header, Sidebar, BottomNav)
+- [x] Transaction components: TransactionForm, TransactionCard
+- [x] Ledger components: TransactionGroup, BalanceCard, DateNav, LedgerAddButton
+- [x] Ledger page (`/ledger`) — main home page
+- [x] Settings page (`/settings`) — PersonList (add/edit/delete)
+- [x] Summary + Analytics placeholder pages
 
 ---
 
-## Blockers
+## In Progress / Blockers
 
-- **Database not yet provisioned** — Need to create a Neon/Supabase PostgreSQL database and set `DATABASE_URL` in Vercel environment variables before auth/data features can work.
-
----
-
-## Next Up (Queue)
-
-1. Provision PostgreSQL database (Neon — `neonctl` already installed)
-2. Run `pnpm db:migrate` to apply initial migration
-3. Set `DATABASE_URL` and `AUTH_SECRET` in Vercel environment variables
-4. Phase 1.2 — Authentication (Auth.js v5 setup, login/register pages)
-5. Phase 1.3 — Family & Person Setup
-6. Phase 1.4 — Transaction CRUD
-7. Phase 1.5 — Daily Ledger View
-8. Phase 1.6 — Balance & Loan Calculation
+- [ ] **DATABASE_URL** — User must provision a PostgreSQL database (Supabase or Neon) and add `DATABASE_URL` to `.env.local`
+- [ ] Run `pnpm prisma generate` — generates Prisma client types (resolves all TS type errors)
+- [ ] Run `pnpm prisma migrate dev --name init` — creates DB tables
+- [ ] (Optional) Run `pnpm db:seed` — seeds demo data
+- [ ] Deploy to Vercel and set production env vars
 
 ---
 
-## Key URLs
+## Next Up (Phase 2)
 
-| Resource | URL |
-|---|---|
-| Production app | https://spendbook-eight.vercel.app |
-| GitHub repo | https://github.com/theAdityaNVS/spendBook |
-| Vercel dashboard | https://vercel.com/theadityanvs-projects/spendbook |
+1. Monthly summary page with person-level aggregates
+2. Category tag management in settings
+3. Payment mode management in settings
+4. Date range filtering
+5. Export to CSV
 
 ---
 
@@ -98,14 +81,12 @@
 | Docs location | `docs/` folder at project root | Keeps root clean; docs are reference material, not source code |
 | Copilot instructions | `.github/copilot-instructions.md` | Standard location recognized by GitHub Copilot |
 | Git commit style | Conventional Commits, single-line | Industry standard; one commit per logical change block |
-| CSS approach | Tailwind v4 with `@import "tailwindcss"` | v4 uses CSS-first config, no tailwind.config.ts needed |
-| Vercel deployment | GitHub integration + Vercel CLI | Auto-deploys on every push to main |
 
 ---
 
 ## Notes for Next Session
 
-- Database needs to be provisioned. Use `neonctl` (already installed) to create a Neon PostgreSQL database.
-- After creating DB: run `pnpm db:migrate` to create tables, then add env vars in Vercel dashboard under Settings > Environment Variables.
-- Auth.js v5 needs `AUTH_SECRET` (run `openssl rand -base64 32`) and `AUTH_URL` set in `.env.local` and Vercel.
-- Start implementing `src/lib/auth.ts` with Prisma adapter and credentials provider.
+- Start with `pnpm create next-app@latest . --typescript --tailwind --eslint --app --src-dir --import-alias "@/*"` to initialize the project.
+- Then install core dependencies: `prisma`, `@prisma/client`, `next-auth@beta`, `zod`, `sonner`.
+- Configure the Prisma schema with all entities from PRD §7.
+- Choose between Supabase and Neon for PostgreSQL hosting.

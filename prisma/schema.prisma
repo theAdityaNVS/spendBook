@@ -1,8 +1,253 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+// ─── Auth.js required models ──────────────────────────────────────────────────
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String? // null for OAuth users
+  avatar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userFamilies UserFamily[]
+  accounts     Account[]
+  sessions     Session[]
+
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// ─── Core domain models ───────────────────────────────────────────────────────
+
+model Family {
+  id              String   @id @default(cuid())
+  name            String
+  defaultCurrency String   @default("INR")
+  timezone        String   @default("Asia/Kolkata")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  userFamilies  UserFamily[]
+  persons       Person[]
+  categoryTags  CategoryTag[]
+  paymentModes  PaymentMode[]
+  transactions  Transaction[]
+  dailyBalances DailyBalance[]
+  loanBalances  LoanBalance[]
+
+  @@map("families")
+}
+
+model UserFamily {
+  id       String @id @default(cuid())
+  userId   String
+  familyId String
+  role     Role   @default(PERSON)
+  personId String? // links user account to their Person in this family
+
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  family    Family  @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  person    Person? @relation(fields: [personId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([userId, familyId])
+  @@map("user_families")
+}
+
+enum Role {
+  ADMIN
+  FAMILY
+  PERSON
+}
+
+model Person {
+  id              String   @id @default(cuid())
+  name            String
+  familyId        String
+  isFamilyAccount Boolean  @default(false)
+  isArchived      Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  family        Family         @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  transactions  Transaction[]
+  paymentModes  PaymentMode[]  @relation("PersonPaymentModes")
+  dailyBalances DailyBalance[]
+  loanBalances  LoanBalance[]
+  userFamilies  UserFamily[]
+
+  @@index([familyId])
+  @@map("persons")
+}
+
+enum TransactionType {
+  DEBIT
+  CREDIT
+  PAYMENT
+}
+
+enum PaidTowards {
+  PERSONAL
+  FAMILY
+}
+
+model Transaction {
+  id            String          @id @default(cuid())
+  familyId      String
+  personId      String
+  type          TransactionType
+  name          String
+  description   String?
+  categoryTagId String?
+  paymentModeId String?
+  amount        Decimal         @db.Decimal(12, 2)
+  currency      String          @default("INR")
+  paidTowards   PaidTowards     @default(PERSONAL)
+  date          DateTime        @db.Date
+  createdById   String
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  family      Family       @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  person      Person       @relation(fields: [personId], references: [id])
+  categoryTag CategoryTag? @relation(fields: [categoryTagId], references: [id])
+  paymentMode PaymentMode? @relation(fields: [paymentModeId], references: [id])
+
+  @@index([familyId])
+  @@index([personId])
+  @@index([date])
+  @@index([type])
+  @@index([familyId, date])
+  @@map("transactions")
+}
+
+model CategoryTag {
+  id         String   @id @default(cuid())
+  name       String
+  color      String   @default("#6366f1")
+  familyId   String
+  sortOrder  Int      @default(0)
+  isArchived Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  family       Family        @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+
+  @@map("category_tags")
+}
+
+enum PaymentModeType {
+  CREDIT_CARD
+  DEBIT_CARD
+  UPI
+  CASH
+  WALLET
+  NET_BANKING
+}
+
+model PaymentMode {
+  id            String          @id @default(cuid())
+  name          String
+  type          PaymentModeType
+  ownerPersonId String? // null = family-owned
+  familyId      String
+  isArchived    Boolean         @default(false)
+  createdAt     DateTime        @default(now())
+
+  family       Family        @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  ownerPerson  Person?       @relation("PersonPaymentModes", fields: [ownerPersonId], references: [id])
+  transactions Transaction[]
+
+  @@index([familyId])
+  @@map("payment_modes")
+}
+
+// ─── Balance cache tables (derived from transactions) ─────────────────────────
+
+model DailyBalance {
+  id             String   @id @default(cuid())
+  personId       String
+  familyId       String
+  date           DateTime @db.Date
+  openingBalance Decimal  @default(0) @db.Decimal(12, 2)
+  totalDebits    Decimal  @default(0) @db.Decimal(12, 2)
+  totalCredits   Decimal  @default(0) @db.Decimal(12, 2)
+  totalPayments  Decimal  @default(0) @db.Decimal(12, 2)
+  closingBalance Decimal  @default(0) @db.Decimal(12, 2)
+  updatedAt      DateTime @updatedAt
+
+  person Person @relation(fields: [personId], references: [id], onDelete: Cascade)
+  family Family @relation(fields: [familyId], references: [id], onDelete: Cascade)
+
+  @@unique([personId, date])
+  @@index([familyId, date])
+  @@map("daily_balances")
+}
+
+model LoanBalance {
+  id            String   @id @default(cuid())
+  personId      String
+  familyId      String
+  date          DateTime @db.Date
+  openingLoan   Decimal  @default(0) @db.Decimal(12, 2)
+  loanIncreases Decimal  @default(0) @db.Decimal(12, 2)
+  loanDecreases Decimal  @default(0) @db.Decimal(12, 2)
+  closingLoan   Decimal  @default(0) @db.Decimal(12, 2)
+  updatedAt     DateTime @updatedAt
+
+  person Person @relation(fields: [personId], references: [id], onDelete: Cascade)
+  family Family @relation(fields: [familyId], references: [id], onDelete: Cascade)
+
+  @@unique([personId, date])
+  @@index([familyId, date])
+  @@map("loan_balances")
 }
