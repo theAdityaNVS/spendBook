@@ -7,6 +7,16 @@ import { loginSchema } from "@/lib/validators"
 import { authConfig } from "@/lib/auth.config"
 import type { Role } from "@/generated/prisma"
 
+// Validate required auth environment variables
+if (process.env.NODE_ENV === "production") {
+  if (!process.env.AUTH_SECRET) {
+    console.warn("⚠️ AUTH_SECRET is not set in production. This is required for JWT sessions.")
+  }
+  if (!process.env.AUTH_URL && !process.env.VERCEL_URL) {
+    console.warn("⚠️ AUTH_URL or VERCEL_URL must be set in production.")
+  }
+}
+
 declare module "next-auth" {
   interface Session {
     user: {
@@ -29,6 +39,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   adapter: PrismaAdapter(db as any),
   session: { strategy: "jwt" },
+  secret: process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET, // Fallback for legacy naming
   providers: [
     Credentials({
       credentials: {
