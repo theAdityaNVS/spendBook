@@ -12,7 +12,7 @@ import type {
   PaidTowards,
   PaymentModeType,
   Role,
-} from "@prisma/client"
+} from "@/generated/prisma"
 import type { Decimal } from "@prisma/client/runtime/library"
 
 export type {
