@@ -11,8 +11,46 @@
 |---|---|
 | **Current Phase** | Phase 1 — MVP: Core Expense Tracking |
 | **Current Sub-Phase** | 1.5 — Daily Ledger View |
-| **Status** | Phase 1 Complete (pending DB setup) |
-| **Last Updated** | 2026-03-03 |
+| **Status** | Deployment Issue: Registration 500 Error |
+| **Last Updated** | 2026-03-04 |
+
+---
+
+## Current Issue: Registration 500 Error on Vercel
+
+**Problem:** POST /register returns 500 error. Prisma client cannot connect to Neon database on Vercel.
+
+**Root Cause:** `DATABASE_URL` environment variable not set in Vercel project.
+
+### Required Fix Steps
+
+1. **Set DATABASE_URL in Vercel:**
+   - Go to Vercel Project Settings → Environment Variables
+   - Add `DATABASE_URL` with your Neon connection string (from Neon dashboard)
+   - Connection string format: `postgresql://user:password@ep-xxx.us-east-1.neon.tech/spendbook?sslmode=require`
+   - Ensure you use the **Pooling** connection string from Neon (for serverless functions)
+   
+2. **Rebuild & Redeploy:**
+   - Push code changes to trigger new build: `git push`
+   - OR manually trigger deployment from Vercel dashboard
+   - Vercel will auto-run: `pnpm install`, `prisma generate`, `next build`
+
+3. **Test Registration:**
+   - Try creating account again at https://spendbook.adityanvs.in/register
+
+### Code Changes Made (2026-03-04)
+
+- [x] Updated `src/lib/db.ts` — refactored Prisma client singleton for better serverless function handling
+- [x] Enhanced error logging in `src/server/actions/auth.ts` — now logs specific connection errors
+- [x] Updated `next.config.ts` — expose `DATABASE_URL` env var to build
+- [x] Added missing indexes to `prisma/schema.prisma` — userId on Account/Session, familyId/userId on UserFamily for query performance
+
+### Neon Pooling Configuration
+
+When connecting Neon to Vercel with PgBouncer pooling:
+- Neon provides separate "Pooling" and "Direct" connection strings
+- **Use the Pooling string** for serverless functions (Vercel)
+- Format: `postgresql://user:password@ep-xxx.us-east-1.neon.tech/spendbook?sslmode=require`
 
 ---
 
@@ -50,15 +88,24 @@
 - [x] Settings page (`/settings`) — PersonList (add/edit/delete)
 - [x] Summary + Analytics placeholder pages
 
+### Session 3 — 2026-03-04 (Deployment Fixes)
+
+- [x] Diagnosed registration 500 error on Vercel
+- [x] Improved Prisma client singleton pattern for serverless
+- [x] Enhanced error logging in auth server action
+- [x] Added missing database indexes for performance (Account.userId, Session.userId, UserFamily.userId/familyId)
+- [x] Updated next.config.ts to expose DATABASE_URL
+
 ---
 
 ## In Progress / Blockers
 
-- [ ] **DATABASE_URL** — User must provision a PostgreSQL database (Supabase or Neon) and add `DATABASE_URL` to `.env.local`
-- [ ] Run `pnpm prisma generate` — generates Prisma client types (resolves all TS type errors)
-- [ ] Run `pnpm prisma migrate dev --name init` — creates DB tables
-- [ ] (Optional) Run `pnpm db:seed` — seeds demo data
-- [ ] Deploy to Vercel and set production env vars
+- [ ] **DATABASE_URL in Vercel**  ← **CRITICAL: Must set this in Vercel Project Settings → Environment Variables**
+  - Use Neon Pooling connection string
+  - Format: `postgresql://user:password@ep-xxx.us-east-1.neon.tech/neondb?sslmode=require`
+- [ ] Rebuild and deploy after setting DATABASE_URL
+- [ ] Run migrations: `pnpm prisma migrate deploy` (Vercel auto-runs this)
+- [ ] Test registration flow after deployment
 
 ---
 
@@ -81,12 +128,13 @@
 | Docs location | `docs/` folder at project root | Keeps root clean; docs are reference material, not source code |
 | Copilot instructions | `.github/copilot-instructions.md` | Standard location recognized by GitHub Copilot |
 | Git commit style | Conventional Commits, single-line | Industry standard; one commit per logical change block |
+| Database pooling | Neon Pooling connection string | Required for serverless/Vercel environments |
 
 ---
 
 ## Notes for Next Session
 
-- Start with `pnpm create next-app@latest . --typescript --tailwind --eslint --app --src-dir --import-alias "@/*"` to initialize the project.
-- Then install core dependencies: `prisma`, `@prisma/client`, `next-auth@beta`, `zod`, `sonner`.
-- Configure the Prisma schema with all entities from PRD §7.
-- Choose between Supabase and Neon for PostgreSQL hosting.
+- **ACTION REQUIRED:** Set `DATABASE_URL` in Vercel project settings with Neon Pooling connection string
+- After DATABASE_URL is set, trigger redeploy from Vercel
+- Test account creation: https://spendbook.adityanvs.in/register
+- If still failing, check Vercel Function Logs for specific Prisma errors
