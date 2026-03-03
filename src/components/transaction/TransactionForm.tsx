@@ -1,6 +1,6 @@
 "use client"
 
-import { useActionState, useEffect, useState } from "react"
+import { useActionState, useCallback, useEffect, useRef, useState } from "react"
 import { toast } from "sonner"
 import {
   createTransactionAction,
@@ -55,15 +55,23 @@ export function TransactionForm({
 
   const [state, formAction, isPending] = useActionState(action, initial)
 
+  // Stable ref for onClose to avoid useEffect re-triggers
+  const onCloseRef = useRef(onClose)
+  onCloseRef.current = onClose
+
+  const handleClose = useCallback(() => {
+    onCloseRef.current()
+  }, [])
+
   // Reset and close on success
   useEffect(() => {
     if (state.success) {
       toast.success(isEdit ? "Transaction updated" : "Transaction added")
-      onClose()
+      handleClose()
     } else if (state.error) {
       toast.error(state.error)
     }
-  }, [state, isEdit, onClose])
+  }, [state, isEdit, handleClose])
 
   // Local state for controlled selects
   const [type, setType] = useState(editTransaction?.type ?? "DEBIT")
@@ -74,10 +82,10 @@ export function TransactionForm({
     editTransaction?.personId ?? defaultPersonId ?? persons[0]?.id ?? "",
   )
   const [categoryTagId, setCategoryTagId] = useState(
-    editTransaction?.categoryTagId ?? "",
+    editTransaction?.categoryTagId ?? "__none__",
   )
   const [paymentModeId, setPaymentModeId] = useState(
-    editTransaction?.paymentModeId ?? "",
+    editTransaction?.paymentModeId ?? "__none__",
   )
 
   return (
@@ -180,7 +188,7 @@ export function TransactionForm({
           <input
             type="hidden"
             name="categoryTagId"
-            value={categoryTagId || ""}
+            value={categoryTagId === "__none__" ? "" : categoryTagId}
           />
           <div className="space-y-2">
             <Label>Category</Label>
@@ -189,7 +197,7 @@ export function TransactionForm({
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">No category</SelectItem>
+                <SelectItem value="__none__">No category</SelectItem>
                 {categoryTags.map((tag) => (
                   <SelectItem key={tag.id} value={tag.id}>
                     <span className="flex items-center gap-2">
@@ -209,7 +217,7 @@ export function TransactionForm({
           <input
             type="hidden"
             name="paymentModeId"
-            value={paymentModeId || ""}
+            value={paymentModeId === "__none__" ? "" : paymentModeId}
           />
           <div className="space-y-2">
             <Label>Payment Mode</Label>
@@ -218,7 +226,7 @@ export function TransactionForm({
                 <SelectValue placeholder="Select payment mode" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">No payment mode</SelectItem>
+                <SelectItem value="__none__">No payment mode</SelectItem>
                 {paymentModes.map((mode) => (
                   <SelectItem key={mode.id} value={mode.id}>
                     {mode.name}
