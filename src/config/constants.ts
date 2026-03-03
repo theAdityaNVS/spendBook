@@ -1,4 +1,4 @@
-import { TransactionType, PaidTowards, PaymentModeType, Role } from "@prisma/client"
+import { TransactionType, PaidTowards, PaymentModeType, Role } from "@/generated/prisma"
 
 export { TransactionType, PaidTowards, PaymentModeType, Role }
 
