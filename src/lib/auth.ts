@@ -5,7 +5,7 @@ import bcrypt from "bcryptjs"
 import { db } from "@/lib/db"
 import { loginSchema } from "@/lib/validators"
 import { authConfig } from "@/lib/auth.config"
-import type { Role } from "@prisma/client"
+import type { Role } from "@/generated/prisma"
 
 declare module "next-auth" {
   interface Session {
@@ -26,7 +26,8 @@ declare module "next-auth" {
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
-  adapter: PrismaAdapter(db),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  adapter: PrismaAdapter(db as any),
   session: { strategy: "jwt" },
   providers: [
     Credentials({

@@ -15,7 +15,7 @@ import { Decimal } from "@prisma/client/runtime/library"
 import type {
   Transaction,
   PaymentMode,
-} from "@prisma/client"
+} from "@/generated/prisma"
 import { db } from "@/lib/db"
 
 type TransactionForBalance = Transaction & {
