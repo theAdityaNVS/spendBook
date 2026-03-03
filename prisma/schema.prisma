@@ -43,6 +43,7 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@index([userId])
   @@map("accounts")
 }
 
@@ -54,6 +55,7 @@ model Session {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId])
   @@map("sessions")
 }
 
@@ -100,6 +102,8 @@ model UserFamily {
   createdAt DateTime @default(now())
 
   @@unique([userId, familyId])
+  @@index([userId])
+  @@index([familyId])
   @@map("user_families")
 }
 

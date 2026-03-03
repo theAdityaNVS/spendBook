@@ -110,7 +110,12 @@ export async function registerAction(
 
     return { success: true, data: undefined }
   } catch (error) {
-    console.error("registerAction failed:", error)
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    console.error("registerAction failed:", { errorMessage, name: error instanceof Error ? error.name : "Unknown" })
+    // If database URL is not set, provide specific error message
+    if (!process.env.DATABASE_URL) {
+      console.error("DATABASE_URL is not configured")
+    }
     return { success: false, error: "Failed to create account. Please try again." }
   }
 }
