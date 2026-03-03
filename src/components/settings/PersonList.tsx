@@ -1,7 +1,6 @@
 "use client"
 
-import { useState } from "react"
-import { useActionState } from "react"
+import { useActionState, useCallback, useEffect, useRef, useState } from "react"
 import { toast } from "sonner"
 import { Pencil, Trash2, Plus, User } from "lucide-react"
 import { createPersonAction, updatePersonAction, deletePersonAction } from "@/server/actions/person"
@@ -17,7 +16,6 @@ import {
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import type { Person, ActionResult } from "@/types"
-import { useEffect } from "react"
 
 const initialCreate: ActionResult<Person> = { success: false, error: "" }
 const initialUpdate: ActionResult<Person> = { success: false, error: "" }
@@ -34,14 +32,21 @@ function AddPersonDialog({
     initialCreate,
   )
 
+  const onCloseRef = useRef(onClose)
+  onCloseRef.current = onClose
+
+  const handleClose = useCallback(() => {
+    onCloseRef.current()
+  }, [])
+
   useEffect(() => {
     if (state.success) {
       toast.success("Person added")
-      onClose()
+      handleClose()
     } else if (state.error) {
       toast.error(state.error)
     }
-  }, [state, onClose])
+  }, [state, handleClose])
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
@@ -82,14 +87,21 @@ function EditPersonDialog({
     initialUpdate,
   )
 
+  const onCloseRef = useRef(onClose)
+  onCloseRef.current = onClose
+
+  const handleClose = useCallback(() => {
+    onCloseRef.current()
+  }, [])
+
   useEffect(() => {
     if (state.success) {
       toast.success("Person updated")
-      onClose()
+      handleClose()
     } else if (state.error) {
       toast.error(state.error)
     }
-  }, [state, onClose])
+  }, [state, handleClose])
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
