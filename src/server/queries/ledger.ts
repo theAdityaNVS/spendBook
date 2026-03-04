@@ -1,4 +1,4 @@
-import { auth } from "@/lib/auth"
+import { getAppSession } from "@/lib/auth/session"
 import { db } from "@/lib/db"
 import type { TransactionWithRelations, DailyBalanceSummary } from "@/types"
 
@@ -7,7 +7,7 @@ export async function getDailyLedger(date: Date): Promise<{
   transactions: TransactionWithRelations[]
   balances: DailyBalanceSummary[]
 }> {
-  const session = await auth()
+  const session = await getAppSession()
   if (!session?.user) throw new Error("Unauthorized")
 
   const { activeFamilyId } = session.user

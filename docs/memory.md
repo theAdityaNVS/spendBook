@@ -11,63 +11,47 @@
 |---|---|
 | **Current Phase** | Phase 1 — MVP: Core Expense Tracking |
 | **Current Sub-Phase** | 1.5 — Daily Ledger View |
-| **Status** | Deployment Debugging: Registration 500 Error |
+| **Status** | Migrated to Neon Auth — Ready for Deployment |
 | **Last Updated** | 2026-03-04 |
 
 ---
 
-## Current Issue: Registration 500 Error on Vercel
+## Auth Migration: NextAuth → Neon Auth (Completed 2026-03-04)
 
-**Status:** DATABASE_URL is now set in Vercel ✅ | Debugging registration endpoint
+**Status:** Migration complete. Build passes locally. Ready to deploy.
 
-**Root Cause:** Still investigating actual cause of 500 error. Most likely:
-1. Missing `AUTH_SECRET` in Vercel environment variables
-2. Database migrations not fully deployed
-3. Constraint or data validation issue during user creation
+### What Changed
+- Replaced NextAuth v5 (Auth.js) with **Neon Auth** (`@neondatabase/auth`)
+- Removed: `next-auth`, `@auth/prisma-adapter`, `bcryptjs`
+- Added: `@neondatabase/auth@latest`
+- Neon Auth uses pre-built UI components (AuthView, AccountView, UserButton)
+- All login/register/password-reset handled by Neon Auth
 
-### Recent Fixes Applied (2026-03-04)
+### New Auth Flow
+1. User visits app → middleware redirects to `/auth/sign-in` (Neon Auth UI)
+2. Neon Auth handles sign-up/sign-in/forgot-password
+3. After auth, dashboard layout checks if user has a family via `getAppSession()`
+4. If no family → redirected to `/onboarding` to create one
+5. Once onboarded → full app access
 
-1. ✅ Set `DATABASE_URL` in Vercel with Neon Pooling connection string
-2. ✅ Improved Prisma client singleton pattern for serverless
-3. ✅ Enhanced error logging in `registerAction` with detailed error details
-4. ✅ Added missing database indexes (Account.userId, Session.userId, UserFamily.userId/familyId)
-5. ✅ Created proper migration file for indexes: `20260303191930_add_missing_indexes`
-6. ✅ Added AUTH_SECRET validation and warnings in auth.ts
-7. ✅ Improved signIn error handling in registerAction
+### Environment Variables Checklist (Vercel)
 
-### Next Steps to Fix Registration
+| Variable | Required | Value |
+|---|---|---|
+| `DATABASE_URL` | Yes | Neon Pooling connection string |
+| `NEON_AUTH_BASE_URL` | Yes | `https://ep-sweet-waterfall-a14zhs84.neonauth.ap-southeast-1.aws.neon.tech/neondb/auth` |
+| `NEON_AUTH_COOKIE_SECRET` | Yes | Generate with: `node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"` |
 
-**ACTION ITEMS FOR VERCEL:**
-
-1. **Set AUTH_SECRET** (Critical):
-   - Go to Vercel Project Settings → Environment Variables
-   - Add `AUTH_SECRET` with a secure random value
-   - Generate with: `openssl rand -base64 32`
-   - Example: `AUTH_SECRET=your-secure-random-value-here`
-
-2. **Set AUTH_URL** (Recommended):
-   - Add `AUTH_URL=https://spendbook.adityanvs.in`
-   - This ensures cookie/session handling works correctly with custom domain
-
-3. **Verify DATABASE_URL** (Already done):
-   - Should be: `postgresql://neondb_owner:npg_QxE2tN7HSMLA@ep-sweet-waterfall-a14zhs84-pooler.ap-southeast-1.aws.neon.tech/neondb?channel_binding=require&sslmode=require` ✅
-
-4. **Trigger Rebuild** after setting env vars:
-   - Click "Deploy" in Vercel if environment changes don't trigger auto-rebuild
-   - OR push a new commit to trigger automatic rebuild
-
-5. **Check Vercel Function Logs**:
-   - After deployment, go to Vercel Deployments → Function Logs
-   - Attempt registration and check logs for detailed error messages
-   - Look for: Database connection errors, constraint violations, or session errors
-
-### Environment Variables Checklist
-
-| Variable | Required | Set? | Value |
-|---|---|---|---|
-| DATABASE_URL | Yes | ✅ | Neon Pooling connection string |
-| AUTH_SECRET | Yes | ❓ | Must be set in Vercel |
-| AUTH_URL | Recommended | ❓ | https://spendbook.adityanvs.in |
+### Files Changed
+- **Added:** `src/lib/auth/server.ts`, `src/lib/auth/client.ts`, `src/lib/auth/session.ts`
+- **Added:** `src/app/auth/[path]/page.tsx`, `src/app/account/[path]/page.tsx`
+- **Added:** `src/app/onboarding/page.tsx`, `src/server/actions/onboarding.ts`
+- **Added:** `src/app/api/auth/[...path]/route.ts`
+- **Removed:** `src/lib/auth.ts`, `src/lib/auth.config.ts`, `src/server/actions/auth.ts`
+- **Removed:** `src/app/(auth)/login/page.tsx`, `src/app/(auth)/register/page.tsx`
+- **Removed:** `src/app/api/auth/[...nextauth]/route.ts`
+- **Updated:** middleware, root layout, dashboard layout, Header, all server actions/queries
+- **Schema:** Removed Account, Session, VerificationToken models; added `neonAuthId` to User
 
 ---
 
@@ -107,34 +91,40 @@
 
 ### Session 3 — 2026-03-04 (Deployment & Debug Improvements)
 
-- [x] Diagnosed registration 500 error on Vercel - root cause still under investigation
-- [x] Verified DATABASE_URL is set correctly in Vercel with Neon Pooling
-- [x] Improved Prisma client singleton pattern for better serverless support
-- [x] Enhanced error logging in auth server action - now logs error codes and types
-- [x] Added missing database indexes for query performance:
-  - `Account.userId`
-  - `Session.userId`
-  - `UserFamily.userId` and `UserFamily.familyId`
-- [x] Created proper migration file for index changes: `20260303191930_add_missing_indexes`
-- [x] Added AUTH_SECRET validation and production warnings in auth.ts
-- [x] Improved signIn error handling - returns success even if post-registration signin fails
-- [x] Attempted commits and pushes - all successful
+- [x] Diagnosed registration 500 error on Vercel with NextAuth
+- [x] Added missing database indexes: Account.userId, Session.userId, UserFamily.userId/familyId
+- [x] Created migration: `20260303191930_add_missing_indexes`
+- [x] Improved error logging and Prisma singleton for serverless
+
+### Session 4 — 2026-03-04 (Neon Auth Migration)
+
+- [x] Full migration from NextAuth v5 → Neon Auth (`@neondatabase/auth`)
+- [x] Removed: `next-auth`, `@auth/prisma-adapter`, `bcryptjs`
+- [x] Created auth server/client/session modules in `src/lib/auth/`
+- [x] Created API route `src/app/api/auth/[...path]/route.ts`
+- [x] Created auth UI pages (`/auth/sign-in`, `/account/settings`)
+- [x] Created onboarding flow (`/onboarding` + `setupFamilyAction`)
+- [x] Updated middleware for Neon Auth
+- [x] Updated root layout with `NeonAuthUIProvider`
+- [x] Updated all server actions/queries to use `getAppSession()`
+- [x] Updated Header with Neon Auth's `UserButton`
+- [x] Updated dashboard layout with auth/onboarding checks
+- [x] Migrated Prisma schema: removed Account/Session/VerificationToken models, added `neonAuthId`
+- [x] Applied database migration via Neon MCP: `20260304120000_neon_auth_migration`
+- [x] Removed old auth files (auth.ts, auth.config.ts, login/register pages, auth actions)
+- [x] Updated seed.ts, validators.ts, .env.example
+- [x] Build passes locally ✅, TypeScript clean ✅
 
 ---
 
 ## In Progress / Blockers
 
-- [ ] **Set AUTH_SECRET in Vercel** ← **CRITICAL: Required for JWT session handling in production**
-  - Go to Vercel Project Settings → Environment Variables
-  - Generate with: `openssl rand -base64 32`
-  - Set `AUTH_SECRET` with the generated value
-  
-- [ ] **Optional: Set AUTH_URL in Vercel** (Recommended for cookie handling with custom domain)
-  - Value: `https://spendbook.adityanvs.in`
-
-- [ ] **Test registration after setting AUTH_SECRET**
-  - Attempt account creation at https://spendbook.adityanvs.in/register
-  - Check Vercel Function Logs for detailed error messages if still failing
+- [ ] **Deploy to Vercel** — commit + push to trigger new deployment
+- [ ] **Set Vercel env vars:**
+  - `NEON_AUTH_BASE_URL` = `https://ep-sweet-waterfall-a14zhs84.neonauth.ap-southeast-1.aws.neon.tech/neondb/auth`
+  - `NEON_AUTH_COOKIE_SECRET` = generate with `node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"`
+- [ ] **Remove old env vars from Vercel:** `AUTH_SECRET`, `AUTH_URL` (no longer needed)
+- [ ] **Test auth flow end-to-end on production**
 
 ---
 
@@ -154,39 +144,28 @@
 |---|---|---|
 | Folder structure | Next.js App Router with route groups | Separates auth and dashboard concerns cleanly |
 | File naming | kebab-case for docs, PascalCase for components | Industry standard for Next.js projects |
-| Docs location | `docs/` folder at project root | Keeps root clean; docs are reference material, not source code |
-| Copilot instructions | `.github/copilot-instructions.md` | Standard location recognized by GitHub Copilot |
-| Git commit style | Conventional Commits, single-line | Industry standard; one commit per logical change block |
+| Auth system | **Neon Auth** (`@neondatabase/auth`) | Integrated with Neon DB, pre-built UI, no JWT/session debugging |
+| Session bridging | `getAppSession()` in `src/lib/auth/session.ts` | Maps Neon Auth user to internal User/Family model |
+| Onboarding | Separate `/onboarding` page | New users need to create a family before accessing the app |
 | Database pooling | Neon Pooling connection string | Required for serverless/Vercel environments |
-
----
+| Git commit style | Conventional Commits, single-line | Industry standard; one commit per logical change block |
 
 ---
 
 ## Notes for Next Session
 
-**ACTION REQUIRED BEFORE TESTING:**
-1. Set `AUTH_SECRET` in Vercel Project Settings → Environment Variables  
-   - Generate: `openssl rand -base64 32`
-   - Add as `AUTH_SECRET` with the generated value
-
-2. (Optional) Set `AUTH_URL = https://spendbook.adityanvs.in`
-
-3. Trigger rebuild/deploy if needed
-
-4. Test registration at: https://spendbook.adityanvs.in/register
-
-5. If still failing, check Vercel Function Logs for detailed error messages
-
-**Key Findings:**
-- DATABASE_URL is correctly set with Neon Pooling connection
-- All source code improvements deployed (error logging, index migration)
-- Most likely remaining issue: AUTH_SECRET not set in production
-- Code is now more robust with better error handling and logging
+**DEPLOYMENT STEPS:**
+1. Commit all Neon Auth migration changes
+2. Push to trigger Vercel deployment
+3. In Vercel Project Settings → Environment Variables:
+   - Add `NEON_AUTH_BASE_URL` (see value above)
+   - Add `NEON_AUTH_COOKIE_SECRET` (generate a NEW one for production)
+   - Remove `AUTH_SECRET` and `AUTH_URL` (obsolete)
+4. Trigger redeploy if env var changes don't auto-deploy
+5. Test: visit https://spendbook.adityanvs.in → should redirect to sign-in page
 
 **Database Information:**
-- Database: Neon (PostgreSQL)
-- Project: ep-sweet-waterfall-a14zhs84
-- Connection: Pooling endpoint (ap-southeast-1.aws.neon.tech)
-- Database: neondb
-- User: neondb_owner
+- Database: Neon (PostgreSQL 17)
+- Project: divine-smoke-58320411 (ep-sweet-waterfall-a14zhs84)
+- Region: ap-southeast-1
+- Neon Auth URL: `https://ep-sweet-waterfall-a14zhs84.neonauth.ap-southeast-1.aws.neon.tech/neondb/auth`
