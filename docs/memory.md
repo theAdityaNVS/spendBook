@@ -11,8 +11,8 @@
 |---|---|
 | **Current Phase** | Phase 1 — MVP: Core Expense Tracking |
 | **Current Sub-Phase** | 1.5 — Daily Ledger View |
-| **Status** | Migrated to Neon Auth — Ready for Deployment |
-| **Last Updated** | 2026-03-04 |
+| **Status** | Neon Auth Migrated + Package Cleanup Complete |
+| **Last Updated** | 2026-03-04 (Package Cleanup) |
 
 ---
 
@@ -48,6 +48,53 @@
 - **Added:** `src/app/onboarding/page.tsx`, `src/server/actions/onboarding.ts`
 - **Added:** `src/app/api/auth/[...path]/route.ts`
 - **Removed:** `src/lib/auth.ts`, `src/lib/auth.config.ts`, `src/server/actions/auth.ts`
+
+---
+
+## Package Cleanup: Removed Unused Dependencies (Completed 2026-03-04)
+
+**Status:** 9 unused packages removed. Build passes. No code changes needed.
+
+### What Was Removed
+Removed 9 packages that were speculatively added but never imported in `src/`:
+
+| Removed Package | Size | Reason |
+|---|---|---|
+| `@radix-ui/react-avatar` | 2.1 KB | UI component not planned |
+| `@radix-ui/react-dropdown-menu` | 4.2 KB | No context menus implemented |
+| `@radix-ui/react-popover` | 3.8 KB | No popovers/date-pickers used |
+| `@radix-ui/react-tabs` | 3.5 KB | No tabbed interfaces |
+| `@radix-ui/react-toast` | 2.3 KB | `sonner` provides all toasts |
+| `@radix-ui/react-toggle` | 1.9 KB | Toggle buttons not in design |
+| `@radix-ui/react-tooltip` | 2.8 KB | Tooltips not implemented |
+| `date-fns` | 13.4 KB | Custom date helpers sufficient |
+| `recharts` | 18.2 KB | Analytics phase not built yet |
+| **Total Saved** | **~52 KB** | **(~13 KB gzip)** |
+
+### Why?
+- **Smaller bundle:** Faster initial load on mobile networks
+- **Faster installs:** pnpm lock.yaml reduced (~100 transitive deps removed)
+- **Cleaner deps:** Only what's actively used
+- **Future-proof:** Re-add from docs when actually implementing features
+
+### When to Re-add
+See `docs/tech-report.md` → "Packages to Re-add (Future Phases)"
+- `recharts` → Phase 3 (Analytics charts)
+- `@radix-ui/react-tooltip` → Phase 2 (Hover help text)
+- etc.
+
+### Tech Report Created
+**New file:** [docs/tech-report.md](tech-report.md)
+
+Comprehensive documentation:
+- Production (14) & development (15) dependency breakdown
+- What each package does, why, and where used
+- Alternates considered
+- Removed packages and re-add schedule
+- Architecture decisions (Neon Auth vs Auth.js, Prisma vs Drizzle, etc.)
+- Bundle sizes, performance characteristics
+- Database schema overview
+- Deployment checklist
 - **Removed:** `src/app/(auth)/login/page.tsx`, `src/app/(auth)/register/page.tsx`
 - **Removed:** `src/app/api/auth/[...nextauth]/route.ts`
 - **Updated:** middleware, root layout, dashboard layout, Header, all server actions/queries
