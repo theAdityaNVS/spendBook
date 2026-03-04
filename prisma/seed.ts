@@ -1,5 +1,4 @@
 import { PrismaClient, PaymentModeType, Role } from "@prisma/client"
-import bcrypt from "bcryptjs"
 
 const prisma = new PrismaClient()
 
@@ -19,15 +18,13 @@ const DEFAULT_CATEGORY_TAGS = [
 async function main() {
   console.log("🌱 Seeding database...")
 
-  // Create demo admin user
-  const hashedPassword = await bcrypt.hash("password123", 12)
+  // Create demo admin user (Neon Auth handles actual credentials)
   const user = await prisma.user.upsert({
     where: { email: "demo@spendbook.app" },
     update: {},
     create: {
       email: "demo@spendbook.app",
       name: "Demo Admin",
-      password: hashedPassword,
     },
   })
 
@@ -131,7 +128,7 @@ async function main() {
   })
 
   console.log("✅ Seed complete.")
-  console.log(`   Demo login: demo@spendbook.app / password123`)
+  console.log(`   Demo user: demo@spendbook.app (sign up via Neon Auth)`)
 }
 
 main()

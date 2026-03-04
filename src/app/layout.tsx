@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next"
 import { Inter } from "next/font/google"
 import { Toaster } from "sonner"
+import { NeonAuthUIProvider } from "@neondatabase/auth/react"
+import { authClient } from "@/lib/auth/client"
 import "./globals.css"
 
 const inter = Inter({
@@ -31,8 +33,10 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} font-sans antialiased`}>
-        {children}
-        <Toaster richColors position="top-right" />
+        <NeonAuthUIProvider authClient={authClient}>
+          {children}
+          <Toaster richColors position="top-right" />
+        </NeonAuthUIProvider>
       </body>
     </html>
   )
