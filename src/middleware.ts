@@ -1,10 +1,9 @@
-import NextAuth from "next-auth"
-import { authConfig } from "@/lib/auth.config"
+import { auth } from "@/lib/auth/server"
 
-const { auth } = NextAuth(authConfig)
-
-export default auth
+export default auth.middleware({
+  loginUrl: "/auth/sign-in",
+})
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|icons).*)"],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|icons|auth).*)"],
 }
