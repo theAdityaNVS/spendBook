@@ -1,7 +1,7 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { auth } from "@/lib/auth"
+import { getAppSession } from "@/lib/auth/session"
 import { db } from "@/lib/db"
 import {
   createPersonSchema,
@@ -13,7 +13,7 @@ export async function createPersonAction(
   _prev: ActionResult<Person>,
   formData: FormData,
 ): Promise<ActionResult<Person>> {
-  const session = await auth()
+  const session = await getAppSession()
   if (!session?.user) return { success: false, error: "Unauthorized" }
   if (session.user.activeRole !== "ADMIN") {
     return { success: false, error: "Only admins can add persons" }
@@ -44,7 +44,7 @@ export async function updatePersonAction(
   _prev: ActionResult<Person>,
   formData: FormData,
 ): Promise<ActionResult<Person>> {
-  const session = await auth()
+  const session = await getAppSession()
   if (!session?.user) return { success: false, error: "Unauthorized" }
   if (session.user.activeRole !== "ADMIN") {
     return { success: false, error: "Only admins can edit persons" }
@@ -84,7 +84,7 @@ export async function updatePersonAction(
 export async function deletePersonAction(
   id: string,
 ): Promise<ActionResult<void>> {
-  const session = await auth()
+  const session = await getAppSession()
   if (!session?.user) return { success: false, error: "Unauthorized" }
   if (session.user.activeRole !== "ADMIN") {
     return { success: false, error: "Only admins can remove persons" }
