@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "@neondatabase/auth/ui/tailwind";
 
 /* ── Design tokens (CSS vars) — used by @theme and swapped for dark mode ── */
 @layer base {
