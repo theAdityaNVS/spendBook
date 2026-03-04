@@ -1,10 +1,10 @@
-import { auth } from "@/lib/auth"
+import { getAppSession } from "@/lib/auth/session"
 import { db } from "@/lib/db"
 import type { Person, CategoryTag, PaymentMode } from "@/types"
 
 /** Get all active persons for the active family. Family Account is always first. */
 export async function getPersons(): Promise<Person[]> {
-  const session = await auth()
+  const session = await getAppSession()
   if (!session?.user) throw new Error("Unauthorized")
 
   return db.person.findMany({
@@ -15,7 +15,7 @@ export async function getPersons(): Promise<Person[]> {
 
 /** Get all active category tags for the active family. */
 export async function getCategoryTags(): Promise<CategoryTag[]> {
-  const session = await auth()
+  const session = await getAppSession()
   if (!session?.user) throw new Error("Unauthorized")
 
   return db.categoryTag.findMany({
@@ -28,7 +28,7 @@ export async function getCategoryTags(): Promise<CategoryTag[]> {
 export async function getPaymentModes(): Promise<
   (PaymentMode & { ownerPerson: Person | null })[]
 > {
-  const session = await auth()
+  const session = await getAppSession()
   if (!session?.user) throw new Error("Unauthorized")
 
   return db.paymentMode.findMany({

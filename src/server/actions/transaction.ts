@@ -1,7 +1,7 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { auth } from "@/lib/auth"
+import { getAppSession } from "@/lib/auth/session"
 import { db } from "@/lib/db"
 import {
   createTransactionSchema,
@@ -19,7 +19,7 @@ export async function createTransactionAction(
   _prev: ActionResult<Transaction>,
   formData: FormData,
 ): Promise<ActionResult<Transaction>> {
-  const session = await auth()
+  const session = await getAppSession()
   if (!session?.user) return { success: false, error: "Unauthorized" }
 
   const raw = {
@@ -92,7 +92,7 @@ export async function updateTransactionAction(
   _prev: ActionResult<Transaction>,
   formData: FormData,
 ): Promise<ActionResult<Transaction>> {
-  const session = await auth()
+  const session = await getAppSession()
   if (!session?.user) return { success: false, error: "Unauthorized" }
 
   const raw = {
@@ -164,7 +164,7 @@ export async function updateTransactionAction(
 export async function deleteTransactionAction(
   id: string,
 ): Promise<ActionResult<void>> {
-  const session = await auth()
+  const session = await getAppSession()
   if (!session?.user) return { success: false, error: "Unauthorized" }
 
   const parsed = deleteTransactionSchema.safeParse({ id })
