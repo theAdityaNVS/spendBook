@@ -1,6 +1,6 @@
 import { getAppSession } from "@/lib/auth/session"
 import { db } from "@/lib/db"
-import type { Person, TransactionType } from "@/types"
+import type { Person } from "@/types"
 
 export type PersonMonthlySummary = {
   person: Person

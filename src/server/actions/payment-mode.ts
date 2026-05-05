@@ -27,9 +27,9 @@ export async function createPaymentMode(
 
     revalidatePath("/settings")
     return { success: true, data: mode }
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error creating payment mode:", error)
-    return { success: false, error: error.message || "Failed to create payment mode" }
+    return { success: false, error: error instanceof Error ? error.message : "Failed to create payment mode" }
   }
 }
 
@@ -59,7 +59,7 @@ export async function updatePaymentMode(
 
     revalidatePath("/settings")
     return { success: true, data: mode }
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error updating payment mode:", error)
     return { success: false, error: "Failed to update payment mode" }
   }
@@ -86,7 +86,7 @@ export async function archivePaymentMode(
 
     revalidatePath("/settings")
     return { success: true, data: undefined }
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error archiving payment mode:", error)
     return { success: false, error: "Failed to archive payment mode" }
   }
