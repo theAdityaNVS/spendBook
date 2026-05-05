@@ -41,8 +41,24 @@ model Family {
   transactions  Transaction[]
   dailyBalances DailyBalance[]
   loanBalances  LoanBalance[]
+  invites       FamilyInvite[]
 
   @@map("families")
+}
+
+model FamilyInvite {
+  id        String   @id @default(cuid())
+  familyId  String
+  token     String   @unique @default(cuid())
+  role      Role     @default(PERSON)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  family Family @relation(fields: [familyId], references: [id], onDelete: Cascade)
+
+  @@index([familyId])
+  @@index([token])
+  @@map("family_invites")
 }
 
 model UserFamily {
