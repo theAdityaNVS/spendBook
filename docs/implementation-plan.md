@@ -4,345 +4,158 @@
 
 ---
 
+## Development Workflow & Branching Strategy
+
+> **CRITICAL INSTRUCTIONS FOR AGENTS:**
+> 1. **Branching Strategy:** We merge phase by phase. Create a new branch for each phase (e.g., `git checkout -b phase-2`). Once a phase is complete, it is merged into `main` via a Pull Request.
+> 2. **Atomic Commits:** Make descriptive commits for **every** sub-task and task you complete. Do not lump massive changes into single commits.
+> 3. **Memory Updates:** Update `docs/memory.md` immediately after completing every task to keep track of progress, blockers, and next steps.
+
+---
+
 ## Overview
 
-| Phase | Name | Duration (est.) | Goal |
-|---|---|---|---|
-| **Phase 1** | MVP — Core Expense Tracking | 4–5 weeks | Single family, daily ledger, transactions, balance/loan calculation |
-| **Phase 2** | Configuration & Reports | 3–4 weeks | Admin panel, custom tags/modes, monthly summary, category breakdown |
-| **Phase 3** | Multi-Family & Analytics | 3–4 weeks | Multi-family support, full analytics dashboard, data export |
-| **Phase 4** | PWA & Polish | 2–3 weeks | Offline support, installable PWA, performance optimization |
-| **Phase 5** | Scale & Enhancements | Ongoing | Multi-currency, notifications, recurring transactions, budgets |
-
-**Total estimated timeline: 12–16 weeks** (for a solo developer, part-time)
-
----
-
-## Phase 1 — MVP: Core Expense Tracking
-
-> **Goal:** A working app where one family can log daily expenses and see balances.
-
-### 1.1 Project Setup (Week 1)
-
-- [ ] Initialize Next.js 15 project with TypeScript, Tailwind CSS, pnpm
-- [ ] Set up project structure (app router, folder conventions)
-- [ ] Install and configure shadcn/ui (theme, base components)
-- [ ] Set up ESLint, Prettier, Husky, lint-staged
-- [ ] Set up PostgreSQL database (Supabase or Neon)
-- [ ] Initialize Prisma with database connection
-- [ ] Create initial Prisma schema (User, Family, Person, Transaction, CategoryTag, PaymentMode, DailyBalance, LoanBalance)
-- [ ] Run first migration
-- [ ] Set up environment variables (.env.local, .env.example)
-- [ ] Deploy skeleton app to Vercel (CI/CD pipeline working)
-
-### 1.2 Authentication (Week 1–2)
-
-- [ ] Install and configure Auth.js v5
-- [ ] Implement email/password registration
-- [ ] Implement email/password login
-- [ ] Implement session management (JWT)
-- [ ] Create login page UI
-- [ ] Create registration page UI
-- [ ] Add protected route middleware (redirect unauthenticated users)
-- [ ] Create user profile model integration (User ↔ Prisma)
-
-### 1.3 Family & Person Setup (Week 2)
-
-- [ ] Auto-create a Family when a new user registers (first-time setup flow)
-- [ ] Auto-create the Family Account (built-in "person" with `is_family_account = true`)
-- [ ] Build "Add Person" form — admin adds family members (name only, no login yet)
-- [ ] Build person list view (shows Family Account + all persons)
-- [ ] Implement edit/delete person
-- [ ] Seed default category tags (Food Delivery, Groceries, Shopping, Subscriptions, Utilities, Transport, Entertainment, Healthcare, Education, Miscellaneous)
-- [ ] Seed default payment modes (Cash — family-owned, UPI — family-owned)
-
-### 1.4 Transaction CRUD (Week 2–3)
-
-- [ ] Build "Add Transaction" form/modal:
-  - Person selector (dropdown)
-  - Type selector (Debit / Credit / Payment)
-  - Name (text input)
-  - Description (optional textarea)
-  - Category tag (dropdown)
-  - Payment mode (dropdown)
-  - Amount (number input with ₹ prefix)
-  - Paid Towards (Personal / Family toggle)
-  - Date (date picker, defaults to today)
-- [ ] Implement create transaction (Server Action → Prisma)
-- [ ] Implement edit transaction
-- [ ] Implement delete transaction (with confirmation)
-- [ ] Validate required fields (client + server)
-- [ ] Mobile-optimized form layout (touch-friendly inputs)
-
-### 1.5 Daily Ledger View (Week 3–4)
-
-- [ ] Build daily ledger page (home page)
-- [ ] Date header with date picker navigation
-- [ ] Swipe left/right or arrow buttons for day navigation
-- [ ] Group transactions by type (Debits, Credits, Payments sections)
-- [ ] Within each section, group by person
-- [ ] Display each transaction: name, description, category tag, payment mode, amount, paid towards
-- [ ] "Add Transaction" FAB (floating action button) on mobile
-- [ ] Tap transaction to edit
-- [ ] Empty state for days with no transactions
-
-### 1.6 Balance & Loan Calculation (Week 4–5)
-
-- [ ] Implement balance calculation engine:
-  - Family Account: running balance (income − expenses)
-  - Person: loan balance based on payment mode ownership × paid towards matrix
-- [ ] Build Balance Card component:
-  - Previous day balance/loan
-  - Today's debits
-  - Today's credits
-  - Today's payments
-  - New balance/loan
-- [ ] Display Balance Card at bottom of daily ledger (per person + family)
-- [ ] Implement DailyBalance cache table (computed on transaction create/edit/delete)
-- [ ] Implement LoanBalance cache table
-- [ ] Add recalculation utility (rebuild balances from scratch if needed)
-- [ ] Test with sample data: verify loan impact matrix is correct
-
-### 1.7 MVP Polish
-
-- [ ] Responsive layout testing (iPad, iPhone, desktop)
-- [ ] Loading states and skeleton screens
-- [ ] Error handling (toast notifications for failures)
-- [ ] Basic app layout: header with app name, sidebar/bottom nav
-- [ ] Deploy MVP to Vercel
-
-**Phase 1 Deliverable:** Single-family expense tracker with daily ledger, full transaction CRUD, and working balance/loan calculations.
+| Phase | Name | Duration (est.) | Goal | Status |
+|---|---|---|---|---|
+| **Phase 1** | MVP — Core Expense Tracking | 4–5 weeks | Single family, daily ledger, transactions, balance/loan calculation | **COMPLETED (90%)** |
+| **Phase 1.5**| Neon-Auth Integration & Migration| 1 week | Full migration from Auth.js to Neon Auth with onboarding flows | **COMPLETED** |
+| **Phase 2** | Configuration & Reports | 3–4 weeks | Admin panel, custom tags/modes, monthly summary, category breakdown | Pending |
+| **Phase 3** | Multi-Family & Analytics | 3–4 weeks | Multi-family support, full analytics dashboard, data export | Pending |
+| **Phase 4** | PWA & Polish | 2–3 weeks | Offline support, installable PWA, performance optimization | Pending |
+| **Phase 5** | Scale & Enhancements | Ongoing | Multi-currency, notifications, recurring transactions, budgets | Pending |
 
 ---
 
-## Phase 2 — Configuration & Reports
+## Phase 1 — MVP: Core Expense Tracking (COMPLETED)
 
-> **Goal:** Admin can customize everything. Users can view monthly summaries and category reports.
+### 1.1 Project Setup [x]
+- [x] Initialize Next.js 15 project with TypeScript, Tailwind CSS, pnpm
+- [x] Set up project structure, shadcn/ui
+- [x] Set up PostgreSQL database (Neon) and Prisma schema
+- [x] Run first migration & seed data
 
-### 2.1 Admin Panel — Category Tags (Week 6)
+### 1.2 Initial Authentication (Auth.js) [x]
+- [x] Initial setup using Auth.js (Later superseded by Phase 1.5)
 
-- [ ] Build category tag management page
-- [ ] CRUD operations: add, rename, reorder (drag-and-drop), archive
-- [ ] Color picker for each tag
-- [ ] Prevent deletion of tags in use (archive instead)
-- [ ] Update transaction form to use admin-configured tags
+### 1.3 Family & Person Setup [x]
+- [x] Auto-create Family Account
+- [x] Build person list view & Person CRUD
+- [x] Seed default category tags & payment modes
 
-### 2.2 Admin Panel — Payment Modes (Week 6)
+### 1.4 Transaction CRUD [x]
+- [x] Build "Add/Edit Transaction" form/modal
+- [x] Implement create/update/delete actions (Server Action → Prisma)
+- [x] Validate required fields (Zod)
 
-- [ ] Build payment mode management page
-- [ ] CRUD operations: add, edit, archive
-- [ ] Set owner: Family or specific Person (critical for loan logic)
-- [ ] Set type: Credit Card, Debit Card, UPI, Cash, Wallet, Net Banking
-- [ ] Update transaction form to use admin-configured payment modes
-- [ ] Show owner badge on payment mode dropdown
+### 1.5 Daily Ledger View [x]
+- [x] Build daily ledger page with date navigation
+- [x] Group transactions by type
+- [x] "Add Transaction" FAB
 
-### 2.3 Admin Panel — Member Management (Week 7)
-
-- [ ] Build member management page
-- [ ] Invite member via email (generate invite link)
-- [ ] Accept invite flow: invitee registers/logs in → joins family
-- [ ] Assign role to invited member (Family / Person)
-- [ ] Link user account to a Person entity in the family
-- [ ] Remove member from family
-- [ ] Edit member role
-
-### 2.4 Role-Based Access Control (Week 7)
-
-- [ ] Implement middleware/guards for role-based page access
-- [ ] Admin: sees all data, all settings
-- [ ] Family role: sees only family account transactions + own balance
-- [ ] Person role: sees only own transactions + own loan balance
-- [ ] Restrict settings pages to Admin only
-- [ ] Filter transaction queries by role scope
-
-### 2.5 Monthly Summary (Week 8)
-
-- [ ] Build monthly summary page
-- [ ] Calendar month selector (dropdown or picker)
-- [ ] Per-person breakdown table:
-  - Total debits (split: personal vs. family)
-  - Total credits
-  - Total payments
-  - Opening balance → Closing balance
-  - Opening loan → Closing loan
-- [ ] Family-level aggregate row: total household spend
-- [ ] Highlight positive/negative balances with color
-
-### 2.6 Category-wise Breakdown (Week 8–9)
-
-- [ ] Build category breakdown page
-- [ ] Pie/donut chart: spend distribution by category tag
-- [ ] Table view alongside chart
-- [ ] Filters: person, time range (this week, this month, last month, custom)
-- [ ] Drill-down: click category → see individual transactions
-- [ ] Install and configure Recharts
-
-**Phase 2 Deliverable:** Fully configurable admin panel, role-based access, monthly summaries, and category analytics.
+### 1.6 Balance & Loan Calculation [x]
+- [x] Implement balance calculation engine (Loan Impact Matrix)
+- [x] Build Balance Card component per person
+- [x] Implement DailyBalance and LoanBalance cache tables
 
 ---
 
-## Phase 3 — Multi-Family & Analytics
+## Phase 1.5 — Neon-Auth Integration & Migration (COMPLETED)
 
-> **Goal:** Users can manage multiple families. Full analytics dashboard.
+> **Goal:** Migrate from Auth.js to Neon's native authentication solution for seamless DB integration.
 
-### 3.1 Multi-Family Support (Week 10)
-
-- [ ] Implement UserFamily join table (many-to-many: user ↔ family)
-- [ ] "Create New Family" flow (from settings or dashboard)
-- [ ] Family switcher component (header dropdown)
-- [ ] Scope all queries to currently selected family
-- [ ] Ensure complete data isolation between families
-- [ ] Update all pages to respect active family context
-- [ ] "Join Family" flow via invite link (cross-family invites)
-
-### 3.2 Analytics Dashboard — Trends (Week 11)
-
-- [ ] Build analytics dashboard page
-- [ ] Time range picker: This month, Last month, Last 3 months, Custom
-- [ ] **Spending trends:** Line/bar chart — daily, weekly, monthly totals
-- [ ] **Income vs. Expense:** Stacked bar chart over time
-- [ ] All charts are scoped to active family
-
-### 3.3 Analytics Dashboard — Deep Insights (Week 11–12)
-
-- [ ] **Category comparison:** Month-over-month category spend changes (grouped bar chart)
-- [ ] **Payment mode analysis:** Donut chart of spend distribution by payment mode
-- [ ] **Person comparison:** Side-by-side bar chart — each member's spending
-- [ ] **Top spends:** Table — highest individual transactions in the selected period
-- [ ] **Inflow vs. Outflow:** Personal credits tracked separately — net personal cash flow chart
-
-### 3.4 Data Export (Week 12)
-
-- [ ] Export transactions to CSV (filtered by date range, person, type)
-- [ ] Export monthly summary to PDF
-- [ ] Export analytics charts to PDF/image
-- [ ] Download button on each relevant page
-
-**Phase 3 Deliverable:** Multi-family management with family switcher, full analytics dashboard with charts, and data export.
+- [x] Remove Auth.js and related dependencies
+- [x] Install and configure `@neondatabase/auth`
+- [x] Set up Auth API route (`/api/auth/[...path]`)
+- [x] Create sign-in / sign-up / account views using Neon UI components
+- [x] Implement session bridging (`getAppSession`) to map Neon users to app `User` & `Family`
+- [x] Protect routes via Neon Auth middleware
+- [x] Build dedicated `/onboarding` flow to create Family upon first login
+- [x] Update Vercel/local `.env` patterns
 
 ---
 
-## Phase 4 — PWA & Polish
+## Phase 2 — Configuration & Reports (NEXT)
 
-> **Goal:** Installable on iPad/mobile, works offline, polished UX.
+> **Goal:** Complete the remaining MVP setup (Admin configuration) and introduce basic reporting so users can see their monthly spend.
 
-### 4.1 PWA Setup (Week 13)
+### 2.1 Admin Panel — Category Tags
+- [ ] Build category tag management UI in Settings
+- [ ] Implement Server Actions for CRUD operations: add, rename, archive
+- [ ] Implement drag-and-drop reordering
+- [ ] Add Color picker for tags
+- [ ] Ensure tags in use cannot be hard-deleted, only archived
 
-- [ ] Install and configure Serwist (service worker)
-- [ ] Create web app manifest (icons, splash screen, theme color)
-- [ ] Enable "Add to Home Screen" on iPad/iPhone/Android
-- [ ] Cache static assets and app shell for instant loads
+### 2.2 Admin Panel — Payment Modes
+- [ ] Build payment mode management UI in Settings
+- [ ] Implement Server Actions for CRUD operations: add, edit, archive
+- [ ] Set owner configuration (Family vs. Specific Person)
+- [ ] Set type (Credit Card, Debit Card, UPI, Cash, Wallet, Net Banking)
 
-### 4.2 Offline Support (Week 13–14)
+### 2.3 Member Management & Role-Based Access
+- [ ] Build member management UI to invite users (via email/link) to the family
+- [ ] Accept invite flow (links user account to Person entity)
+- [ ] Implement RBAC middleware/guards (Admin vs. Family vs. Person roles)
+- [ ] Ensure Family role sees only family transactions; Person role sees only their own
 
-- [ ] Implement offline transaction queue (IndexedDB)
-- [ ] Queue transactions created offline → sync when online
-- [ ] Show offline indicator in UI
-- [ ] Conflict resolution: last-write-wins or prompt user
-- [ ] Cache recent daily ledger data for offline viewing
+### 2.4 Monthly Summary Page
+- [ ] Replace stub in `/summary` with actual UI
+- [ ] Add Calendar month selector
+- [ ] Build per-person breakdown table (Opening → Debits/Credits/Payments → Closing)
+- [ ] Add Family-level aggregate row
 
-### 4.3 Performance Optimization (Week 14)
+### 2.5 Category-wise Breakdown
+- [ ] Add Category breakdown section to Summary page or dedicated view
+- [ ] Add Pie/donut chart of spend distribution by category
+- [ ] Add drill-down (click category → see transactions)
 
-- [ ] Audit with Lighthouse — target 90+ score on all metrics
-- [ ] Optimize database queries (indexes on frequently queried columns)
-- [ ] Implement pagination for transaction lists (virtual scroll for long days)
-- [ ] Lazy load analytics charts
-- [ ] Image optimization (Next.js Image component for any images/avatars)
-- [ ] Bundle analysis and tree-shaking
-
-### 4.4 UX Polish (Week 14–15)
-
-- [ ] Animations/transitions (page transitions, modal open/close)
-- [ ] Dark mode support (toggle in settings)
-- [ ] Haptic feedback on mobile (vibrate on transaction save)
-- [ ] Keyboard shortcuts for power users (desktop)
-- [ ] Accessibility audit (screen reader, color contrast, focus management)
-- [ ] Onboarding flow for first-time users (guided setup)
-- [ ] Quick-add widget: minimal form for fast mobile entry
-
-**Phase 4 Deliverable:** Installable PWA with offline support, polished animations, dark mode, and performance-optimized.
-
----
-
-## Phase 5 — Scale & Enhancements
-
-> **Goal:** Advanced features for power users. Ongoing improvements.
-
-### 5.1 Multi-Currency (Week 16+)
-
-- [ ] Currency selector per transaction (default: family's default currency)
-- [ ] Add currency conversion display (using exchange rate API)
-- [ ] Family setting: default currency, available currencies
-- [ ] Show amounts in default currency with original currency in tooltip
-
-### 5.2 Recurring Transactions (Future)
-
-- [ ] Define recurring transactions (daily, weekly, monthly, custom)
-- [ ] Auto-create transactions on schedule (cron job / Vercel cron)
-- [ ] Edit/pause/delete recurring rules
-- [ ] Useful for: subscriptions (Netflix, Spotify), rent, EMIs
-
-### 5.3 Budgets & Limits (Future)
-
-- [ ] Set monthly budget per category (e.g., Food: ₹5,000)
-- [ ] Set monthly budget per person
-- [ ] Budget progress bar on dashboard
-- [ ] Alert when budget is 80% or 100% reached
-
-### 5.4 Notifications & Reminders (Future)
-
-- [ ] Daily reminder to log expenses (push notification via PWA)
-- [ ] Budget threshold alerts
-- [ ] Weekly summary email/notification
-
-### 5.5 Smart Features (Future)
-
-- [ ] Auto-categorization: suggest category based on transaction name (ML/heuristic)
-- [ ] Duplicate detection: warn if similar transaction already logged today
-- [ ] Receipt scanning: OCR to auto-fill transaction details (camera/upload)
-- [ ] Voice input: "Spent 250 on Swiggy for family" → auto-fill form
-
-### 5.6 API & Integrations (Future)
-
-- [ ] Public API for programmatic access
-- [ ] Zapier/IFTTT integration
-- [ ] Bank statement import (CSV upload → parse → create transactions)
-- [ ] UPI/SMS auto-detect (Android only — read transaction SMS)
+### 2.6 Deployment & MVP Polish
+- [ ] **BLOCKER FIX:** Update Vercel environment variables (`NEON_AUTH_BASE_URL`, `NEON_AUTH_COOKIE_SECRET`)
+- [ ] Verify production build and test end-to-end auth and ledger flows
+- [ ] Fix empty tests directory (add basic e2e / integration tests)
 
 ---
 
-## Dependency Map
+## Phase 3 — Multi-Family & Analytics (PENDING)
 
-```
-Phase 1.1 (Setup)
-    ├── 1.2 (Auth) ← needs project + DB
-    ├── 1.3 (Family/Person) ← needs Auth
-    │       └── 1.4 (Transaction CRUD) ← needs Person + Tags + Modes
-    │               ├── 1.5 (Daily Ledger) ← needs Transactions
-    │               └── 1.6 (Balance Engine) ← needs Transactions + Payment Mode ownership
-    │
-Phase 2 (all sub-phases need Phase 1 complete)
-    ├── 2.1 (Tags) ─┐
-    ├── 2.2 (Modes) ─┤── can be done in parallel
-    ├── 2.3 (Members) ← needs Auth
-    ├── 2.4 (RBAC) ← needs Members
-    ├── 2.5 (Monthly Summary) ← needs Balance Engine
-    └── 2.6 (Category Breakdown) ← needs Tags + Recharts
-    │
-Phase 3
-    ├── 3.1 (Multi-Family) ← needs RBAC
-    ├── 3.2 (Trends) ─┐
-    ├── 3.3 (Insights) ┤── need Recharts + Balance data
-    └── 3.4 (Export) ← needs Summary/Analytics pages
-    │
-Phase 4
-    ├── 4.1 (PWA) ─┐
-    ├── 4.2 (Offline) ┤── independent of feature work
-    ├── 4.3 (Perf) ──┘
-    └── 4.4 (UX Polish) ← after all features stable
-    │
-Phase 5 ← all items independent, can be prioritized as needed
-```
+### 3.1 Multi-Family Support
+- [ ] Implement UserFamily join table logic to allow users to belong to multiple families
+- [ ] Add Family switcher component (header dropdown)
+- [ ] Scope all queries to the currently active family context
+
+### 3.2 Analytics Dashboard
+- [ ] Replace stub in `/analytics` with actual UI (Recharts)
+- [ ] Implement Time range picker (This month, Last month, Custom)
+- [ ] Add Spending trends chart (Line/Bar)
+- [ ] Add Income vs. Expense chart
+- [ ] Add Person comparison and Top spends tables
+
+### 3.3 Data Export
+- [ ] Export transactions to CSV
+- [ ] Export monthly summary / charts to PDF
+- [ ] Add download buttons on relevant pages
+
+---
+
+## Phase 4 — PWA & Polish (PENDING)
+
+### 4.1 PWA Setup & Offline Support
+- [ ] Configure service worker (e.g. Serwist)
+- [ ] Enable "Add to Home Screen"
+- [ ] Implement offline transaction queue (IndexedDB) with online sync
+
+### 4.2 Performance & UX
+- [ ] Lighthouse audit and DB query optimization
+- [ ] Implement virtual scrolling / pagination for ledger
+- [ ] Add Dark mode toggle
+- [ ] Add animations and haptic feedback
+
+---
+
+## Phase 5 — Scale & Enhancements (FUTURE)
+- [ ] Multi-Currency support
+- [ ] Recurring transactions (cron)
+- [ ] Budgets & Limits (alerts)
+- [ ] Smart Features (Auto-categorization, Receipt scanning)
 
 ---
 
