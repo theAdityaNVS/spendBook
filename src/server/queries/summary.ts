@@ -18,6 +18,12 @@ export async function getMonthlySummary(year: number, month: number): Promise<{
     totalCredits: number
     totalPayments: number
   }
+  categoryBreakdown: {
+    id: string
+    name: string
+    color: string
+    amount: number
+  }[]
 }> {
   const session = await getAppSession()
   if (!session?.user) throw new Error("Unauthorized")
@@ -51,6 +57,13 @@ export async function getMonthlySummary(year: number, month: number): Promise<{
       personId: true,
       type: true,
       amount: true,
+      categoryTag: {
+        select: {
+          id: true,
+          name: true,
+          color: true,
+        },
+      },
     },
   })
 
@@ -114,5 +127,25 @@ export async function getMonthlySummary(year: number, month: number): Promise<{
     totalPayments: summaries.reduce((acc, s) => acc + s.totalPayments, 0),
   }
 
-  return { summaries, familyAggregate }
+  // Calculate category breakdown (only DEBIT transactions)
+  const categoryMap = new Map<string, { id: string; name: string; color: string; amount: number }>()
+
+  for (const tx of transactions) {
+    if (tx.type !== "DEBIT") continue
+
+    const tagId = tx.categoryTag?.id || "uncategorized"
+    const tagName = tx.categoryTag?.name || "Uncategorized"
+    const tagColor = tx.categoryTag?.color || "#94a3b8"
+    const amount = Number(tx.amount)
+
+    if (categoryMap.has(tagId)) {
+      categoryMap.get(tagId)!.amount += amount
+    } else {
+      categoryMap.set(tagId, { id: tagId, name: tagName, color: tagColor, amount })
+    }
+  }
+
+  const categoryBreakdown = Array.from(categoryMap.values()).sort((a, b) => b.amount - a.amount)
+
+  return { summaries, familyAggregate, categoryBreakdown }
 }
