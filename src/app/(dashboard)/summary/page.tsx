@@ -14,7 +14,7 @@ export default async function SummaryPage({
   const year = params.year ? parseInt(params.year as string) : now.getFullYear()
   const month = params.month ? parseInt(params.month as string) : now.getMonth() + 1
 
-  const { summaries, familyAggregate } = await getMonthlySummary(year, month)
+  const { summaries, familyAggregate, categoryBreakdown } = await getMonthlySummary(year, month)
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-6">
@@ -23,6 +23,7 @@ export default async function SummaryPage({
         month={month}
         summaries={summaries}
         familyAggregate={familyAggregate}
+        categoryBreakdown={categoryBreakdown}
       />
     </div>
   )
