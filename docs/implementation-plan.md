@@ -86,16 +86,16 @@
 - [x] Ensure tags in use cannot be hard-deleted, only archived
 
 ### 2.2 Admin Panel — Payment Modes
-- [ ] Build payment mode management UI in Settings
-- [ ] Implement Server Actions for CRUD operations: add, edit, archive
-- [ ] Set owner configuration (Family vs. Specific Person)
-- [ ] Set type (Credit Card, Debit Card, UPI, Cash, Wallet, Net Banking)
+- [x] Build payment mode management UI in Settings
+- [x] Implement Server Actions for CRUD operations: add, edit, archive
+- [x] Set owner configuration (Family vs. Specific Person)
+- [x] Set type (Credit Card, Debit Card, UPI, Cash, Wallet, Net Banking)
 
 ### 2.3 Member Management & Role-Based Access
-- [ ] Build member management UI to invite users (via email/link) to the family
-- [ ] Accept invite flow (links user account to Person entity)
-- [ ] Implement RBAC middleware/guards (Admin vs. Family vs. Person roles)
-- [ ] Ensure Family role sees only family transactions; Person role sees only their own
+- [x] Build member management UI to invite users (via email/link) to the family
+- [x] Accept invite flow (links user account to Person entity)
+- [x] Implement RBAC middleware/guards (Admin vs. Family vs. Person roles)
+- [x] Ensure Family role sees only family transactions; Person role sees only their own
 
 ### 2.4 Monthly Summary Page
 - [ ] Replace stub in `/summary` with actual UI
