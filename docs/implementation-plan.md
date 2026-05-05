@@ -79,11 +79,11 @@
 > **Goal:** Complete the remaining MVP setup (Admin configuration) and introduce basic reporting so users can see their monthly spend.
 
 ### 2.1 Admin Panel — Category Tags
-- [ ] Build category tag management UI in Settings
-- [ ] Implement Server Actions for CRUD operations: add, rename, archive
-- [ ] Implement drag-and-drop reordering
-- [ ] Add Color picker for tags
-- [ ] Ensure tags in use cannot be hard-deleted, only archived
+- [x] Build category tag management UI in Settings
+- [x] Implement Server Actions for CRUD operations: add, rename, archive
+- [x] Implement drag-and-drop reordering
+- [x] Add Color picker for tags
+- [x] Ensure tags in use cannot be hard-deleted, only archived
 
 ### 2.2 Admin Panel — Payment Modes
 - [ ] Build payment mode management UI in Settings
