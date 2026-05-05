@@ -1,6 +1,7 @@
 import { PersonList } from "@/components/settings/PersonList"
 import { CategoryTagList } from "@/components/settings/CategoryTagList"
 import { PaymentModeList } from "@/components/settings/PaymentModeList"
+import { InviteMember } from "@/components/settings/InviteMember"
 import { getPersons, getCategoryTags, getPaymentModes } from "@/server/queries/settings"
 
 export const dynamic = "force-dynamic"
@@ -20,6 +21,8 @@ export default async function SettingsPage() {
           Manage your family members and preferences.
         </p>
       </div>
+
+      <InviteMember />
 
       <PersonList persons={persons} />
       
