@@ -13,6 +13,7 @@ export interface AppSession {
     name: string
     activeFamilyId: string
     activeRole: Role
+    activePersonId: string | null
   }
 }
 
@@ -63,6 +64,7 @@ export async function getAppSession(): Promise<AppSession | null> {
       name: user.name,
       activeFamilyId: userFamily.familyId,
       activeRole: userFamily.role,
+      activePersonId: userFamily.personId,
     },
   }
 }
