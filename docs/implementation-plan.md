@@ -98,10 +98,10 @@
 - [x] Ensure Family role sees only family transactions; Person role sees only their own
 
 ### 2.4 Monthly Summary Page
-- [ ] Replace stub in `/summary` with actual UI
-- [ ] Add Calendar month selector
-- [ ] Build per-person breakdown table (Opening → Debits/Credits/Payments → Closing)
-- [ ] Add Family-level aggregate row
+- [x] Replace stub in `/summary` with actual UI
+- [x] Add Calendar month selector
+- [x] Build per-person breakdown table (Opening → Debits/Credits/Payments → Closing)
+- [x] Add Family-level aggregate row
 
 ### 2.5 Category-wise Breakdown
 - [ ] Add Category breakdown section to Summary page or dedicated view
