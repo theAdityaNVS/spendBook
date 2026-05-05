@@ -109,9 +109,9 @@
 - [x] Add drill-down (click category → see transactions)
 
 ### 2.6 Deployment & MVP Polish
-- [ ] **BLOCKER FIX:** Update Vercel environment variables (`NEON_AUTH_BASE_URL`, `NEON_AUTH_COOKIE_SECRET`)
-- [ ] Verify production build and test end-to-end auth and ledger flows
-- [ ] Fix empty tests directory (add basic e2e / integration tests)
+- [x] **BLOCKER FIX:** Update Vercel environment variables (`NEON_AUTH_BASE_URL`, `NEON_AUTH_COOKIE_SECRET`)
+- [x] Verify production build and test end-to-end auth and ledger flows
+- [x] Fix empty tests directory (add basic e2e / integration tests)
 
 ---
 
