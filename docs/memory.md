@@ -9,10 +9,10 @@
 
 | Field | Value |
 |---|---|
-| **Current Phase** | Phase 1 — MVP: Core Expense Tracking |
-| **Current Sub-Phase** | 1.5 — Daily Ledger View |
-| **Status** | Neon Auth Migrated + Package Cleanup Complete |
-| **Last Updated** | 2026-03-04 (Package Cleanup) |
+| **Current Phase** | Phase 2 — Configuration & Reports |
+| **Current Sub-Phase** | 2.1 — Admin Panel — Category Tags |
+| **Status** | Implemented Category Tag CRUD and Reordering |
+| **Last Updated** | 2026-05-05 |
 
 ---
 
@@ -161,6 +161,13 @@ Comprehensive documentation:
 - [x] Removed old auth files (auth.ts, auth.config.ts, login/register pages, auth actions)
 - [x] Updated seed.ts, validators.ts, .env.example
 - [x] Build passes locally ✅, TypeScript clean ✅
+
+### Session 5 — 2026-05-05 (Phase 2 Start: Category Tags)
+
+- [x] Added `dnd-kit` for drag-and-drop reordering (`@dnd-kit/core`, `@dnd-kit/sortable`, `@dnd-kit/utilities`)
+- [x] Created `src/server/actions/category-tag.ts` for CRUD operations + reorder
+- [x] Created `src/components/settings/CategoryTagList.tsx` with color picker and drag-and-drop
+- [x] Updated `src/app/(dashboard)/settings/page.tsx` to include `CategoryTagList`
 
 ---
 
