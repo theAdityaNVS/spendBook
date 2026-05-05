@@ -12,6 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts"
 import type { PersonMonthlySummary } from "@/server/queries/summary"
 import { formatCurrency } from "@/lib/utils"
 
@@ -20,11 +21,13 @@ export function SummaryView({
   month,
   summaries,
   familyAggregate,
+  categoryBreakdown,
 }: {
   year: number
   month: number
   summaries: PersonMonthlySummary[]
   familyAggregate: { totalDebits: number; totalCredits: number; totalPayments: number }
+  categoryBreakdown: { id: string; name: string; color: string; amount: number }[]
 }) {
   const router = useRouter()
 
@@ -120,6 +123,55 @@ export function SummaryView({
           </div>
         </CardContent>
       </Card>
+
+      {categoryBreakdown.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Category Breakdown</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col md:flex-row items-center gap-8">
+            <div className="h-64 w-full md:w-1/2">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={categoryBreakdown}
+                    dataKey="amount"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={80}
+                    paddingAngle={2}
+                  >
+                    {categoryBreakdown.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    formatter={(value: number) => formatCurrency(value)}
+                  />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+
+            <div className="w-full md:w-1/2 space-y-4">
+              {categoryBreakdown.map((category) => (
+                <div key={category.id} className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div
+                      className="h-3 w-3 rounded-full"
+                      style={{ backgroundColor: category.color }}
+                    />
+                    <span className="font-medium">{category.name}</span>
+                  </div>
+                  <span className="font-bold">{formatCurrency(category.amount)}</span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }

@@ -104,9 +104,9 @@
 - [x] Add Family-level aggregate row
 
 ### 2.5 Category-wise Breakdown
-- [ ] Add Category breakdown section to Summary page or dedicated view
-- [ ] Add Pie/donut chart of spend distribution by category
-- [ ] Add drill-down (click category → see transactions)
+- [x] Add Category breakdown section to Summary page or dedicated view
+- [x] Add Pie/donut chart of spend distribution by category
+- [x] Add drill-down (click category → see transactions)
 
 ### 2.6 Deployment & MVP Polish
 - [ ] **BLOCKER FIX:** Update Vercel environment variables (`NEON_AUTH_BASE_URL`, `NEON_AUTH_COOKIE_SECRET`)
