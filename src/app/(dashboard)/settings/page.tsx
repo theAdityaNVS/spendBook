@@ -1,13 +1,15 @@
 import { PersonList } from "@/components/settings/PersonList"
 import { CategoryTagList } from "@/components/settings/CategoryTagList"
-import { getPersons, getCategoryTags } from "@/server/queries/settings"
+import { PaymentModeList } from "@/components/settings/PaymentModeList"
+import { getPersons, getCategoryTags, getPaymentModes } from "@/server/queries/settings"
 
 export const dynamic = "force-dynamic"
 
 export default async function SettingsPage() {
-  const [persons, tags] = await Promise.all([
+  const [persons, tags, modes] = await Promise.all([
     getPersons(),
-    getCategoryTags()
+    getCategoryTags(),
+    getPaymentModes()
   ])
 
   return (
@@ -22,6 +24,8 @@ export default async function SettingsPage() {
       <PersonList persons={persons} />
       
       <CategoryTagList initialTags={tags} />
+      
+      <PaymentModeList initialModes={modes} persons={persons} />
     </div>
   )
 }
