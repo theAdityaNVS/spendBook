@@ -1,6 +1,6 @@
 "use client"
 
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -148,6 +148,7 @@ export function SummaryView({
                     ))}
                   </Pie>
                   <Tooltip
+                    // @ts-expect-error Recharts formatter type is complex
                     formatter={(value: number) => formatCurrency(value)}
                   />
                   <Legend />
