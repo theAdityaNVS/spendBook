@@ -9,9 +9,9 @@
 
 | Field | Value |
 |---|---|
-| **Current Phase** | Phase 2 — Configuration & Reports |
-| **Current Sub-Phase** | 2.1 — Admin Panel — Category Tags |
-| **Status** | Implemented Category Tag CRUD and Reordering |
+| **Current Phase** | Phase 3 — Cross-Family Analytics & Export |
+| **Current Sub-Phase** | Pending |
+| **Status** | Phase 2 is 100% complete. Ready for Phase 3. |
 | **Last Updated** | 2026-05-05 |
 
 ---
@@ -180,15 +180,22 @@ Comprehensive documentation:
 - [ ] **Remove old env vars from Vercel:** `AUTH_SECRET`, `AUTH_URL` (no longer needed)
 - [ ] **Test auth flow end-to-end on production**
 
+### Session 6 — 2026-05-05 (Phase 2 Full Implementation)
+
+- [x] Phase 2.2 — **Admin Panel — Payment Modes**: Built `PaymentModeList` UI and server actions with owner mapping (person vs family).
+- [x] Phase 2.3 — **Member Management & RBAC**: Implemented invite link generation and handling (`FamilyInvite` model) and access control (Admin, Family, Person).
+- [x] Phase 2.4 — **Monthly Summary Page**: Built `SummaryView` component with month/year picker and member breakdown table showing opening, debits, credits, payments, and closing balances.
+- [x] Phase 2.5 — **Category-wise Breakdown**: Added Recharts Pie chart for category spending distribution in `SummaryView`.
+- [x] Phase 2.6 — **Deployment Polish**: Fixed TypeScript errors, added Recharts dependency, added Shadcn UI table, created Playwright base test, and successfully ran production build `pnpm run build`.
+
 ---
 
-## Next Up (Phase 2)
+## Next Up (Phase 3)
 
-1. Monthly summary page with person-level aggregates
-2. Category tag management in settings
-3. Payment mode management in settings
-4. Date range filtering
-5. Export to CSV
+1. **Phase 3.1: Family Switcher** — Build UI in Sidebar to switch between active families.
+2. **Phase 3.2: Export to CSV** — Implement API routes/server actions to export ledger data.
+3. **Phase 3.3: Extended Analytics** — Cross-family overview or more detailed category breakdowns.
+4. **Phase 3.4: Polish & Performance** — Optimistic UI pass on remaining actions, caching improvements.
 
 ---
 
