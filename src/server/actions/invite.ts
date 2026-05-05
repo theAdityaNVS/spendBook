@@ -32,7 +32,7 @@ export async function createInvite(
 
     revalidatePath("/settings")
     return { success: true, data: inviteUrl }
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error creating invite:", error)
     return { success: false, error: "Failed to create invite link" }
   }
@@ -58,7 +58,7 @@ export async function revokeInvite(
 
     revalidatePath("/settings")
     return { success: true, data: undefined }
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error revoking invite:", error)
     return { success: false, error: "Failed to revoke invite" }
   }
@@ -127,7 +127,7 @@ export async function acceptInvite(
     })
 
     return { success: true, data: undefined }
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error accepting invite:", error)
     return { success: false, error: "Failed to join family" }
   }

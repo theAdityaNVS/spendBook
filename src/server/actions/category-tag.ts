@@ -34,9 +34,9 @@ export async function createCategoryTag(
 
     revalidatePath("/settings")
     return { success: true, data: tag }
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error creating category tag:", error)
-    return { success: false, error: error.message || "Failed to create tag" }
+    return { success: false, error: error instanceof Error ? error.message : "Failed to create tag" }
   }
 }
 
@@ -65,7 +65,7 @@ export async function updateCategoryTag(
 
     revalidatePath("/settings")
     return { success: true, data: tag }
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error updating category tag:", error)
     return { success: false, error: "Failed to update tag" }
   }
@@ -92,7 +92,7 @@ export async function archiveCategoryTag(
 
     revalidatePath("/settings")
     return { success: true, data: undefined }
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error archiving category tag:", error)
     return { success: false, error: "Failed to archive tag" }
   }
@@ -121,7 +121,7 @@ export async function reorderCategoryTags(
 
     revalidatePath("/settings")
     return { success: true, data: undefined }
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error reordering category tags:", error)
     return { success: false, error: "Failed to reorder tags" }
   }
