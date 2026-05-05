@@ -60,7 +60,7 @@ export default async function InvitePage({
         <div className="mb-6 text-center">
           <h1 className="text-2xl font-bold">Join Family</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            You've been invited to join the <strong>{invite.family.name}</strong> family account.
+            You&apos;ve been invited to join the <strong>{invite.family.name}</strong> family account.
           </p>
         </div>
 
