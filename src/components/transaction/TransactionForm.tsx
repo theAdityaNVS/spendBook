@@ -38,7 +38,7 @@ interface TransactionFormProps {
   editTransaction?: Transaction
 }
 
-const initial: ActionResult<Transaction> = { success: false, error: "" }
+const initial: ActionResult<any> = { success: false, error: "" }
 
 export function TransactionForm({
   open,
