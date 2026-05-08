@@ -1,8 +1,10 @@
-import { auth } from "@/lib/auth/server"
+import { NextResponse } from "next/server"
+import type { NextRequest } from "next/server"
 
-export default auth.middleware({
-  loginUrl: "/auth/sign-in",
-})
+export default function middleware(request: NextRequest) {
+  // Auth disabled for development bypass
+  return NextResponse.next()
+}
 
 export const config = {
   // Exclude: API routes, Next.js internals, static assets, auth routes, and public files
