@@ -2,6 +2,8 @@ import { auth } from "@/lib/auth/server"
 import { db } from "@/lib/db"
 import type { Role } from "@/generated/prisma"
 
+import { cookies } from "next/headers"
+
 /**
  * Our custom session shape used throughout the app.
  * Bridges Neon Auth's session with our User + UserFamily models.
@@ -23,14 +25,19 @@ export interface AppSession {
  * Looks up Neon Auth session → finds/creates our User → loads UserFamily.
  * Returns null if not authenticated or no family setup yet.
  * 
- * NOTE: For development, if no real session exists, returns the first user found in DB.
+ * NOTE: For development, if no real session exists, returns the user specified by 'dev_user_id' cookie,
+ * or the first user found in DB.
  */
 export async function getAppSession(): Promise<AppSession | null> {
   const { data: neonSession } = await auth.getSession()
   
   if (!neonSession?.user?.email) {
-    // DEVELOPMENT BYPASS: return the first user in the DB
+    // DEVELOPMENT BYPASS
+    const cookieStore = await cookies()
+    const devUserId = cookieStore.get("dev_user_id")?.value
+    
     const devUser = await db.user.findFirst({
+      where: devUserId ? { id: devUserId } : undefined,
       include: { userFamilies: { orderBy: { createdAt: "asc" }, take: 1 } }
     })
     
