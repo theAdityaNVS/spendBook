@@ -82,5 +82,11 @@ export async function getDailyLedger(date: Date): Promise<{
     }),
   )
 
-  return { transactions, balances }
+  return {
+    transactions: transactions.map((t) => ({
+      ...t,
+      amount: t.amount.toString(),
+    })),
+    balances,
+  }
 }
