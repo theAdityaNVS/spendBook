@@ -220,6 +220,14 @@ Comprehensive documentation:
 - [x] **Balance Integrity:** Fixed a bug where editing a transaction's person failed to recalculate the previous owner's balance.
 - [x] **Balance Cascade:** Refactored `recalculateBalancesForDate` to chronologically cascade balance updates through all future dates, ensuring historical edits correctly sync with running totals.
 
+### Session 8 — Development Auth Bypass
+
+- [x] **Branching:** Created `backup/with-auth` as a safe-point and `feature/disabled-auth-picker` for the bypass implementation.
+- [x] **Middleware:** Updated `middleware.ts` to allow all requests during development bypass.
+- [x] **Session Engine:** Updated `getAppSession()` and `isAuthenticated()` in `src/lib/auth/session.ts` to support a `dev_user_id` cookie for session-based account switching.
+- [x] **Account Picker:** Built `DevAccountPicker` component and integrated it into the `Header` to allow researchers to switch between users instantly.
+- [x] **Seeding:** Fixed `prisma/seed.ts` import issue to allow database population with demo users.
+
 ## Notes for Next Session
 
 **DEPLOYMENT STEPS:**

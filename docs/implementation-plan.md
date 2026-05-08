@@ -8,8 +8,9 @@
 
 > **CRITICAL INSTRUCTIONS FOR AGENTS:**
 > 1. **Branching Strategy:** We merge phase by phase. Create a new branch for each phase (e.g., `git checkout -b phase-2`). Once a phase is complete, it is merged into `main` via a Pull Request.
-> 2. **Atomic Commits:** Make descriptive commits for **every** sub-task and task you complete. Do not lump massive changes into single commits.
-> 3. **Memory Updates:** Update `docs/memory.md` immediately after completing every task to keep track of progress, blockers, and next steps.
+> 2. **Development Mode (Auth Bypass):** For faster iteration, a development bypass is available in the `feature/disabled-auth-picker` branch. This allows "signing in" as any user via an Account Picker in the Header without the full Neon Auth flow. **NEVER merge this bypass to production branches without explicit removal.**
+> 3. **Atomic Commits:** Make descriptive commits for **every** sub-task and task you complete. Do not lump massive changes into single commits.
+> 4. **Memory Updates:** Update `docs/memory.md` immediately after completing every task to keep track of progress, blockers, and next steps.
 
 ---
 
