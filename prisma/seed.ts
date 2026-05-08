@@ -1,4 +1,4 @@
-import { PrismaClient, PaymentModeType, Role } from "@prisma/client"
+import { PrismaClient, PaymentModeType, Role } from "../src/generated/prisma"
 
 const prisma = new PrismaClient()
 
