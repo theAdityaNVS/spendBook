@@ -1,10 +1,17 @@
 import { PersonList } from "@/components/settings/PersonList"
-import { getPersons } from "@/server/queries/settings"
+import { CategoryTagList } from "@/components/settings/CategoryTagList"
+import { PaymentModeList } from "@/components/settings/PaymentModeList"
+import { InviteMember } from "@/components/settings/InviteMember"
+import { getPersons, getCategoryTags, getPaymentModes } from "@/server/queries/settings"
 
 export const dynamic = "force-dynamic"
 
 export default async function SettingsPage() {
-  const persons = await getPersons()
+  const [persons, tags, modes] = await Promise.all([
+    getPersons(),
+    getCategoryTags(),
+    getPaymentModes()
+  ])
 
   return (
     <div className="mx-auto max-w-2xl space-y-8 px-4 py-6">
@@ -15,7 +22,13 @@ export default async function SettingsPage() {
         </p>
       </div>
 
+      <InviteMember />
+
       <PersonList persons={persons} />
+      
+      <CategoryTagList initialTags={tags} />
+      
+      <PaymentModeList initialModes={modes} persons={persons} />
     </div>
   )
 }
