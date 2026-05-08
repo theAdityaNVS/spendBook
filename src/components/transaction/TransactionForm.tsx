@@ -25,7 +25,13 @@ import {
 } from "@/components/ui/dialog"
 import { toDateParam } from "@/lib/utils"
 import { TRANSACTION_TYPE_LABELS, PAID_TOWARDS_LABELS, PAYMENT_MODE_TYPE_LABELS } from "@/config/constants"
-import type { Person, CategoryTag, PaymentMode, Transaction, ActionResult } from "@/types"
+import type {
+  Person,
+  CategoryTag,
+  PaymentMode,
+  ActionResult,
+  TransactionWithRelations,
+} from "@/types"
 
 interface TransactionFormProps {
   open: boolean
@@ -35,10 +41,10 @@ interface TransactionFormProps {
   paymentModes: (PaymentMode & { ownerPerson: Person | null })[]
   defaultDate: Date
   defaultPersonId?: string
-  editTransaction?: Transaction
+  editTransaction?: TransactionWithRelations
 }
 
-const initial: ActionResult<any> = { success: false, error: "" }
+const initial: ActionResult<unknown> = { success: false, error: "" }
 
 export function TransactionForm({
   open,
