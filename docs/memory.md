@@ -9,10 +9,10 @@
 
 | Field | Value |
 |---|---|
-| **Current Phase** | Phase 1 — MVP: Core Expense Tracking |
-| **Current Sub-Phase** | 1.5 — Daily Ledger View |
-| **Status** | Migrated to Neon Auth — Ready for Deployment |
-| **Last Updated** | 2026-03-04 |
+| **Current Phase** | Phase 3 — Cross-Family Analytics & Export |
+| **Current Sub-Phase** | Pending |
+| **Status** | Phase 2 is 100% complete. Ready for Phase 3. |
+| **Last Updated** | 2026-05-05 |
 
 ---
 
@@ -48,6 +48,53 @@
 - **Added:** `src/app/onboarding/page.tsx`, `src/server/actions/onboarding.ts`
 - **Added:** `src/app/api/auth/[...path]/route.ts`
 - **Removed:** `src/lib/auth.ts`, `src/lib/auth.config.ts`, `src/server/actions/auth.ts`
+
+---
+
+## Package Cleanup: Removed Unused Dependencies (Completed 2026-03-04)
+
+**Status:** 9 unused packages removed. Build passes. No code changes needed.
+
+### What Was Removed
+Removed 9 packages that were speculatively added but never imported in `src/`:
+
+| Removed Package | Size | Reason |
+|---|---|---|
+| `@radix-ui/react-avatar` | 2.1 KB | UI component not planned |
+| `@radix-ui/react-dropdown-menu` | 4.2 KB | No context menus implemented |
+| `@radix-ui/react-popover` | 3.8 KB | No popovers/date-pickers used |
+| `@radix-ui/react-tabs` | 3.5 KB | No tabbed interfaces |
+| `@radix-ui/react-toast` | 2.3 KB | `sonner` provides all toasts |
+| `@radix-ui/react-toggle` | 1.9 KB | Toggle buttons not in design |
+| `@radix-ui/react-tooltip` | 2.8 KB | Tooltips not implemented |
+| `date-fns` | 13.4 KB | Custom date helpers sufficient |
+| `recharts` | 18.2 KB | Analytics phase not built yet |
+| **Total Saved** | **~52 KB** | **(~13 KB gzip)** |
+
+### Why?
+- **Smaller bundle:** Faster initial load on mobile networks
+- **Faster installs:** pnpm lock.yaml reduced (~100 transitive deps removed)
+- **Cleaner deps:** Only what's actively used
+- **Future-proof:** Re-add from docs when actually implementing features
+
+### When to Re-add
+See `docs/tech-report.md` → "Packages to Re-add (Future Phases)"
+- `recharts` → Phase 3 (Analytics charts)
+- `@radix-ui/react-tooltip` → Phase 2 (Hover help text)
+- etc.
+
+### Tech Report Created
+**New file:** [docs/tech-report.md](tech-report.md)
+
+Comprehensive documentation:
+- Production (14) & development (15) dependency breakdown
+- What each package does, why, and where used
+- Alternates considered
+- Removed packages and re-add schedule
+- Architecture decisions (Neon Auth vs Auth.js, Prisma vs Drizzle, etc.)
+- Bundle sizes, performance characteristics
+- Database schema overview
+- Deployment checklist
 - **Removed:** `src/app/(auth)/login/page.tsx`, `src/app/(auth)/register/page.tsx`
 - **Removed:** `src/app/api/auth/[...nextauth]/route.ts`
 - **Updated:** middleware, root layout, dashboard layout, Header, all server actions/queries
@@ -115,6 +162,13 @@
 - [x] Updated seed.ts, validators.ts, .env.example
 - [x] Build passes locally ✅, TypeScript clean ✅
 
+### Session 5 — 2026-05-05 (Phase 2 Start: Category Tags)
+
+- [x] Added `dnd-kit` for drag-and-drop reordering (`@dnd-kit/core`, `@dnd-kit/sortable`, `@dnd-kit/utilities`)
+- [x] Created `src/server/actions/category-tag.ts` for CRUD operations + reorder
+- [x] Created `src/components/settings/CategoryTagList.tsx` with color picker and drag-and-drop
+- [x] Updated `src/app/(dashboard)/settings/page.tsx` to include `CategoryTagList`
+
 ---
 
 ## In Progress / Blockers
@@ -126,15 +180,22 @@
 - [ ] **Remove old env vars from Vercel:** `AUTH_SECRET`, `AUTH_URL` (no longer needed)
 - [ ] **Test auth flow end-to-end on production**
 
+### Session 6 — 2026-05-05 (Phase 2 Full Implementation)
+
+- [x] Phase 2.2 — **Admin Panel — Payment Modes**: Built `PaymentModeList` UI and server actions with owner mapping (person vs family).
+- [x] Phase 2.3 — **Member Management & RBAC**: Implemented invite link generation and handling (`FamilyInvite` model) and access control (Admin, Family, Person).
+- [x] Phase 2.4 — **Monthly Summary Page**: Built `SummaryView` component with month/year picker and member breakdown table showing opening, debits, credits, payments, and closing balances.
+- [x] Phase 2.5 — **Category-wise Breakdown**: Added Recharts Pie chart for category spending distribution in `SummaryView`.
+- [x] Phase 2.6 — **Deployment Polish**: Fixed TypeScript errors, added Recharts dependency, added Shadcn UI table, created Playwright base test, and successfully ran production build `pnpm run build`.
+
 ---
 
-## Next Up (Phase 2)
+## Next Up (Phase 3)
 
-1. Monthly summary page with person-level aggregates
-2. Category tag management in settings
-3. Payment mode management in settings
-4. Date range filtering
-5. Export to CSV
+1. **Phase 3.1: Family Switcher** — Build UI in Sidebar to switch between active families.
+2. **Phase 3.2: Export to CSV** — Implement API routes/server actions to export ledger data.
+3. **Phase 3.3: Extended Analytics** — Cross-family overview or more detailed category breakdowns.
+4. **Phase 3.4: Polish & Performance** — Optimistic UI pass on remaining actions, caching improvements.
 
 ---
 
@@ -151,6 +212,13 @@
 | Git commit style | Conventional Commits, single-line | Industry standard; one commit per logical change block |
 
 ---
+
+### Session 7 — Debugging Core Architecture
+
+- [x] **Auth:** Fixed `404` errors in production on `/auth/[path]` by adding `generateStaticParams` (required for `dynamicParams = false`).
+- [x] **Server Actions:** Fixed `500` crash when creating transactions by stripping un-serializable Prisma `Decimal` objects from Server Action return payloads.
+- [x] **Balance Integrity:** Fixed a bug where editing a transaction's person failed to recalculate the previous owner's balance.
+- [x] **Balance Cascade:** Refactored `recalculateBalancesForDate` to chronologically cascade balance updates through all future dates, ensuring historical edits correctly sync with running totals.
 
 ## Notes for Next Session
 

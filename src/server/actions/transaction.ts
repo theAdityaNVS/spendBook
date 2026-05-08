@@ -16,9 +16,9 @@ function parseDate(dateStr: string): Date {
 }
 
 export async function createTransactionAction(
-  _prev: ActionResult<Transaction>,
+  _prev: ActionResult<any>,
   formData: FormData,
-): Promise<ActionResult<Transaction>> {
+): Promise<ActionResult<any>> {
   const session = await getAppSession()
   if (!session?.user) return { success: false, error: "Unauthorized" }
 
@@ -81,8 +81,8 @@ export async function createTransactionAction(
     )
 
     revalidatePath("/ledger")
-    return { success: true, data: transaction }
-  } catch (error) {
+    return { success: true, data: { id: transaction.id } }
+    } catch (error) {
     console.error("createTransactionAction failed:", error)
     return { success: false, error: "Failed to create transaction" }
   }
@@ -145,7 +145,10 @@ export async function updateTransactionAction(
       parsed.data.personId,
       newDate,
     )
-    if (oldDate.toISOString() !== newDate.toISOString()) {
+    if (
+      oldDate.toISOString() !== newDate.toISOString() ||
+      existing.personId !== parsed.data.personId
+    ) {
       await recalculateBalancesForDate(
         session.user.activeFamilyId,
         existing.personId,
@@ -154,8 +157,8 @@ export async function updateTransactionAction(
     }
 
     revalidatePath("/ledger")
-    return { success: true, data: transaction }
-  } catch (error) {
+    return { success: true, data: { id: transaction.id } }
+    } catch (error) {
     console.error("updateTransactionAction failed:", error)
     return { success: false, error: "Failed to update transaction" }
   }

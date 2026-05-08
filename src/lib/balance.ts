@@ -70,100 +70,125 @@ export function computeLoanDelta(
 export async function recalculateBalancesForDate(
   familyId: string,
   personId: string,
-  date: Date,
+  startDate: Date,
 ): Promise<void> {
   const person = await db.person.findUniqueOrThrow({
     where: { id: personId },
   })
 
-  const transactions = await db.transaction.findMany({
-    where: { familyId, personId, date },
-    include: { paymentMode: true },
+  // Find all dates from `startDate` onwards that have either a transaction or an existing daily balance record
+  const txDates = await db.transaction.findMany({
+    where: { familyId, personId, date: { gte: startDate } },
+    select: { date: true },
+    distinct: ["date"],
+  })
+  
+  const balanceDates = await db.dailyBalance.findMany({
+    where: { familyId, personId, date: { gte: startDate } },
+    select: { date: true },
+    distinct: ["date"],
   })
 
-  // ── DailyBalance (tracks gross debits/credits/payments) ──
-  const totalDebits = transactions
-    .filter((t) => t.type === "DEBIT")
-    .reduce((acc, t) => acc.plus(t.amount), new Decimal(0))
+  const datesToRecalculate = new Set([
+    startDate.toISOString(),
+    ...txDates.map(t => t.date.toISOString()),
+    ...balanceDates.map(b => b.date.toISOString())
+  ])
 
-  const totalCredits = transactions
-    .filter((t) => t.type === "CREDIT")
-    .reduce((acc, t) => acc.plus(t.amount), new Decimal(0))
+  const sortedDates = Array.from(datesToRecalculate)
+    .map(d => new Date(d))
+    .sort((a, b) => a.getTime() - b.getTime())
 
-  const totalPayments = transactions
-    .filter((t) => t.type === "PAYMENT")
-    .reduce((acc, t) => acc.plus(t.amount), new Decimal(0))
+  for (const date of sortedDates) {
+    const transactions = await db.transaction.findMany({
+      where: { familyId, personId, date },
+      include: { paymentMode: true },
+    })
 
-  // Opening balance = closing balance of the previous day
-  const prevBalance = await db.dailyBalance.findFirst({
-    where: { personId, familyId, date: { lt: date } },
-    orderBy: { date: "desc" },
-  })
-  const openingBalance = prevBalance?.closingBalance ?? new Decimal(0)
-  const closingBalance = openingBalance
-    .plus(totalDebits)
-    .minus(totalCredits)
-    .minus(totalPayments)
+    // ── DailyBalance (tracks gross debits/credits/payments) ──
+    const totalDebits = transactions
+      .filter((t) => t.type === "DEBIT")
+      .reduce((acc, t) => acc.plus(t.amount), new Decimal(0))
 
-  await db.dailyBalance.upsert({
-    where: { personId_date: { personId, date } },
-    create: {
-      personId,
-      familyId,
-      date,
-      openingBalance,
-      totalDebits,
-      totalCredits,
-      totalPayments,
-      closingBalance,
-    },
-    update: {
-      openingBalance,
-      totalDebits,
-      totalCredits,
-      totalPayments,
-      closingBalance,
-    },
-  })
+    const totalCredits = transactions
+      .filter((t) => t.type === "CREDIT")
+      .reduce((acc, t) => acc.plus(t.amount), new Decimal(0))
 
-  // ── LoanBalance (only relevant for non-family-account persons) ──
-  if (person.isFamilyAccount) return
+    const totalPayments = transactions
+      .filter((t) => t.type === "PAYMENT")
+      .reduce((acc, t) => acc.plus(t.amount), new Decimal(0))
 
-  const prevLoan = await db.loanBalance.findFirst({
-    where: { personId, familyId, date: { lt: date } },
-    orderBy: { date: "desc" },
-  })
-  const openingLoan = prevLoan?.closingLoan ?? new Decimal(0)
+    // Opening balance = closing balance of the previous day
+    const prevBalance = await db.dailyBalance.findFirst({
+      where: { personId, familyId, date: { lt: date } },
+      orderBy: { date: "desc" },
+    })
+    const openingBalance = prevBalance?.closingBalance ?? new Decimal(0)
+    const closingBalance = openingBalance
+      .plus(totalDebits)
+      .minus(totalCredits)
+      .minus(totalPayments)
 
-  let loanIncreases = new Decimal(0)
-  let loanDecreases = new Decimal(0)
+    await db.dailyBalance.upsert({
+      where: { personId_date: { personId, date } },
+      create: {
+        personId,
+        familyId,
+        date,
+        openingBalance,
+        totalDebits,
+        totalCredits,
+        totalPayments,
+        closingBalance,
+      },
+      update: {
+        openingBalance,
+        totalDebits,
+        totalCredits,
+        totalPayments,
+        closingBalance,
+      },
+    })
 
-  for (const tx of transactions) {
-    const delta = computeLoanDelta(tx, personId)
-    if (delta.gt(0)) loanIncreases = loanIncreases.plus(delta)
-    if (delta.lt(0)) loanDecreases = loanDecreases.plus(delta.abs())
+    // ── LoanBalance (only relevant for non-family-account persons) ──
+    if (!person.isFamilyAccount) {
+      const prevLoan = await db.loanBalance.findFirst({
+        where: { personId, familyId, date: { lt: date } },
+        orderBy: { date: "desc" },
+      })
+      const openingLoan = prevLoan?.closingLoan ?? new Decimal(0)
+
+      let loanIncreases = new Decimal(0)
+      let loanDecreases = new Decimal(0)
+
+      for (const tx of transactions) {
+        const delta = computeLoanDelta(tx, personId)
+        if (delta.gt(0)) loanIncreases = loanIncreases.plus(delta)
+        if (delta.lt(0)) loanDecreases = loanDecreases.plus(delta.abs())
+      }
+
+      const closingLoan = openingLoan.plus(loanIncreases).minus(loanDecreases)
+
+      await db.loanBalance.upsert({
+        where: { personId_date: { personId, date } },
+        create: {
+          personId,
+          familyId,
+          date,
+          openingLoan,
+          loanIncreases,
+          loanDecreases,
+          closingLoan,
+        },
+        update: {
+          openingLoan,
+          loanIncreases,
+          loanDecreases,
+          closingLoan,
+        },
+      })
+    }
   }
-
-  const closingLoan = openingLoan.plus(loanIncreases).minus(loanDecreases)
-
-  await db.loanBalance.upsert({
-    where: { personId_date: { personId, date } },
-    create: {
-      personId,
-      familyId,
-      date,
-      openingLoan,
-      loanIncreases,
-      loanDecreases,
-      closingLoan,
-    },
-    update: {
-      openingLoan,
-      loanIncreases,
-      loanDecreases,
-      closingLoan,
-    },
-  })
 }
 
 /** Recalculate balances for ALL persons in a family for a given date. */

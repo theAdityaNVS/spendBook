@@ -14,7 +14,13 @@ export async function getDailyLedger(date: Date): Promise<{
 
   const [transactions, persons] = await Promise.all([
     db.transaction.findMany({
-      where: { familyId: activeFamilyId, date },
+      where: {
+        familyId: activeFamilyId,
+        date,
+        ...(session.user.activeRole === "PERSON" && session.user.activePersonId
+          ? { personId: session.user.activePersonId }
+          : {}),
+      },
       include: {
         person: true,
         categoryTag: true,
@@ -23,7 +29,13 @@ export async function getDailyLedger(date: Date): Promise<{
       orderBy: { createdAt: "asc" },
     }),
     db.person.findMany({
-      where: { familyId: activeFamilyId, isArchived: false },
+      where: {
+        familyId: activeFamilyId,
+        isArchived: false,
+        ...(session.user.activeRole === "PERSON" && session.user.activePersonId
+          ? { id: session.user.activePersonId }
+          : {}),
+      },
       orderBy: [{ isFamilyAccount: "asc" }, { createdAt: "asc" }],
     }),
   ])
