@@ -36,8 +36,10 @@ export async function getAppSession(): Promise<AppSession | null> {
     const cookieStore = await cookies()
     const devUserId = cookieStore.get("dev_user_id")?.value
     
+    if (!devUserId) return null // Force redirect via middleware
+    
     const devUser = await db.user.findFirst({
-      where: devUserId ? { id: devUserId } : undefined,
+      where: { id: devUserId },
       include: { userFamilies: { orderBy: { createdAt: "asc" }, take: 1 } }
     })
     
