@@ -213,6 +213,13 @@ Comprehensive documentation:
 
 ---
 
+### Session 7 — Debugging Core Architecture
+
+- [x] **Auth:** Fixed `404` errors in production on `/auth/[path]` by adding `generateStaticParams` (required for `dynamicParams = false`).
+- [x] **Server Actions:** Fixed `500` crash when creating transactions by stripping un-serializable Prisma `Decimal` objects from Server Action return payloads.
+- [x] **Balance Integrity:** Fixed a bug where editing a transaction's person failed to recalculate the previous owner's balance.
+- [x] **Balance Cascade:** Refactored `recalculateBalancesForDate` to chronologically cascade balance updates through all future dates, ensuring historical edits correctly sync with running totals.
+
 ## Notes for Next Session
 
 **DEPLOYMENT STEPS:**
