@@ -25,7 +25,7 @@ export default async function DevLoginPage() {
 
       <div className="w-full max-w-4xl text-center">
         <h2 className="mb-10 text-2xl font-medium text-muted-foreground">
-          Who's tracking today?
+          Who&apos;s tracking today?
         </h2>
 
         <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 md:grid-cols-4">

@@ -9,16 +9,16 @@ import {
   deleteTransactionSchema,
 } from "@/lib/validators"
 import { recalculateBalancesForDate } from "@/lib/balance"
-import type { ActionResult, Transaction } from "@/types"
+import type { ActionResult } from "@/types"
 
 function parseDate(dateStr: string): Date {
   return new Date(`${dateStr}T00:00:00.000Z`)
 }
 
 export async function createTransactionAction(
-  _prev: ActionResult<any>,
+  _prev: ActionResult<unknown>,
   formData: FormData,
-): Promise<ActionResult<any>> {
+): Promise<ActionResult<unknown>> {
   const session = await getAppSession()
   if (!session?.user) return { success: false, error: "Unauthorized" }
 
@@ -89,9 +89,9 @@ export async function createTransactionAction(
 }
 
 export async function updateTransactionAction(
-  _prev: ActionResult<Transaction>,
+  _prev: ActionResult<unknown>,
   formData: FormData,
-): Promise<ActionResult<Transaction>> {
+): Promise<ActionResult<unknown>> {
   const session = await getAppSession()
   if (!session?.user) return { success: false, error: "Unauthorized" }
 

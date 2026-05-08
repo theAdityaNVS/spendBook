@@ -34,7 +34,8 @@ export type {
 
 // ─── Enriched / joined types used in UI ──────────────────────────────────────
 
-export type TransactionWithRelations = Transaction & {
+export type TransactionWithRelations = Omit<Transaction, "amount"> & {
+  amount: string
   person: Person
   categoryTag: CategoryTag | null
   paymentMode: (PaymentMode & { ownerPerson: Person | null }) | null
