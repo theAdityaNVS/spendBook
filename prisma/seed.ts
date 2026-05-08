@@ -1,4 +1,4 @@
-import { PrismaClient, PaymentModeType, Role } from "@prisma/client"
+import { PrismaClient, PaymentModeType, Role } from "../src/generated/prisma"
 
 const prisma = new PrismaClient()
 
@@ -18,13 +18,31 @@ const DEFAULT_CATEGORY_TAGS = [
 async function main() {
   console.log("🌱 Seeding database...")
 
-  // Create demo admin user (Neon Auth handles actual credentials)
-  const user = await prisma.user.upsert({
-    where: { email: "demo@spendbook.app" },
+  // Create demo admin user
+  const admin = await prisma.user.upsert({
+    where: { email: "admin@spendbook.app" },
     update: {},
     create: {
-      email: "demo@spendbook.app",
-      name: "Demo Admin",
+      email: "admin@spendbook.app",
+      name: "Aditya (Admin)",
+    },
+  })
+
+  const user2 = await prisma.user.upsert({
+    where: { email: "rahul@spendbook.app" },
+    update: {},
+    create: {
+      email: "rahul@spendbook.app",
+      name: "Rahul",
+    },
+  })
+
+  const user3 = await prisma.user.upsert({
+    where: { email: "priya@spendbook.app" },
+    update: {},
+    create: {
+      email: "priya@spendbook.app",
+      name: "Priya",
     },
   })
 
@@ -34,45 +52,41 @@ async function main() {
     update: {},
     create: {
       id: "demo-family-id",
-      name: "Demo Household",
+      name: "Nadamuni Household",
       defaultCurrency: "INR",
     },
   })
 
-  // Create Family Account (built-in person)
-  const familyAccount = await prisma.person.upsert({
-    where: { id: "demo-family-account-id" },
-    update: {},
-    create: {
-      id: "demo-family-account-id",
-      name: "Family Account",
-      familyId: family.id,
-      isFamilyAccount: true,
-    },
-  })
+  // Link users to family
+  const roles = [
+    { userId: admin.id, role: Role.ADMIN, name: "Family Account" },
+    { userId: user2.id, role: Role.FAMILY, name: "Rahul" },
+    { userId: user3.id, role: Role.PERSON, name: "Priya" },
+  ]
 
-  // Create a sample person
-  const person1 = await prisma.person.upsert({
-    where: { id: "demo-person-1-id" },
-    update: {},
-    create: {
-      id: "demo-person-1-id",
-      name: "Rahul",
-      familyId: family.id,
-    },
-  })
+  for (const r of roles) {
+    const person = await prisma.person.upsert({
+      where: { id: `demo-person-${r.name.toLowerCase()}` },
+      update: {},
+      create: {
+        id: `demo-person-${r.name.toLowerCase()}`,
+        name: r.name,
+        familyId: family.id,
+        isFamilyAccount: r.role === Role.ADMIN,
+      },
+    })
 
-  // Link admin user to family
-  await prisma.userFamily.upsert({
-    where: { userId_familyId: { userId: user.id, familyId: family.id } },
-    update: {},
-    create: {
-      userId: user.id,
-      familyId: family.id,
-      role: Role.ADMIN,
-      personId: familyAccount.id,
-    },
-  })
+    await prisma.userFamily.upsert({
+      where: { userId_familyId: { userId: r.userId, familyId: family.id } },
+      update: {},
+      create: {
+        userId: r.userId,
+        familyId: family.id,
+        role: r.role,
+        personId: person.id,
+      },
+    })
+  }
 
   // Seed default category tags
   for (const tag of DEFAULT_CATEGORY_TAGS) {
@@ -123,7 +137,7 @@ async function main() {
       name: "Rahul Cash",
       type: PaymentModeType.CASH,
       familyId: family.id,
-      ownerPersonId: person1.id,
+      ownerPersonId: "demo-person-rahul",
     },
   })
 
