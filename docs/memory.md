@@ -169,14 +169,22 @@ Comprehensive documentation:
 - [x] Created `src/components/settings/CategoryTagList.tsx` with color picker and drag-and-drop
 - [x] Updated `src/app/(dashboard)/settings/page.tsx` to include `CategoryTagList`
 
+### Verified Production Values (2026-05-08)
+
+- **Project ID**: `divine-smoke-58320411`
+- **Endpoint ID**: `ep-sweet-waterfall-a14zhs84`
+- **Region**: `ap-southeast-1`
+- **Neon Auth URL**: `https://ep-sweet-waterfall-a14zhs84.neonauth.ap-southeast-1.aws.neon.tech/neondb/auth`
+- **Database URL (Pooled)**: `postgresql://neondb_owner:[REDACTED]@ep-sweet-waterfall-a14zhs84-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require`
+
 ---
 
 ## In Progress / Blockers
 
-- [ ] **Deploy to Vercel** — commit + push to trigger new deployment
-- [ ] **Set Vercel env vars:**
-  - `NEON_AUTH_BASE_URL` = `https://ep-sweet-waterfall-a14zhs84.neonauth.ap-southeast-1.aws.neon.tech/neondb/auth`
-  - `NEON_AUTH_COOKIE_SECRET` = generate with `node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"`
+- [x] **Deploy to Vercel** — Fixes for build and runtime errors committed and pushed to main.
+- [x] **Set Vercel env vars:** (Verified via CLI)
+  - `NEON_AUTH_BASE_URL` = set
+  - `NEON_AUTH_COOKIE_SECRET` = set
 - [ ] **Remove old env vars from Vercel:** `AUTH_SECRET`, `AUTH_URL` (no longer needed)
 - [ ] **Test auth flow end-to-end on production**
 
