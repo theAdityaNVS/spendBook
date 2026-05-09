@@ -7,12 +7,12 @@
 
 ## Current Status
 
-| Field | Value |
-|---|---|
-| **Current Phase** | Phase 3 — Cross-Family Analytics & Export |
-| **Current Sub-Phase** | Pending |
-| **Status** | Phase 2 is 100% complete. Ready for Phase 3. |
-| **Last Updated** | 2026-05-05 |
+| Field                 | Value                                        |
+| --------------------- | -------------------------------------------- |
+| **Current Phase**     | Phase 3 — Cross-Family Analytics & Export    |
+| **Current Sub-Phase** | Pending                                      |
+| **Status**            | Phase 2 is 100% complete. Ready for Phase 3. |
+| **Last Updated**      | 2026-05-05                                   |
 
 ---
 
@@ -21,6 +21,7 @@
 **Status:** Migration complete. Build passes locally. Ready to deploy.
 
 ### What Changed
+
 - Replaced NextAuth v5 (Auth.js) with **Neon Auth** (`@neondatabase/auth`)
 - Removed: `next-auth`, `@auth/prisma-adapter`, `bcryptjs`
 - Added: `@neondatabase/auth@latest`
@@ -28,6 +29,7 @@
 - All login/register/password-reset handled by Neon Auth
 
 ### New Auth Flow
+
 1. User visits app → middleware redirects to `/auth/sign-in` (Neon Auth UI)
 2. Neon Auth handles sign-up/sign-in/forgot-password
 3. After auth, dashboard layout checks if user has a family via `getAppSession()`
@@ -36,13 +38,14 @@
 
 ### Environment Variables Checklist (Vercel)
 
-| Variable | Required | Value |
-|---|---|---|
-| `DATABASE_URL` | Yes | Neon Pooling connection string |
-| `NEON_AUTH_BASE_URL` | Yes | `https://ep-sweet-waterfall-a14zhs84.neonauth.ap-southeast-1.aws.neon.tech/neondb/auth` |
-| `NEON_AUTH_COOKIE_SECRET` | Yes | Generate with: `node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"` |
+| Variable                  | Required | Value                                                                                        |
+| ------------------------- | -------- | -------------------------------------------------------------------------------------------- |
+| `DATABASE_URL`            | Yes      | Neon Pooling connection string                                                               |
+| `NEON_AUTH_BASE_URL`      | Yes      | `https://ep-sweet-waterfall-a14zhs84.neonauth.ap-southeast-1.aws.neon.tech/neondb/auth`      |
+| `NEON_AUTH_COOKIE_SECRET` | Yes      | Generate with: `node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"` |
 
 ### Files Changed
+
 - **Added:** `src/lib/auth/server.ts`, `src/lib/auth/client.ts`, `src/lib/auth/session.ts`
 - **Added:** `src/app/auth/[path]/page.tsx`, `src/app/account/[path]/page.tsx`
 - **Added:** `src/app/onboarding/page.tsx`, `src/server/actions/onboarding.ts`
@@ -56,37 +59,43 @@
 **Status:** 9 unused packages removed. Build passes. No code changes needed.
 
 ### What Was Removed
+
 Removed 9 packages that were speculatively added but never imported in `src/`:
 
-| Removed Package | Size | Reason |
-|---|---|---|
-| `@radix-ui/react-avatar` | 2.1 KB | UI component not planned |
-| `@radix-ui/react-dropdown-menu` | 4.2 KB | No context menus implemented |
-| `@radix-ui/react-popover` | 3.8 KB | No popovers/date-pickers used |
-| `@radix-ui/react-tabs` | 3.5 KB | No tabbed interfaces |
-| `@radix-ui/react-toast` | 2.3 KB | `sonner` provides all toasts |
-| `@radix-ui/react-toggle` | 1.9 KB | Toggle buttons not in design |
-| `@radix-ui/react-tooltip` | 2.8 KB | Tooltips not implemented |
-| `date-fns` | 13.4 KB | Custom date helpers sufficient |
-| `recharts` | 18.2 KB | Analytics phase not built yet |
-| **Total Saved** | **~52 KB** | **(~13 KB gzip)** |
+| Removed Package                 | Size       | Reason                         |
+| ------------------------------- | ---------- | ------------------------------ |
+| `@radix-ui/react-avatar`        | 2.1 KB     | UI component not planned       |
+| `@radix-ui/react-dropdown-menu` | 4.2 KB     | No context menus implemented   |
+| `@radix-ui/react-popover`       | 3.8 KB     | No popovers/date-pickers used  |
+| `@radix-ui/react-tabs`          | 3.5 KB     | No tabbed interfaces           |
+| `@radix-ui/react-toast`         | 2.3 KB     | `sonner` provides all toasts   |
+| `@radix-ui/react-toggle`        | 1.9 KB     | Toggle buttons not in design   |
+| `@radix-ui/react-tooltip`       | 2.8 KB     | Tooltips not implemented       |
+| `date-fns`                      | 13.4 KB    | Custom date helpers sufficient |
+| `recharts`                      | 18.2 KB    | Analytics phase not built yet  |
+| **Total Saved**                 | **~52 KB** | **(~13 KB gzip)**              |
 
 ### Why?
+
 - **Smaller bundle:** Faster initial load on mobile networks
 - **Faster installs:** pnpm lock.yaml reduced (~100 transitive deps removed)
 - **Cleaner deps:** Only what's actively used
 - **Future-proof:** Re-add from docs when actually implementing features
 
 ### When to Re-add
+
 See `docs/tech-report.md` → "Packages to Re-add (Future Phases)"
+
 - `recharts` → Phase 3 (Analytics charts)
 - `@radix-ui/react-tooltip` → Phase 2 (Hover help text)
 - etc.
 
 ### Tech Report Created
+
 **New file:** [docs/tech-report.md](tech-report.md)
 
 Comprehensive documentation:
+
 - Production (14) & development (15) dependency breakdown
 - What each package does, why, and where used
 - Alternates considered
@@ -209,15 +218,15 @@ Comprehensive documentation:
 
 ## Architecture Decisions Made
 
-| Decision | Choice | Reason |
-|---|---|---|
-| Folder structure | Next.js App Router with route groups | Separates auth and dashboard concerns cleanly |
-| File naming | kebab-case for docs, PascalCase for components | Industry standard for Next.js projects |
-| Auth system | **Neon Auth** (`@neondatabase/auth`) | Integrated with Neon DB, pre-built UI, no JWT/session debugging |
-| Session bridging | `getAppSession()` in `src/lib/auth/session.ts` | Maps Neon Auth user to internal User/Family model |
-| Onboarding | Separate `/onboarding` page | New users need to create a family before accessing the app |
-| Database pooling | Neon Pooling connection string | Required for serverless/Vercel environments |
-| Git commit style | Conventional Commits, single-line | Industry standard; one commit per logical change block |
+| Decision         | Choice                                         | Reason                                                          |
+| ---------------- | ---------------------------------------------- | --------------------------------------------------------------- |
+| Folder structure | Next.js App Router with route groups           | Separates auth and dashboard concerns cleanly                   |
+| File naming      | kebab-case for docs, PascalCase for components | Industry standard for Next.js projects                          |
+| Auth system      | **Neon Auth** (`@neondatabase/auth`)           | Integrated with Neon DB, pre-built UI, no JWT/session debugging |
+| Session bridging | `getAppSession()` in `src/lib/auth/session.ts` | Maps Neon Auth user to internal User/Family model               |
+| Onboarding       | Separate `/onboarding` page                    | New users need to create a family before accessing the app      |
+| Database pooling | Neon Pooling connection string                 | Required for serverless/Vercel environments                     |
+| Git commit style | Conventional Commits, single-line              | Industry standard; one commit per logical change block          |
 
 ---
 
@@ -239,6 +248,7 @@ Comprehensive documentation:
 ## Notes for Next Session
 
 **DEPLOYMENT STEPS:**
+
 1. Commit all Neon Auth migration changes
 2. Push to trigger Vercel deployment
 3. In Vercel Project Settings → Environment Variables:
@@ -249,6 +259,7 @@ Comprehensive documentation:
 5. Test: visit https://spendbook.adityanvs.in → should redirect to sign-in page
 
 **Database Information:**
+
 - Database: Neon (PostgreSQL 17)
 - Project: divine-smoke-58320411 (ep-sweet-waterfall-a14zhs84)
 - Region: ap-southeast-1

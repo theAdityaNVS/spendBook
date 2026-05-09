@@ -1,52 +1,42 @@
-"use client"
+"use client";
 
-import { useActionState, useCallback, useEffect, useRef, useState } from "react"
-import { toast } from "sonner"
-import { Pencil, Trash2, Plus, User } from "lucide-react"
-import { createPersonAction, updatePersonAction, deletePersonAction } from "@/server/actions/person"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { useActionState, useCallback, useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
+import { Pencil, Trash2, Plus, User } from "lucide-react";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import type { Person, ActionResult } from "@/types"
+  createPersonAction,
+  updatePersonAction,
+  deletePersonAction,
+} from "@/server/actions/person";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import type { Person, ActionResult } from "@/types";
 
-const initialCreate: ActionResult<Person> = { success: false, error: "" }
-const initialUpdate: ActionResult<Person> = { success: false, error: "" }
+const initialCreate: ActionResult<Person> = { success: false, error: "" };
+const initialUpdate: ActionResult<Person> = { success: false, error: "" };
 
-function AddPersonDialog({
-  open,
-  onClose,
-}: {
-  open: boolean
-  onClose: () => void
-}) {
-  const [state, formAction, isPending] = useActionState(
-    createPersonAction,
-    initialCreate,
-  )
+function AddPersonDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [state, formAction, isPending] = useActionState(createPersonAction, initialCreate);
 
-  const onCloseRef = useRef(onClose)
-  onCloseRef.current = onClose
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
 
   const handleClose = useCallback(() => {
-    onCloseRef.current()
-  }, [])
+    onCloseRef.current();
+  }, []);
 
   useEffect(() => {
     if (state.success) {
-      toast.success("Person added")
-      handleClose()
+      toast.success("Person added");
+      handleClose();
     } else if (state.error) {
-      toast.error(state.error)
+      toast.error(state.error);
     }
-  }, [state, handleClose])
+  }, [state, handleClose]);
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
@@ -70,7 +60,7 @@ function AddPersonDialog({
         </form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
 
 function EditPersonDialog({
@@ -78,30 +68,27 @@ function EditPersonDialog({
   open,
   onClose,
 }: {
-  person: Person
-  open: boolean
-  onClose: () => void
+  person: Person;
+  open: boolean;
+  onClose: () => void;
 }) {
-  const [state, formAction, isPending] = useActionState(
-    updatePersonAction,
-    initialUpdate,
-  )
+  const [state, formAction, isPending] = useActionState(updatePersonAction, initialUpdate);
 
-  const onCloseRef = useRef(onClose)
-  onCloseRef.current = onClose
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
 
   const handleClose = useCallback(() => {
-    onCloseRef.current()
-  }, [])
+    onCloseRef.current();
+  }, []);
 
   useEffect(() => {
     if (state.success) {
-      toast.success("Person updated")
-      handleClose()
+      toast.success("Person updated");
+      handleClose();
     } else if (state.error) {
-      toast.error(state.error)
+      toast.error(state.error);
     }
-  }, [state, handleClose])
+  }, [state, handleClose]);
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
@@ -113,12 +100,7 @@ function EditPersonDialog({
           <input type="hidden" name="id" value={person.id} />
           <div className="space-y-2">
             <Label htmlFor="edit-name">Name</Label>
-            <Input
-              id="edit-name"
-              name="name"
-              defaultValue={person.name}
-              required
-            />
+            <Input id="edit-name" name="name" defaultValue={person.name} required />
           </div>
           <div className="flex gap-3">
             <Button type="button" variant="outline" className="flex-1" onClick={onClose}>
@@ -131,21 +113,21 @@ function EditPersonDialog({
         </form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
 
 interface PersonListProps {
-  persons: Person[]
+  persons: Person[];
 }
 
 export function PersonList({ persons }: PersonListProps) {
-  const [addOpen, setAddOpen] = useState(false)
-  const [editPerson, setEditPerson] = useState<Person | null>(null)
+  const [addOpen, setAddOpen] = useState(false);
+  const [editPerson, setEditPerson] = useState<Person | null>(null);
 
   async function handleDelete(person: Person) {
-    if (!confirm(`Remove ${person.name} from the family? This can't be undone.`)) return
-    const result = await deletePersonAction(person.id)
-    if (!result.success) toast.error(result.error)
+    if (!confirm(`Remove ${person.name} from the family? This can't be undone.`)) return;
+    const result = await deletePersonAction(person.id);
+    if (!result.success) toast.error(result.error);
   }
 
   return (
@@ -161,13 +143,13 @@ export function PersonList({ persons }: PersonListProps) {
       <div className="space-y-2">
         {persons.map((person) => (
           <Card key={person.id}>
-            <CardContent className="flex items-center justify-between py-3 px-4">
+            <CardContent className="flex items-center justify-between px-4 py-3">
               <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-muted">
-                  <User className="h-4 w-4 text-muted-foreground" />
+                <div className="bg-muted flex h-9 w-9 items-center justify-center rounded-full">
+                  <User className="text-muted-foreground h-4 w-4" />
                 </div>
                 <div>
-                  <p className="font-medium text-sm">{person.name}</p>
+                  <p className="text-sm font-medium">{person.name}</p>
                   {person.isFamilyAccount && (
                     <Badge variant="secondary" className="mt-0.5 text-xs">
                       Family Account
@@ -189,7 +171,7 @@ export function PersonList({ persons }: PersonListProps) {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                    className="text-muted-foreground hover:text-destructive h-8 w-8"
                     onClick={() => handleDelete(person)}
                   >
                     <Trash2 className="h-3.5 w-3.5" />
@@ -210,5 +192,5 @@ export function PersonList({ persons }: PersonListProps) {
         />
       )}
     </div>
-  )
+  );
 }

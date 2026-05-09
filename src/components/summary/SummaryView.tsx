@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import { useRouter } from "next/navigation"
-import { ChevronLeft, ChevronRight } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { useRouter } from "next/navigation";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -10,11 +10,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts"
-import type { PersonMonthlySummary } from "@/server/queries/summary"
-import { formatCurrency } from "@/lib/utils"
+} from "@/components/ui/table";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import type { PersonMonthlySummary } from "@/server/queries/summary";
+import { formatCurrency } from "@/lib/utils";
 
 export function SummaryView({
   year,
@@ -23,35 +23,35 @@ export function SummaryView({
   familyAggregate,
   categoryBreakdown,
 }: {
-  year: number
-  month: number
-  summaries: PersonMonthlySummary[]
-  familyAggregate: { totalDebits: number; totalCredits: number; totalPayments: number }
-  categoryBreakdown: { id: string; name: string; color: string; amount: number }[]
+  year: number;
+  month: number;
+  summaries: PersonMonthlySummary[];
+  familyAggregate: { totalDebits: number; totalCredits: number; totalPayments: number };
+  categoryBreakdown: { id: string; name: string; color: string; amount: number }[];
 }) {
-  const router = useRouter()
+  const router = useRouter();
 
-  const date = new Date(year, month - 1, 1)
-  const monthName = date.toLocaleString("default", { month: "long" })
+  const date = new Date(year, month - 1, 1);
+  const monthName = date.toLocaleString("default", { month: "long" });
 
   function handlePrevMonth() {
-    let newMonth = month - 1
-    let newYear = year
+    let newMonth = month - 1;
+    let newYear = year;
     if (newMonth < 1) {
-      newMonth = 12
-      newYear -= 1
+      newMonth = 12;
+      newYear -= 1;
     }
-    router.push(`/summary?year=${newYear}&month=${newMonth}`)
+    router.push(`/summary?year=${newYear}&month=${newMonth}`);
   }
 
   function handleNextMonth() {
-    let newMonth = month + 1
-    let newYear = year
+    let newMonth = month + 1;
+    let newYear = year;
     if (newMonth > 12) {
-      newMonth = 1
-      newYear += 1
+      newMonth = 1;
+      newYear += 1;
     }
-    router.push(`/summary?year=${newYear}&month=${newMonth}`)
+    router.push(`/summary?year=${newYear}&month=${newMonth}`);
   }
 
   return (
@@ -96,14 +96,22 @@ export function SummaryView({
                       {s.person.isFamilyAccount && " (Family)"}
                     </TableCell>
                     <TableCell className="text-right">{formatCurrency(s.openingBalance)}</TableCell>
-                    <TableCell className="text-right text-red-500">{formatCurrency(s.totalDebits)}</TableCell>
-                    <TableCell className="text-right text-green-500">{formatCurrency(s.totalCredits)}</TableCell>
-                    <TableCell className="text-right text-blue-500">{formatCurrency(s.totalPayments)}</TableCell>
-                    <TableCell className="text-right font-bold">{formatCurrency(s.closingBalance)}</TableCell>
+                    <TableCell className="text-right text-red-500">
+                      {formatCurrency(s.totalDebits)}
+                    </TableCell>
+                    <TableCell className="text-right text-green-500">
+                      {formatCurrency(s.totalCredits)}
+                    </TableCell>
+                    <TableCell className="text-right text-blue-500">
+                      {formatCurrency(s.totalPayments)}
+                    </TableCell>
+                    <TableCell className="text-right font-bold">
+                      {formatCurrency(s.closingBalance)}
+                    </TableCell>
                   </TableRow>
                 ))}
                 {summaries.length > 1 && (
-                  <TableRow className="bg-muted/50 font-bold hover:bg-muted/50">
+                  <TableRow className="bg-muted/50 hover:bg-muted/50 font-bold">
                     <TableCell>Family Total</TableCell>
                     <TableCell className="text-right">-</TableCell>
                     <TableCell className="text-right text-red-500">
@@ -129,7 +137,7 @@ export function SummaryView({
           <CardHeader>
             <CardTitle>Category Breakdown</CardTitle>
           </CardHeader>
-          <CardContent className="flex flex-col md:flex-row items-center gap-8">
+          <CardContent className="flex flex-col items-center gap-8 md:flex-row">
             <div className="h-64 w-full md:w-1/2">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -156,7 +164,7 @@ export function SummaryView({
               </ResponsiveContainer>
             </div>
 
-            <div className="w-full md:w-1/2 space-y-4">
+            <div className="w-full space-y-4 md:w-1/2">
               {categoryBreakdown.map((category) => (
                 <div key={category.id} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -174,5 +182,5 @@ export function SummaryView({
         </Card>
       )}
     </div>
-  )
+  );
 }
