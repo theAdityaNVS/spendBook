@@ -1,50 +1,46 @@
-"use client"
+"use client";
 
-import { useActionState, useCallback, useEffect, useRef, useState } from "react"
-import { toast } from "sonner"
-import {
-  createTransactionAction,
-  updateTransactionAction,
-} from "@/server/actions/transaction"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
+import { useActionState, useCallback, useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
+import { createTransactionAction, updateTransactionAction } from "@/server/actions/transaction";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { toDateParam } from "@/lib/utils";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
-import { toDateParam } from "@/lib/utils"
-import { TRANSACTION_TYPE_LABELS, PAID_TOWARDS_LABELS, PAYMENT_MODE_TYPE_LABELS } from "@/config/constants"
+  TRANSACTION_TYPE_LABELS,
+  PAID_TOWARDS_LABELS,
+  PAYMENT_MODE_TYPE_LABELS,
+} from "@/config/constants";
 import type {
   Person,
   CategoryTag,
   PaymentMode,
   ActionResult,
   TransactionWithRelations,
-} from "@/types"
+} from "@/types";
 
 interface TransactionFormProps {
-  open: boolean
-  onClose: () => void
-  persons: Person[]
-  categoryTags: CategoryTag[]
-  paymentModes: (PaymentMode & { ownerPerson: Person | null })[]
-  defaultDate: Date
-  defaultPersonId?: string
-  editTransaction?: TransactionWithRelations
+  open: boolean;
+  onClose: () => void;
+  persons: Person[];
+  categoryTags: CategoryTag[];
+  paymentModes: (PaymentMode & { ownerPerson: Person | null })[];
+  defaultDate: Date;
+  defaultPersonId?: string;
+  editTransaction?: TransactionWithRelations;
 }
 
-const initial: ActionResult<unknown> = { success: false, error: "" }
+const initial: ActionResult<unknown> = { success: false, error: "" };
 
 export function TransactionForm({
   open,
@@ -56,51 +52,43 @@ export function TransactionForm({
   defaultPersonId,
   editTransaction,
 }: TransactionFormProps) {
-  const isEdit = !!editTransaction
-  const action = isEdit ? updateTransactionAction : createTransactionAction
+  const isEdit = !!editTransaction;
+  const action = isEdit ? updateTransactionAction : createTransactionAction;
 
-  const [state, formAction, isPending] = useActionState(action, initial)
+  const [state, formAction, isPending] = useActionState(action, initial);
 
   // Stable ref for onClose to avoid useEffect re-triggers
-  const onCloseRef = useRef(onClose)
-  onCloseRef.current = onClose
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
 
   const handleClose = useCallback(() => {
-    onCloseRef.current()
-  }, [])
+    onCloseRef.current();
+  }, []);
 
   // Reset and close on success
   useEffect(() => {
     if (state.success) {
-      toast.success(isEdit ? "Transaction updated" : "Transaction added")
-      handleClose()
+      toast.success(isEdit ? "Transaction updated" : "Transaction added");
+      handleClose();
     } else if (state.error) {
-      toast.error(state.error)
+      toast.error(state.error);
     }
-  }, [state, isEdit, handleClose])
+  }, [state, isEdit, handleClose]);
 
   // Local state for controlled selects
-  const [type, setType] = useState(editTransaction?.type ?? "DEBIT")
-  const [paidTowards, setPaidTowards] = useState(
-    editTransaction?.paidTowards ?? "PERSONAL",
-  )
+  const [type, setType] = useState(editTransaction?.type ?? "DEBIT");
+  const [paidTowards, setPaidTowards] = useState(editTransaction?.paidTowards ?? "PERSONAL");
   const [personId, setPersonId] = useState(
-    editTransaction?.personId ?? defaultPersonId ?? persons[0]?.id ?? "",
-  )
-  const [categoryTagId, setCategoryTagId] = useState(
-    editTransaction?.categoryTagId ?? "__none__",
-  )
-  const [paymentModeId, setPaymentModeId] = useState(
-    editTransaction?.paymentModeId ?? "__none__",
-  )
+    editTransaction?.personId ?? defaultPersonId ?? persons[0]?.id ?? ""
+  );
+  const [categoryTagId, setCategoryTagId] = useState(editTransaction?.categoryTagId ?? "__none__");
+  const [paymentModeId, setPaymentModeId] = useState(editTransaction?.paymentModeId ?? "__none__");
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>
-            {isEdit ? "Edit Transaction" : "Add Transaction"}
-          </DialogTitle>
+          <DialogTitle>{isEdit ? "Edit Transaction" : "Add Transaction"}</DialogTitle>
         </DialogHeader>
 
         <form action={formAction} className="space-y-4">
@@ -290,12 +278,7 @@ export function TransactionForm({
           <input type="hidden" name="currency" value="INR" />
 
           <div className="flex gap-3 pt-2">
-            <Button
-              type="button"
-              variant="outline"
-              className="flex-1"
-              onClick={onClose}
-            >
+            <Button type="button" variant="outline" className="flex-1" onClick={onClose}>
               Cancel
             </Button>
             <Button type="submit" className="flex-1" disabled={isPending}>
@@ -311,5 +294,5 @@ export function TransactionForm({
         </form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

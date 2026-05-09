@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import { useState, useTransition } from "react"
-import { Plus, GripVertical, Pencil, Trash2, Tag } from "lucide-react"
-import { toast } from "sonner"
+import { useState, useTransition } from "react";
+import { Plus, GripVertical, Pencil, Trash2, Tag } from "lucide-react";
+import { toast } from "sonner";
 import {
   DndContext,
   closestCenter,
@@ -11,34 +11,34 @@ import {
   useSensor,
   useSensors,
   DragEndEvent,
-} from "@dnd-kit/core"
+} from "@dnd-kit/core";
 import {
   arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
   useSortable,
-} from "@dnd-kit/sortable"
-import { CSS } from "@dnd-kit/utilities"
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent } from "@/components/ui/card"
-import type { CategoryTag } from "@/types"
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent } from "@/components/ui/card";
+import type { CategoryTag } from "@/types";
 import {
   createCategoryTag,
   updateCategoryTag,
   archiveCategoryTag,
   reorderCategoryTags,
-} from "@/server/actions/category-tag"
+} from "@/server/actions/category-tag";
 
 const PREDEFINED_COLORS = [
   "#ef4444", // red
@@ -53,36 +53,36 @@ const PREDEFINED_COLORS = [
   "#8b5cf6", // violet
   "#d946ef", // fuchsia
   "#f43f5e", // rose
-]
+];
 
 interface SortableTagItemProps {
-  tag: CategoryTag
-  onEdit: (tag: CategoryTag) => void
-  onArchive: (tag: CategoryTag) => void
-  isPending: boolean
+  tag: CategoryTag;
+  onEdit: (tag: CategoryTag) => void;
+  onArchive: (tag: CategoryTag) => void;
+  isPending: boolean;
 }
 
 function SortableTagItem({ tag, onEdit, onArchive, isPending }: SortableTagItemProps) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
     id: tag.id,
-  })
+  });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-  }
+  };
 
   return (
     <div
       ref={setNodeRef}
       style={style}
-      className="flex items-center justify-between gap-4 rounded-lg border bg-card p-4 shadow-sm"
+      className="bg-card flex items-center justify-between gap-4 rounded-lg border p-4 shadow-sm"
     >
       <div className="flex items-center gap-3">
         <div
           {...attributes}
           {...listeners}
-          className="cursor-grab text-muted-foreground hover:text-foreground active:cursor-grabbing"
+          className="text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing"
         >
           <GripVertical className="h-5 w-5" />
         </div>
@@ -95,12 +95,7 @@ function SortableTagItem({ tag, onEdit, onArchive, isPending }: SortableTagItemP
         <span className="font-medium">{tag.name}</span>
       </div>
       <div className="flex items-center gap-2">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => onEdit(tag)}
-          disabled={isPending}
-        >
+        <Button variant="ghost" size="icon" onClick={() => onEdit(tag)} disabled={isPending}>
           <Pencil className="h-4 w-4" />
         </Button>
         <Button
@@ -109,7 +104,7 @@ function SortableTagItem({ tag, onEdit, onArchive, isPending }: SortableTagItemP
           className="text-destructive hover:bg-destructive/10 hover:text-destructive"
           onClick={() => {
             if (confirm("Are you sure you want to archive this tag?")) {
-              onArchive(tag)
+              onArchive(tag);
             }
           }}
           disabled={isPending}
@@ -118,109 +113,107 @@ function SortableTagItem({ tag, onEdit, onArchive, isPending }: SortableTagItemP
         </Button>
       </div>
     </div>
-  )
+  );
 }
 
 export function CategoryTagList({ initialTags }: { initialTags: CategoryTag[] }) {
-  const [tags, setTags] = useState<CategoryTag[]>(initialTags)
-  const [isPending, startTransition] = useTransition()
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  
-  const [editingTag, setEditingTag] = useState<CategoryTag | null>(null)
-  const [formData, setFormData] = useState({ name: "", color: PREDEFINED_COLORS[8] })
+  const [tags, setTags] = useState<CategoryTag[]>(initialTags);
+  const [isPending, startTransition] = useTransition();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [editingTag, setEditingTag] = useState<CategoryTag | null>(null);
+  const [formData, setFormData] = useState({ name: "", color: PREDEFINED_COLORS[8] });
 
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
-  )
+  );
 
   function handleDragEnd(event: DragEndEvent) {
-    const { active, over } = event
+    const { active, over } = event;
 
     if (over && active.id !== over.id) {
       setTags((items) => {
-        const oldIndex = items.findIndex((item) => item.id === active.id)
-        const newIndex = items.findIndex((item) => item.id === over.id)
+        const oldIndex = items.findIndex((item) => item.id === active.id);
+        const newIndex = items.findIndex((item) => item.id === over.id);
 
-        const newItems = arrayMove(items, oldIndex, newIndex)
+        const newItems = arrayMove(items, oldIndex, newIndex);
 
         // Save reordered items
         startTransition(async () => {
-          const result = await reorderCategoryTags(newItems.map((item) => item.id))
+          const result = await reorderCategoryTags(newItems.map((item) => item.id));
           if (!result.success) {
-            toast.error(result.error)
-            setTags(initialTags) // revert
+            toast.error(result.error);
+            setTags(initialTags); // revert
           }
-        })
+        });
 
-        return newItems
-      })
+        return newItems;
+      });
     }
   }
 
   function openModal(tag?: CategoryTag) {
     if (tag) {
-      setEditingTag(tag)
-      setFormData({ name: tag.name, color: tag.color })
+      setEditingTag(tag);
+      setFormData({ name: tag.name, color: tag.color });
     } else {
-      setEditingTag(null)
-      setFormData({ name: "", color: PREDEFINED_COLORS[8] })
+      setEditingTag(null);
+      setFormData({ name: "", color: PREDEFINED_COLORS[8] });
     }
-    setIsModalOpen(true)
+    setIsModalOpen(true);
   }
 
   function closeModal() {
-    setIsModalOpen(false)
-    setEditingTag(null)
+    setIsModalOpen(false);
+    setEditingTag(null);
   }
 
   async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!formData.name.trim()) {
-      toast.error("Tag name is required")
-      return
+      toast.error("Tag name is required");
+      return;
     }
 
     startTransition(async () => {
-      let result
+      let result;
       if (editingTag) {
-        result = await updateCategoryTag(editingTag.id, formData)
+        result = await updateCategoryTag(editingTag.id, formData);
       } else {
-        result = await createCategoryTag(formData)
+        result = await createCategoryTag(formData);
       }
 
       if (result.success) {
-        toast.success(`Tag ${editingTag ? "updated" : "created"} successfully`)
-        
+        toast.success(`Tag ${editingTag ? "updated" : "created"} successfully`);
+
         // Optimistic UI update
         if (editingTag) {
-          setTags((prev) =>
-            prev.map((t) => (t.id === editingTag.id ? { ...t, ...formData } : t))
-          )
+          setTags((prev) => prev.map((t) => (t.id === editingTag.id ? { ...t, ...formData } : t)));
         } else if (result.data) {
-          setTags((prev) => [...prev, result.data as CategoryTag])
+          setTags((prev) => [...prev, result.data as CategoryTag]);
         }
-        
-        closeModal()
+
+        closeModal();
       } else {
-        toast.error(result.error)
+        toast.error(result.error);
       }
-    })
+    });
   }
 
   function handleArchive(tag: CategoryTag) {
     startTransition(async () => {
-      const result = await archiveCategoryTag(tag.id)
+      const result = await archiveCategoryTag(tag.id);
       if (result.success) {
-        toast.success("Tag archived successfully")
-        setTags((prev) => prev.filter((t) => t.id !== tag.id))
+        toast.success("Tag archived successfully");
+        setTags((prev) => prev.filter((t) => t.id !== tag.id));
       } else {
-        toast.error(result.error)
+        toast.error(result.error);
       }
-    })
+    });
   }
 
   return (
@@ -228,7 +221,7 @@ export function CategoryTagList({ initialTags }: { initialTags: CategoryTag[] })
       <div className="flex items-center justify-between p-6 pb-4">
         <div>
           <h2 className="text-xl font-semibold">Category Tags</h2>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             Manage your custom spending categories. Drag to reorder.
           </p>
         </div>
@@ -241,11 +234,11 @@ export function CategoryTagList({ initialTags }: { initialTags: CategoryTag[] })
       <CardContent>
         {tags.length === 0 ? (
           <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
-            <div className="rounded-full bg-primary/10 p-3">
-              <Tag className="h-6 w-6 text-primary" />
+            <div className="bg-primary/10 rounded-full p-3">
+              <Tag className="text-primary h-6 w-6" />
             </div>
             <h3 className="mt-4 font-semibold">No category tags</h3>
-            <p className="mt-1 text-sm text-muted-foreground">
+            <p className="text-muted-foreground mt-1 text-sm">
               Add your first category tag to organize your expenses.
             </p>
             <Button className="mt-4" onClick={() => openModal()} disabled={isPending}>
@@ -301,8 +294,8 @@ export function CategoryTagList({ initialTags }: { initialTags: CategoryTag[] })
                   <button
                     key={c}
                     type="button"
-                    className={`h-10 rounded-md ring-offset-background transition-all hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
-                      formData.color === c ? "ring-2 ring-ring ring-offset-2" : ""
+                    className={`ring-offset-background focus-visible:ring-ring h-10 rounded-md transition-all hover:scale-105 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none ${
+                      formData.color === c ? "ring-ring ring-2 ring-offset-2" : ""
                     }`}
                     style={{ backgroundColor: c }}
                     onClick={() => setFormData({ ...formData, color: c })}
@@ -313,12 +306,7 @@ export function CategoryTagList({ initialTags }: { initialTags: CategoryTag[] })
             </div>
 
             <DialogFooter>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={closeModal}
-                disabled={isPending}
-              >
+              <Button type="button" variant="outline" onClick={closeModal} disabled={isPending}>
                 Cancel
               </Button>
               <Button type="submit" disabled={isPending}>
@@ -329,5 +317,5 @@ export function CategoryTagList({ initialTags }: { initialTags: CategoryTag[] })
         </DialogContent>
       </Dialog>
     </Card>
-  )
+  );
 }

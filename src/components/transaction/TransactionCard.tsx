@@ -1,25 +1,20 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { toast } from "sonner"
-import { Pencil, Trash2 } from "lucide-react"
-import { deleteTransactionAction } from "@/server/actions/transaction"
-import { TransactionForm } from "./TransactionForm"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { formatCurrency } from "@/lib/utils"
-import type {
-  TransactionWithRelations,
-  Person,
-  CategoryTag,
-  PaymentMode,
-} from "@/types"
+import { useState } from "react";
+import { toast } from "sonner";
+import { Pencil, Trash2 } from "lucide-react";
+import { deleteTransactionAction } from "@/server/actions/transaction";
+import { TransactionForm } from "./TransactionForm";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { formatCurrency } from "@/lib/utils";
+import type { TransactionWithRelations, Person, CategoryTag, PaymentMode } from "@/types";
 
 interface TransactionCardProps {
-  transaction: TransactionWithRelations
-  persons: Person[]
-  categoryTags: CategoryTag[]
-  paymentModes: (PaymentMode & { ownerPerson: Person | null })[]
+  transaction: TransactionWithRelations;
+  persons: Person[];
+  categoryTags: CategoryTag[];
+  paymentModes: (PaymentMode & { ownerPerson: Person | null })[];
 }
 
 export function TransactionCard({
@@ -28,29 +23,25 @@ export function TransactionCard({
   categoryTags,
   paymentModes,
 }: TransactionCardProps) {
-  const [editOpen, setEditOpen] = useState(false)
+  const [editOpen, setEditOpen] = useState(false);
 
   async function handleDelete() {
-    if (!confirm(`Delete "${transaction.name}"?`)) return
-    const result = await deleteTransactionAction(transaction.id)
+    if (!confirm(`Delete "${transaction.name}"?`)) return;
+    const result = await deleteTransactionAction(transaction.id);
     if (!result.success) {
-      toast.error(result.error)
+      toast.error(result.error);
     }
   }
 
   const typeBadgeVariant =
-    transaction.type === "DEBIT"
-      ? "debit"
-      : transaction.type === "CREDIT"
-        ? "credit"
-        : "payment"
+    transaction.type === "DEBIT" ? "debit" : transaction.type === "CREDIT" ? "credit" : "payment";
 
   return (
     <>
       <div className="flex items-start justify-between gap-3 py-3">
         <div className="flex min-w-0 flex-1 flex-col gap-1">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="truncate font-medium text-sm">{transaction.name}</span>
+            <span className="truncate text-sm font-medium">{transaction.name}</span>
             {transaction.categoryTag && (
               <span
                 className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium"
@@ -66,10 +57,8 @@ export function TransactionCard({
               {transaction.paidTowards === "FAMILY" ? "Family" : "Personal"}
             </Badge>
           </div>
-          <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-            {transaction.description && (
-              <span className="truncate">{transaction.description}</span>
-            )}
+          <div className="text-muted-foreground flex flex-wrap items-center gap-2 text-xs">
+            {transaction.description && <span className="truncate">{transaction.description}</span>}
             {transaction.paymentMode && (
               <span>
                 {transaction.paymentMode.name}
@@ -95,7 +84,7 @@ export function TransactionCard({
           <Button
             variant="ghost"
             size="icon"
-            className="h-7 w-7 text-muted-foreground"
+            className="text-muted-foreground h-7 w-7"
             onClick={() => setEditOpen(true)}
           >
             <Pencil className="h-3.5 w-3.5" />
@@ -103,7 +92,7 @@ export function TransactionCard({
           <Button
             variant="ghost"
             size="icon"
-            className="h-7 w-7 text-muted-foreground hover:text-destructive"
+            className="text-muted-foreground hover:text-destructive h-7 w-7"
             onClick={handleDelete}
           >
             <Trash2 className="h-3.5 w-3.5" />
@@ -123,5 +112,5 @@ export function TransactionCard({
         />
       )}
     </>
-  )
+  );
 }
