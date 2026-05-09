@@ -1,3 +1,4 @@
+# Fresh trigger to verify fix
 name: CI
 
 on:
@@ -32,7 +33,15 @@ jobs:
         run: pnpm run type-check
 
       - name: Build
-        run: pnpm run build
+        run: |
+          if [ -z "${{ secrets.DATABASE_URL }}" ]; then
+            echo "DATABASE_URL is missing, using dummy for build verification"
+            export DATABASE_URL="***REMOVED***"
+            export NEON_AUTH_BASE_URL="https://dummy.neonauth.tech"
+            export NEON_AUTH_COOKIE_SECRET="dummy_secret_at_least_32_characters_long_123456"
+          fi
+          pnpm prisma generate
+          pnpm next build
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           NEON_AUTH_BASE_URL: ${{ secrets.NEON_AUTH_BASE_URL }}
