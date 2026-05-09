@@ -21,7 +21,7 @@ export function LedgerAddButton({ data, persons, categoryTags, paymentModes }: L
       {/* Floating Add Button (mobile) */}
       <Button
         size="icon"
-        className="fixed right-5 bottom-24 z-40 h-14 w-14 rounded-full shadow-lg md:hidden"
+        className="fixed right-5 bottom-24 z-40 h-14 w-14 rounded-full bg-brand-gold text-nav shadow-xl shadow-brand-gold/25 hover:bg-brand-gold/90 md:hidden"
         aria-label="Add transaction"
         onClick={() => setOpen(true)}
       >
@@ -29,7 +29,7 @@ export function LedgerAddButton({ data, persons, categoryTags, paymentModes }: L
       </Button>
 
       {/* Desktop Add Button */}
-      <Button className="hidden md:inline-flex" onClick={() => setOpen(true)}>
+      <Button className="hidden bg-brand-gold text-nav hover:bg-brand-gold/90 md:inline-flex" onClick={() => setOpen(true)}>
         <Plus className="mr-2 h-4 w-4" />
         Add Transaction
       </Button>
