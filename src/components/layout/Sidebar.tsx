@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, BarChart2, TrendingUp, Settings, Wallet } from "lucide-react";
+import { BookOpen, BarChart2, TrendingUp, Settings, Wallet, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
@@ -17,61 +17,62 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="glass-panel z-20 m-4 hidden w-64 shrink-0 flex-col rounded-[2.5rem] md:flex relative overflow-hidden">
-      {/* Subtle top glare */}
-      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
-      <div className="absolute inset-0 rounded-[2.5rem] ring-1 ring-inset ring-white/10 pointer-events-none" />
+    <aside className="relative z-20 m-4 hidden w-72 shrink-0 overflow-hidden rounded-lg bg-nav text-white shadow-2xl md:flex md:flex-col">
+      <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-brand-gold via-brand-coral to-brand-teal" />
 
-      {/* Logo */}
-      <div className="relative flex h-24 items-center gap-4 px-8 pt-4">
-        <div className="bg-primary/20 text-primary relative flex h-12 w-12 items-center justify-center rounded-2xl shadow-inner ring-1 ring-white/20 backdrop-blur-md">
+      <div className="relative flex h-24 items-center gap-4 px-7">
+        <div className="relative flex h-12 w-12 items-center justify-center rounded-lg bg-white/10 text-brand-gold ring-1 ring-white/15">
           <Wallet className="h-6 w-6" />
-          <div className="absolute inset-0 rounded-2xl shadow-[0_0_15px_rgba(var(--primary),0.3)] pointer-events-none" />
         </div>
-        <span className="from-foreground to-foreground/70 bg-gradient-to-br bg-clip-text text-2xl font-extrabold tracking-tight text-transparent">
-          SpendBook
-        </span>
+        <div>
+          <span className="block text-2xl font-black tracking-tight">SpendBook</span>
+          <span className="text-xs font-semibold uppercase text-nav-muted">Family finance desk</span>
+        </div>
       </div>
 
-      {/* Nav */}
-      <nav className="relative flex flex-col gap-3 px-4 py-8">
+      <div className="mx-4 rounded-lg border border-white/10 bg-white/[0.04] p-4">
+        <div className="flex items-center gap-2 text-brand-gold">
+          <Sparkles className="h-4 w-4" />
+          <span className="text-xs font-bold uppercase">Today focus</span>
+        </div>
+        <p className="mt-2 text-sm leading-6 text-white/82">
+          Track the day, settle balances, and keep every shared spend accountable.
+        </p>
+      </div>
+
+      <nav className="relative flex flex-col gap-2 px-4 py-6" aria-label="Primary navigation">
         {NAV_ITEMS.map(({ href, label, Icon }) => {
           const isActive = pathname.startsWith(href);
           return (
             <Link
               key={href}
               href={href}
+              aria-current={isActive ? "page" : undefined}
               className={cn(
-                "group relative flex items-center gap-4 rounded-2xl px-5 py-3.5 text-sm font-semibold transition-all duration-500 overflow-hidden",
+                "group relative flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-semibold transition-all",
                 isActive
-                  ? "text-primary-foreground shadow-lg"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "bg-white text-nav shadow-lg shadow-black/10"
+                  : "text-nav-muted hover:bg-white/10 hover:text-white"
               )}
             >
-              {isActive && (
-                <>
-                  <div className="absolute inset-0 bg-primary opacity-90" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-50" />
-                  <div className="absolute left-0 w-1 h-1/2 top-1/4 bg-white rounded-r-full shadow-[0_0_10px_white]" />
-                </>
-              )}
-              {!isActive && (
-                <div className="absolute inset-0 bg-foreground/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl" />
-              )}
-              
               <Icon
                 className={cn(
-                  "relative z-10 h-5 w-5 transition-transform duration-500 group-hover:scale-110",
-                  isActive
-                    ? "text-primary-foreground drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]"
-                    : "text-muted-foreground group-hover:text-foreground"
+                  "h-5 w-5 transition-transform group-hover:scale-105",
+                  isActive ? "text-primary" : "text-nav-muted group-hover:text-white"
                 )}
               />
-              <span className="relative z-10 tracking-wide">{label}</span>
+              <span>{label}</span>
+              {isActive && <span className="ml-auto h-2 w-2 rounded-full bg-brand-gold" />}
             </Link>
           );
         })}
       </nav>
+
+      <div className="mt-auto p-4">
+        <div className="rounded-lg border border-white/10 bg-white/[0.04] p-4 text-xs leading-5 text-nav-muted">
+          Built for quick daily entries, monthly clarity, and family-level trust.
+        </div>
+      </div>
     </aside>
   );
 }
