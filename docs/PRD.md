@@ -50,11 +50,11 @@ Family: "Parents Household" (managed by same admin)
 
 Roles are **per-family** — a user can have different roles in different families.
 
-| Role | Access | Balance View |
-|---|---|---|
-| **Admin** | Full access: manage all persons/family accounts, configure payment modes, category tags, view all data, manage members, full analytics, all settings | Sees everything — all balances, all loans, all transactions across all persons and family |
-| **Family** | Add/edit/delete family transactions, view family daily ledger, view family balance and reports. Cannot see other persons' personal transactions. | Family balance (+ or −): total household income vs. expenses |
-| **Person (Child)** | Add/edit/delete own transactions, view own daily ledger, view own loan balance and reports. Cannot see other persons' personal transactions or family-only data unless granted. | Loan balance (+ or −): amount owed to family |
+| Role               | Access                                                                                                                                                                          | Balance View                                                                              |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| **Admin**          | Full access: manage all persons/family accounts, configure payment modes, category tags, view all data, manage members, full analytics, all settings                            | Sees everything — all balances, all loans, all transactions across all persons and family |
+| **Family**         | Add/edit/delete family transactions, view family daily ledger, view family balance and reports. Cannot see other persons' personal transactions.                                | Family balance (+ or −): total household income vs. expenses                              |
+| **Person (Child)** | Add/edit/delete own transactions, view own daily ledger, view own loan balance and reports. Cannot see other persons' personal transactions or family-only data unless granted. | Loan balance (+ or −): amount owed to family                                              |
 
 - Admin is typically a parent who manages the entire tracker.
 - Family and Person roles each get a **scoped view** — they see their own transactions and balance only.
@@ -84,40 +84,45 @@ New Loan Balance = Previous Loan Balance
 ```
 
 #### What increases the loan (person owes more):
+
 - Person makes a **personal spend** using a **family payment mode** (e.g., family credit card). The family paid for the person's personal expense → loan increases.
 
 #### What decreases the loan (person owes less):
+
 - Person makes a **payment on behalf of family** (e.g., pays a family bill using their own money, buys groceries with own cash). This is a repayment → loan decreases.
 - Person makes a direct **settlement payment** to family (e.g., transfers money back).
 
 #### What does NOT affect the loan (tracked for stats only):
+
 - Person makes a **personal spend** using **their own funds** (own cash, own UPI, own wallet). They paid from their own pocket — no family money involved. Tracked for the person's inflow/outflow stats but loan is unaffected.
 - **Family expenses** paid by family payment modes — these are normal household spending, tracked under the Family account.
 
 #### Family's own balance:
+
 - Family has its own running balance tracking total household income vs. expenses (independent of any person's loan).
 
 #### Key rule:
+
 > The "Payment Towards" field on each transaction determines whether the spend is **Personal** or **Family**. Combined with **who owns the payment mode**, this determines the loan impact.
 
 ### 4.3 Transaction Categories
 
 Three top-level types, each containing line-item transactions:
 
-| Type | What It Includes | Loan Effect | Examples |
-|---|---|---|---|
-| **Debit** | **All spends** of any type + money sent to someone | Depends on payment mode owner + "paid towards" (see matrix below) | Shopping, subscriptions, food delivery, bills, rent, money sent to a friend, EMIs, recharges |
-| **Credit** | **Refunds** + money received from someone | Reduces loan if refund was for a family-funded personal spend; stats-only otherwise | Cashback, order refunds, money received from friend, salary (if tracked), reimbursements |
-| **Payment** | **Credit card payments** + bill settlements only | Reduces loan (person paying back family or settling on family's behalf) | Credit card bill payment, loan EMI settlement, utility bill settlement |
+| Type        | What It Includes                                   | Loan Effect                                                                         | Examples                                                                                     |
+| ----------- | -------------------------------------------------- | ----------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| **Debit**   | **All spends** of any type + money sent to someone | Depends on payment mode owner + "paid towards" (see matrix below)                   | Shopping, subscriptions, food delivery, bills, rent, money sent to a friend, EMIs, recharges |
+| **Credit**  | **Refunds** + money received from someone          | Reduces loan if refund was for a family-funded personal spend; stats-only otherwise | Cashback, order refunds, money received from friend, salary (if tracked), reimbursements     |
+| **Payment** | **Credit card payments** + bill settlements only   | Reduces loan (person paying back family or settling on family's behalf)             | Credit card bill payment, loan EMI settlement, utility bill settlement                       |
 
 #### Debit Loan Impact Matrix
 
-| Who Paid (Payment Mode Owner) | Paid Towards | Loan Impact | Example |
-|---|---|---|---|
-| Family mode (family CC, family UPI) | Personal | **+** Loan increases | Child buys clothes on family credit card |
-| Family mode | Family | No loan change (family expense) | Groceries on family card |
-| Person's own mode (own cash, own UPI) | Personal | No loan change (stats only) | Child buys coffee with own cash |
-| Person's own mode | Family | **−** Loan decreases (repayment) | Child pays electric bill with own UPI |
+| Who Paid (Payment Mode Owner)         | Paid Towards | Loan Impact                      | Example                                  |
+| ------------------------------------- | ------------ | -------------------------------- | ---------------------------------------- |
+| Family mode (family CC, family UPI)   | Personal     | **+** Loan increases             | Child buys clothes on family credit card |
+| Family mode                           | Family       | No loan change (family expense)  | Groceries on family card                 |
+| Person's own mode (own cash, own UPI) | Personal     | No loan change (stats only)      | Child buys coffee with own cash          |
+| Person's own mode                     | Family       | **−** Loan decreases (repayment) | Child pays electric bill with own UPI    |
 
 ---
 
@@ -148,17 +153,17 @@ Three top-level types, each containing line-item transactions:
 
 Each transaction captures:
 
-| Field | Details |
-|---|---|
-| **Person** | Dropdown: Family Account, Person 1, Person 2, etc. — who is making/associated with this transaction |
-| **Type** | Debit / Credit / Payment |
-| **Name** | Short title (e.g., "Swiggy", "HDFC CC Payment") |
-| **Description** | Optional — longer note (e.g., "KFC burger") |
-| **Category Tag** | User-configurable tags (e.g., Food Delivery, Shopping, Subscriptions, Groceries, Utilities, Entertainment) |
+| Field            | Details                                                                                                                                                                        |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Person**       | Dropdown: Family Account, Person 1, Person 2, etc. — who is making/associated with this transaction                                                                            |
+| **Type**         | Debit / Credit / Payment                                                                                                                                                       |
+| **Name**         | Short title (e.g., "Swiggy", "HDFC CC Payment")                                                                                                                                |
+| **Description**  | Optional — longer note (e.g., "KFC burger")                                                                                                                                    |
+| **Category Tag** | User-configurable tags (e.g., Food Delivery, Shopping, Subscriptions, Groceries, Utilities, Entertainment)                                                                     |
 | **Payment Mode** | User-configurable (e.g., HDFC Credit Card, SBI UPI, Cash, Paytm Wallet). Each mode is **owned by** either Family or a specific Person — this ownership determines loan impact. |
-| **Amount** | Numeric with currency selector (default ₹) |
-| **Paid Towards** | **Personal / Family** — available on every transaction. Combined with payment mode ownership, determines whether the loan balance is affected (see §4.3 matrix). |
-| **Date** | Defaults to today, editable |
+| **Amount**       | Numeric with currency selector (default ₹)                                                                                                                                     |
+| **Paid Towards** | **Personal / Family** — available on every transaction. Combined with payment mode ownership, determines whether the loan balance is affected (see §4.3 matrix).               |
+| **Date**         | Defaults to today, editable                                                                                                                                                    |
 
 - Quick-add mode on mobile: minimal fields (Person, Name, Amount, Type) with defaults.
 - Edit and delete existing transactions.
@@ -300,11 +305,11 @@ LoanBalance
 
 ## 10. Phased Rollout
 
-| Phase | Scope |
-|---|---|
-| **Phase 1 — MVP** | Auth, single family creation, daily ledger, add/edit/delete transactions, balance + loan calculation, person management, basic category tags & payment modes (predefined) |
-| **Phase 2 — Config & Reports** | Admin panel (custom tags, payment modes, member invites, role management), monthly summary, category breakdown |
-| **Phase 3 — Multi-Family & Analytics** | Multi-family support, family switcher, full analytics dashboard, PWA/offline support, data export, multi-currency |
+| Phase                                  | Scope                                                                                                                                                                     |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Phase 1 — MVP**                      | Auth, single family creation, daily ledger, add/edit/delete transactions, balance + loan calculation, person management, basic category tags & payment modes (predefined) |
+| **Phase 2 — Config & Reports**         | Admin panel (custom tags, payment modes, member invites, role management), monthly summary, category breakdown                                                            |
+| **Phase 3 — Multi-Family & Analytics** | Multi-family support, family switcher, full analytics dashboard, PWA/offline support, data export, multi-currency                                                         |
 
 ---
 
