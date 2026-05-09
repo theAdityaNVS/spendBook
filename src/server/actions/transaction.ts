@@ -1,26 +1,26 @@
-"use server"
+"use server";
 
-import { revalidatePath } from "next/cache"
-import { getAppSession } from "@/lib/auth/session"
-import { db } from "@/lib/db"
+import { revalidatePath } from "next/cache";
+import { getAppSession } from "@/lib/auth/session";
+import { db } from "@/lib/db";
 import {
   createTransactionSchema,
   updateTransactionSchema,
   deleteTransactionSchema,
-} from "@/lib/validators"
-import { recalculateBalancesForDate } from "@/lib/balance"
-import type { ActionResult } from "@/types"
+} from "@/lib/validators";
+import { recalculateBalancesForDate } from "@/lib/balance";
+import type { ActionResult } from "@/types";
 
 function parseDate(dateStr: string): Date {
-  return new Date(`${dateStr}T00:00:00.000Z`)
+  return new Date(`${dateStr}T00:00:00.000Z`);
 }
 
 export async function createTransactionAction(
   _prev: ActionResult<unknown>,
-  formData: FormData,
+  formData: FormData
 ): Promise<ActionResult<unknown>> {
-  const session = await getAppSession()
-  if (!session?.user) return { success: false, error: "Unauthorized" }
+  const session = await getAppSession();
+  if (!session?.user) return { success: false, error: "Unauthorized" };
 
   const raw = {
     personId: formData.get("personId"),
@@ -33,11 +33,11 @@ export async function createTransactionAction(
     currency: formData.get("currency") || "INR",
     paidTowards: formData.get("paidTowards") || "PERSONAL",
     date: formData.get("date"),
-  }
+  };
 
-  const parsed = createTransactionSchema.safeParse(raw)
+  const parsed = createTransactionSchema.safeParse(raw);
   if (!parsed.success) {
-    return { success: false, error: parsed.error.errors[0]?.message ?? "Invalid input" }
+    return { success: false, error: parsed.error.errors[0]?.message ?? "Invalid input" };
   }
 
   try {
@@ -48,10 +48,10 @@ export async function createTransactionAction(
         familyId: session.user.activeFamilyId,
         isArchived: false,
       },
-    })
-    if (!person) return { success: false, error: "Invalid person" }
+    });
+    if (!person) return { success: false, error: "Invalid person" };
 
-    const date = parseDate(parsed.data.date)
+    const date = parseDate(parsed.data.date);
 
     const transaction = await db.$transaction(async (tx) => {
       const created = await tx.transaction.create({
@@ -69,31 +69,27 @@ export async function createTransactionAction(
           date,
           createdById: session.user.id,
         },
-      })
-      return created
-    })
+      });
+      return created;
+    });
 
     // Recalculate balances outside the transaction to avoid deadlocks
-    await recalculateBalancesForDate(
-      session.user.activeFamilyId,
-      parsed.data.personId,
-      date,
-    )
+    await recalculateBalancesForDate(session.user.activeFamilyId, parsed.data.personId, date);
 
-    revalidatePath("/ledger")
-    return { success: true, data: { id: transaction.id } }
-    } catch (error) {
-    console.error("createTransactionAction failed:", error)
-    return { success: false, error: "Failed to create transaction" }
+    revalidatePath("/ledger");
+    return { success: true, data: { id: transaction.id } };
+  } catch (error) {
+    console.error("createTransactionAction failed:", error);
+    return { success: false, error: "Failed to create transaction" };
   }
 }
 
 export async function updateTransactionAction(
   _prev: ActionResult<unknown>,
-  formData: FormData,
+  formData: FormData
 ): Promise<ActionResult<unknown>> {
-  const session = await getAppSession()
-  if (!session?.user) return { success: false, error: "Unauthorized" }
+  const session = await getAppSession();
+  if (!session?.user) return { success: false, error: "Unauthorized" };
 
   const raw = {
     id: formData.get("id"),
@@ -107,21 +103,21 @@ export async function updateTransactionAction(
     currency: formData.get("currency") || "INR",
     paidTowards: formData.get("paidTowards") || "PERSONAL",
     date: formData.get("date"),
-  }
+  };
 
-  const parsed = updateTransactionSchema.safeParse(raw)
+  const parsed = updateTransactionSchema.safeParse(raw);
   if (!parsed.success) {
-    return { success: false, error: parsed.error.errors[0]?.message ?? "Invalid input" }
+    return { success: false, error: parsed.error.errors[0]?.message ?? "Invalid input" };
   }
 
   try {
     const existing = await db.transaction.findFirst({
       where: { id: parsed.data.id, familyId: session.user.activeFamilyId },
-    })
-    if (!existing) return { success: false, error: "Transaction not found" }
+    });
+    if (!existing) return { success: false, error: "Transaction not found" };
 
-    const oldDate = existing.date
-    const newDate = parseDate(parsed.data.date)
+    const oldDate = existing.date;
+    const newDate = parseDate(parsed.data.date);
 
     const transaction = await db.transaction.update({
       where: { id: parsed.data.id },
@@ -137,60 +133,46 @@ export async function updateTransactionAction(
         paidTowards: parsed.data.paidTowards,
         date: newDate,
       },
-    })
+    });
 
     // Recalculate for both old and new dates
-    await recalculateBalancesForDate(
-      session.user.activeFamilyId,
-      parsed.data.personId,
-      newDate,
-    )
+    await recalculateBalancesForDate(session.user.activeFamilyId, parsed.data.personId, newDate);
     if (
       oldDate.toISOString() !== newDate.toISOString() ||
       existing.personId !== parsed.data.personId
     ) {
-      await recalculateBalancesForDate(
-        session.user.activeFamilyId,
-        existing.personId,
-        oldDate,
-      )
+      await recalculateBalancesForDate(session.user.activeFamilyId, existing.personId, oldDate);
     }
 
-    revalidatePath("/ledger")
-    return { success: true, data: { id: transaction.id } }
-    } catch (error) {
-    console.error("updateTransactionAction failed:", error)
-    return { success: false, error: "Failed to update transaction" }
+    revalidatePath("/ledger");
+    return { success: true, data: { id: transaction.id } };
+  } catch (error) {
+    console.error("updateTransactionAction failed:", error);
+    return { success: false, error: "Failed to update transaction" };
   }
 }
 
-export async function deleteTransactionAction(
-  id: string,
-): Promise<ActionResult<void>> {
-  const session = await getAppSession()
-  if (!session?.user) return { success: false, error: "Unauthorized" }
+export async function deleteTransactionAction(id: string): Promise<ActionResult<void>> {
+  const session = await getAppSession();
+  if (!session?.user) return { success: false, error: "Unauthorized" };
 
-  const parsed = deleteTransactionSchema.safeParse({ id })
-  if (!parsed.success) return { success: false, error: "Invalid transaction ID" }
+  const parsed = deleteTransactionSchema.safeParse({ id });
+  if (!parsed.success) return { success: false, error: "Invalid transaction ID" };
 
   try {
     const existing = await db.transaction.findFirst({
       where: { id: parsed.data.id, familyId: session.user.activeFamilyId },
-    })
-    if (!existing) return { success: false, error: "Transaction not found" }
+    });
+    if (!existing) return { success: false, error: "Transaction not found" };
 
-    await db.transaction.delete({ where: { id: parsed.data.id } })
+    await db.transaction.delete({ where: { id: parsed.data.id } });
 
-    await recalculateBalancesForDate(
-      session.user.activeFamilyId,
-      existing.personId,
-      existing.date,
-    )
+    await recalculateBalancesForDate(session.user.activeFamilyId, existing.personId, existing.date);
 
-    revalidatePath("/ledger")
-    return { success: true, data: undefined }
+    revalidatePath("/ledger");
+    return { success: true, data: undefined };
   } catch (error) {
-    console.error("deleteTransactionAction failed:", error)
-    return { success: false, error: "Failed to delete transaction" }
+    console.error("deleteTransactionAction failed:", error);
+    return { success: false, error: "Failed to delete transaction" };
   }
 }

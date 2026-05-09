@@ -1,72 +1,72 @@
-"use client"
+"use client";
 
-import { useState, useTransition } from "react"
-import { Copy, UserPlus } from "lucide-react"
-import { toast } from "sonner"
+import { useState, useTransition } from "react";
+import { Copy, UserPlus } from "lucide-react";
+import { toast } from "sonner";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 
-import { createInvite } from "@/server/actions/invite"
-import type { Role } from "@/types"
+import { createInvite } from "@/server/actions/invite";
+import type { Role } from "@/types";
 
 export function InviteMember() {
-  const [isPending, startTransition] = useTransition()
-  const [isOpen, setIsOpen] = useState(false)
-  const [role, setRole] = useState<Role>("PERSON")
-  const [inviteUrl, setInviteUrl] = useState<string | null>(null)
+  const [isPending, startTransition] = useTransition();
+  const [isOpen, setIsOpen] = useState(false);
+  const [role, setRole] = useState<Role>("PERSON");
+  const [inviteUrl, setInviteUrl] = useState<string | null>(null);
 
   function handleCreateInvite() {
     startTransition(async () => {
-      const result = await createInvite(role)
+      const result = await createInvite(role);
       if (result.success) {
-        setInviteUrl(result.data as string)
+        setInviteUrl(result.data as string);
       } else {
-        toast.error(result.error)
+        toast.error(result.error);
       }
-    })
+    });
   }
 
   function handleCopy() {
-    if (!inviteUrl) return
-    navigator.clipboard.writeText(inviteUrl)
-    toast.success("Invite link copied to clipboard")
-    setIsOpen(false)
-    setTimeout(() => setInviteUrl(null), 500)
+    if (!inviteUrl) return;
+    navigator.clipboard.writeText(inviteUrl);
+    toast.success("Invite link copied to clipboard");
+    setIsOpen(false);
+    setTimeout(() => setInviteUrl(null), 500);
   }
 
   return (
     <>
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-lg">Invite Members</CardTitle>
-          <CardDescription>
+      <div className="glass-panel dark:hover:shadow-primary/5 rounded-[2rem] p-6 transition-all hover:shadow-lg sm:p-8">
+        <div className="mb-6">
+          <h2 className="text-xl font-bold tracking-tight">Invite Members</h2>
+          <p className="text-muted-foreground mt-1 text-sm">
             Invite family members to join your SpendBook account.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Button onClick={() => setIsOpen(true)} className="w-full sm:w-auto">
-            <UserPlus className="mr-2 h-4 w-4" />
-            Generate Invite Link
-          </Button>
-        </CardContent>
-      </Card>
+          </p>
+        </div>
+        <Button
+          onClick={() => setIsOpen(true)}
+          className="shadow-primary/20 h-12 w-full rounded-xl font-semibold shadow-md sm:w-auto"
+        >
+          <UserPlus className="mr-2 h-4 w-4" />
+          Generate Invite Link
+        </Button>
+      </div>
 
       <Dialog open={isOpen} onOpenChange={(o) => !o && setIsOpen(false)}>
         <DialogContent>
@@ -103,19 +103,22 @@ export function InviteMember() {
                   <Label htmlFor="link" className="sr-only">
                     Link
                   </Label>
-                  <Input
-                    id="link"
-                    defaultValue={inviteUrl}
-                    readOnly
-                    className="pr-10"
-                  />
+                  <Input id="link" defaultValue={inviteUrl} readOnly className="pr-10" />
                 </div>
                 <Button type="button" size="sm" className="px-3" onClick={handleCopy}>
                   <span className="sr-only">Copy</span>
                   <Copy className="h-4 w-4" />
                 </Button>
               </div>
-              <Button type="button" variant="secondary" className="w-full" onClick={() => { setIsOpen(false); setInviteUrl(null); }}>
+              <Button
+                type="button"
+                variant="secondary"
+                className="w-full"
+                onClick={() => {
+                  setIsOpen(false);
+                  setInviteUrl(null);
+                }}
+              >
                 Done
               </Button>
             </div>
@@ -123,5 +126,5 @@ export function InviteMember() {
         </DialogContent>
       </Dialog>
     </>
-  )
+  );
 }

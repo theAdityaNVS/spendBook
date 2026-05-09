@@ -1,16 +1,16 @@
-import { getAppSession } from "@/lib/auth/session"
-import { db } from "@/lib/db"
-import type { TransactionWithRelations, DailyBalanceSummary } from "@/types"
+import { getAppSession } from "@/lib/auth/session";
+import { db } from "@/lib/db";
+import type { TransactionWithRelations, DailyBalanceSummary } from "@/types";
 
 /** Fetch all transactions for the active family on a given date. */
 export async function getDailyLedger(date: Date): Promise<{
-  transactions: TransactionWithRelations[]
-  balances: DailyBalanceSummary[]
+  transactions: TransactionWithRelations[];
+  balances: DailyBalanceSummary[];
 }> {
-  const session = await getAppSession()
-  if (!session?.user) throw new Error("Unauthorized")
+  const session = await getAppSession();
+  if (!session?.user) throw new Error("Unauthorized");
 
-  const { activeFamilyId } = session.user
+  const { activeFamilyId } = session.user;
 
   const [transactions, persons] = await Promise.all([
     db.transaction.findMany({
@@ -38,7 +38,7 @@ export async function getDailyLedger(date: Date): Promise<{
       },
       orderBy: [{ isFamilyAccount: "asc" }, { createdAt: "asc" }],
     }),
-  ])
+  ]);
 
   // Build balance summaries for each person
   const balances = await Promise.all(
@@ -60,7 +60,7 @@ export async function getDailyLedger(date: Date): Promise<{
               where: { personId: person.id, familyId: activeFamilyId, date: { lt: date } },
               orderBy: { date: "desc" },
             }),
-      ])
+      ]);
 
       const summary: DailyBalanceSummary = {
         person,
@@ -69,18 +69,18 @@ export async function getDailyLedger(date: Date): Promise<{
         totalCredits: (daily?.totalCredits ?? 0).toString(),
         totalPayments: (daily?.totalPayments ?? 0).toString(),
         closingBalance: (daily?.closingBalance ?? prevDaily?.closingBalance ?? 0).toString(),
-      }
+      };
 
       if (!person.isFamilyAccount) {
-        summary.openingLoan = (prevLoan?.closingLoan ?? 0).toString()
-        summary.loanIncreases = (loan?.loanIncreases ?? 0).toString()
-        summary.loanDecreases = (loan?.loanDecreases ?? 0).toString()
-        summary.closingLoan = (loan?.closingLoan ?? prevLoan?.closingLoan ?? 0).toString()
+        summary.openingLoan = (prevLoan?.closingLoan ?? 0).toString();
+        summary.loanIncreases = (loan?.loanIncreases ?? 0).toString();
+        summary.loanDecreases = (loan?.loanDecreases ?? 0).toString();
+        summary.closingLoan = (loan?.closingLoan ?? prevLoan?.closingLoan ?? 0).toString();
       }
 
-      return summary
-    }),
-  )
+      return summary;
+    })
+  );
 
   return {
     transactions: transactions.map((t) => ({
@@ -88,5 +88,5 @@ export async function getDailyLedger(date: Date): Promise<{
       amount: t.amount.toString(),
     })),
     balances,
-  }
+  };
 }

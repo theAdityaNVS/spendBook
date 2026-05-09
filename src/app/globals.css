@@ -1,85 +1,112 @@
 @import "tailwindcss";
 @import "@neondatabase/auth/ui/tailwind";
 
-/* ── Design tokens (CSS vars) — used by @theme and swapped for dark mode ── */
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 45 43% 97%;
+    --foreground: 222 33% 12%;
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 222 33% 12%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
-    --radius: 0.5rem;
-    --debit: 0 84.2% 60.2%;
+    --popover-foreground: 222 33% 12%;
+    --primary: 198 94% 22%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 43 74% 92%;
+    --secondary-foreground: 31 43% 20%;
+    --muted: 42 28% 92%;
+    --muted-foreground: 221 13% 43%;
+    --accent: 174 45% 89%;
+    --accent-foreground: 184 79% 18%;
+    --destructive: 355 77% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 37 24% 83%;
+    --input: 37 24% 83%;
+    --ring: 198 94% 22%;
+    --radius: 0.75rem;
+
+    --surface: 0 0% 100%;
+    --surface-soft: 43 58% 95%;
+    --surface-strong: 214 30% 18%;
+    --nav: 221 38% 13%;
+    --nav-muted: 216 17% 66%;
+    --nav-active: 41 91% 60%;
+    --brand-teal: 178 66% 34%;
+    --brand-coral: 7 85% 64%;
+    --brand-gold: 39 91% 55%;
+
+    --debit: 355 77% 50%;
     --debit-foreground: 0 0% 100%;
-    --debit-muted: 0 93% 94%;
-    --credit: 142.1 76.2% 36.3%;
+    --debit-muted: 355 88% 96%;
+    --credit: 160 73% 31%;
     --credit-foreground: 0 0% 100%;
-    --credit-muted: 142 77% 93%;
-    --payment: 221.2 83.2% 53.3%;
+    --credit-muted: 154 55% 92%;
+    --payment: 208 83% 45%;
     --payment-foreground: 0 0% 100%;
-    --payment-muted: 214 95% 93%;
+    --payment-muted: 204 83% 94%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
-    --debit: 0 72.2% 50.6%;
+    --background: 222 36% 8%;
+    --foreground: 45 38% 94%;
+    --card: 222 31% 12%;
+    --card-foreground: 45 38% 94%;
+    --popover: 222 31% 12%;
+    --popover-foreground: 45 38% 94%;
+    --primary: 188 73% 48%;
+    --primary-foreground: 222 36% 8%;
+    --secondary: 218 26% 18%;
+    --secondary-foreground: 43 50% 91%;
+    --muted: 220 23% 17%;
+    --muted-foreground: 218 15% 68%;
+    --accent: 177 39% 18%;
+    --accent-foreground: 176 61% 75%;
+    --destructive: 355 72% 58%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 217 21% 22%;
+    --input: 217 21% 22%;
+    --ring: 188 73% 48%;
+
+    --surface: 222 31% 12%;
+    --surface-soft: 221 27% 15%;
+    --surface-strong: 44 39% 93%;
+    --nav: 222 45% 9%;
+    --nav-muted: 219 16% 63%;
+    --nav-active: 41 91% 60%;
+
+    --debit: 355 74% 62%;
     --debit-foreground: 0 0% 100%;
-    --debit-muted: 0 63% 20%;
-    --credit: 142.1 70.6% 45.3%;
-    --credit-foreground: 144.9 80.4% 10%;
-    --credit-muted: 143 64% 15%;
-    --payment: 217.2 91.2% 59.8%;
-    --payment-foreground: 222.2 47.4% 11.2%;
-    --payment-muted: 214 60% 20%;
+    --debit-muted: 355 42% 18%;
+    --credit: 159 70% 44%;
+    --credit-foreground: 164 80% 8%;
+    --credit-muted: 158 42% 17%;
+    --payment: 203 88% 61%;
+    --payment-foreground: 210 70% 10%;
+    --payment-muted: 204 44% 18%;
   }
 
   * {
     border-color: hsl(var(--border));
   }
 
+  html {
+    background: hsl(var(--background));
+  }
+
   body {
-    background-color: hsl(var(--background));
+    min-height: 100vh;
+    background: hsl(var(--background));
     color: hsl(var(--foreground));
-    font-family: var(--font-sans, system-ui, sans-serif);
+    font-family: var(--font-sans, Inter, ui-sans-serif, system-ui, sans-serif);
+    letter-spacing: 0;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+
+  ::selection {
+    background: hsl(var(--brand-gold) / 0.35);
+  }
 }
 
-/* ── Tailwind v4 @theme — maps CSS vars to utility classes ── */
 @theme {
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
@@ -100,6 +127,15 @@
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
+  --color-surface: hsl(var(--surface));
+  --color-surface-soft: hsl(var(--surface-soft));
+  --color-surface-strong: hsl(var(--surface-strong));
+  --color-nav: hsl(var(--nav));
+  --color-nav-muted: hsl(var(--nav-muted));
+  --color-nav-active: hsl(var(--nav-active));
+  --color-brand-teal: hsl(var(--brand-teal));
+  --color-brand-coral: hsl(var(--brand-coral));
+  --color-brand-gold: hsl(var(--brand-gold));
   --color-debit: hsl(var(--debit));
   --color-debit-foreground: hsl(var(--debit-foreground));
   --color-debit-muted: hsl(var(--debit-muted));
@@ -112,4 +148,109 @@
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
+}
+
+@layer utilities {
+  .app-canvas {
+    background:
+      linear-gradient(115deg, hsl(45 43% 97%) 0%, hsl(42 52% 94%) 44%, hsl(180 34% 92%) 100%),
+      repeating-linear-gradient(90deg, hsl(222 33% 12% / 0.035) 0 1px, transparent 1px 96px);
+  }
+
+  .dark .app-canvas {
+    background:
+      linear-gradient(115deg, hsl(222 36% 8%) 0%, hsl(219 35% 10%) 52%, hsl(184 35% 12%) 100%),
+      repeating-linear-gradient(90deg, hsl(45 38% 94% / 0.045) 0 1px, transparent 1px 96px);
+  }
+
+  .surface-panel {
+    background: hsl(var(--surface) / 0.92);
+    border: 1px solid hsl(var(--border) / 0.82);
+    box-shadow:
+      0 18px 45px hsl(222 33% 12% / 0.08),
+      0 1px 0 hsl(0 0% 100% / 0.78) inset;
+  }
+
+  .dark .surface-panel {
+    background: hsl(var(--surface) / 0.84);
+    box-shadow:
+      0 22px 55px hsl(0 0% 0% / 0.22),
+      0 1px 0 hsl(0 0% 100% / 0.08) inset;
+  }
+
+  .paper-panel {
+    background: hsl(var(--surface));
+    border: 1px solid hsl(var(--border));
+    box-shadow: 0 10px 24px hsl(222 33% 12% / 0.06);
+  }
+
+  .ink-panel {
+    background:
+      linear-gradient(135deg, hsl(var(--nav)) 0%, hsl(207 47% 18%) 56%, hsl(178 55% 24%) 100%);
+    color: white;
+    box-shadow: 0 22px 50px hsl(207 47% 18% / 0.2);
+  }
+
+  .fine-grid {
+    background-image:
+      linear-gradient(hsl(var(--foreground) / 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--foreground) / 0.04) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+  .lift {
+    transition:
+      transform 180ms ease,
+      box-shadow 180ms ease,
+      border-color 180ms ease,
+      background-color 180ms ease;
+  }
+
+  .lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 18px 38px hsl(222 33% 12% / 0.1);
+  }
+
+  .glass,
+  .glass-panel {
+    background: hsl(var(--surface) / 0.9);
+    border: 1px solid hsl(var(--border) / 0.82);
+    box-shadow:
+      0 14px 34px hsl(222 33% 12% / 0.08),
+      0 1px 0 hsl(0 0% 100% / 0.7) inset;
+  }
+
+  .dark .glass,
+  .dark .glass-panel {
+    background: hsl(var(--surface) / 0.82);
+    box-shadow:
+      0 18px 44px hsl(0 0% 0% / 0.24),
+      0 1px 0 hsl(0 0% 100% / 0.08) inset;
+  }
+
+  .text-glow {
+    text-shadow: none;
+  }
+
+  .bg-mesh {
+    background:
+      linear-gradient(115deg, hsl(45 43% 97%) 0%, hsl(42 52% 94%) 48%, hsl(180 34% 92%) 100%),
+      repeating-linear-gradient(90deg, hsl(222 33% 12% / 0.035) 0 1px, transparent 1px 96px);
+  }
+
+  .animate-float,
+  .animate-float-delayed {
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
