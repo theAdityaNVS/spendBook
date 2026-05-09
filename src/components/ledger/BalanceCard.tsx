@@ -1,5 +1,4 @@
 import { formatCurrency } from "@/lib/utils";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { DailyBalanceSummary } from "@/types";
 
 interface BalanceCardProps {
@@ -15,57 +14,57 @@ export function BalanceCard({ summary }: BalanceCardProps) {
   const loanColor =
     !isFamily && closingValue !== undefined
       ? Number(closingValue) > 0
-        ? "text-debit"
-        : "text-credit"
+        ? "text-debit dark:text-red-400"
+        : "text-credit dark:text-emerald-400"
       : "";
 
   return (
-    <Card className="overflow-hidden">
-      <CardHeader className="bg-muted/50 pt-3 pb-2">
-        <CardTitle className="text-sm font-semibold">
+    <div className="glass-panel dark:hover:shadow-primary/5 relative overflow-hidden rounded-[2rem] p-6 transition-all duration-300 hover:shadow-xl">
+      {/* Subtle background flare */}
+      <div className="bg-primary/10 pointer-events-none absolute -top-10 -right-10 h-32 w-32 rounded-full blur-3xl" />
+
+      <div className="relative z-10">
+        <h3 className="text-muted-foreground text-sm font-medium tracking-wider uppercase">
           {summary.person.name}
-          {isFamily && (
-            <span className="text-muted-foreground ml-2 text-xs font-normal">(Family)</span>
-          )}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="pt-3 pb-4">
-        <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-          {/* Opening */}
-          <div className="text-muted-foreground">
-            {isFamily ? "Opening Balance" : "Opening Loan"}
-          </div>
-          <div className="text-right tabular-nums">
-            {openingValue !== undefined ? formatCurrency(openingValue.toString()) : "—"}
-          </div>
+          {isFamily && <span className="ml-1 text-[10px] opacity-70">(Family)</span>}
+        </h3>
 
-          {/* Debits */}
-          <div className="text-muted-foreground">Debits</div>
-          <div className="text-debit text-right tabular-nums">
-            − {formatCurrency(summary.totalDebits.toString())}
-          </div>
-
-          {/* Credits */}
-          <div className="text-muted-foreground">Credits</div>
-          <div className="text-credit text-right tabular-nums">
-            + {formatCurrency(summary.totalCredits.toString())}
-          </div>
-
-          {/* Payments */}
-          <div className="text-muted-foreground">Payments</div>
-          <div className="text-payment text-right tabular-nums">
-            {formatCurrency(summary.totalPayments.toString())}
-          </div>
-
-          {/* Closing */}
-          <div className="border-t pt-2 font-semibold">
+        <div className="mt-4 mb-6">
+          <p className="text-muted-foreground mb-1 text-xs tracking-widest uppercase">
             {isFamily ? "Closing Balance" : "Loan Balance"}
-          </div>
-          <div className={`border-t pt-2 text-right font-semibold tabular-nums ${loanColor}`}>
+          </p>
+          <div className={`text-4xl font-light tracking-tight tabular-nums ${loanColor}`}>
             {closingValue !== undefined ? formatCurrency(closingValue.toString()) : "—"}
           </div>
         </div>
-      </CardContent>
-    </Card>
+
+        <div className="border-glass-border grid grid-cols-2 gap-4 border-t pt-4 text-sm">
+          <div>
+            <div className="text-muted-foreground mb-1 text-xs">Opening</div>
+            <div className="text-foreground/80 font-medium tabular-nums">
+              {openingValue !== undefined ? formatCurrency(openingValue.toString()) : "—"}
+            </div>
+          </div>
+          <div>
+            <div className="text-muted-foreground mb-1 text-xs">Payments</div>
+            <div className="text-payment font-medium tabular-nums">
+              {formatCurrency(summary.totalPayments.toString())}
+            </div>
+          </div>
+          <div>
+            <div className="text-muted-foreground mb-1 text-xs">Debits</div>
+            <div className="text-debit font-medium tabular-nums">
+              − {formatCurrency(summary.totalDebits.toString())}
+            </div>
+          </div>
+          <div>
+            <div className="text-muted-foreground mb-1 text-xs">Credits</div>
+            <div className="text-credit font-medium tabular-nums">
+              + {formatCurrency(summary.totalCredits.toString())}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
