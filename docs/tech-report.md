@@ -43,6 +43,7 @@ SpendBook (Next.js 15 App Router)
 ### Core Framework & Runtime
 
 #### **`next`** ^15.5.12
+
 - **What:** React meta-framework powered by Vercel
 - **Why:** Full-stack framework combining:
   - App Router (file-based routing)
@@ -55,6 +56,7 @@ SpendBook (Next.js 15 App Router)
 - **Alternates:** Remix (more explicit), SvelteKit, Nuxt
 
 #### **`react`** ^19.0.0 / **`react-dom`** ^19.0.0
+
 - **What:** React core library and DOM rendering
 - **Why:** Modern React 19 brings:
   - `useActionState` hook (form state management)
@@ -68,8 +70,9 @@ SpendBook (Next.js 15 App Router)
 ### Authentication & User Management
 
 #### **`@neondatabase/auth`** 0.2.0-beta.1
+
 - **What:** Managed authentication service tightly integrated with Neon PostgreSQL
-- **Why:** 
+- **Why:**
   - Native PostgreSQL `auth.users` table (no external identity provider)
   - Automatic session management via signed cookies
   - Email/password, OAuth, magic links support
@@ -95,6 +98,7 @@ SpendBook (Next.js 15 App Router)
 ### Database & ORM
 
 #### **`@prisma/client`** ^6.4.1
+
 - **What:** Auto-generated, type-safe database client for PostgreSQL
 - **Why:**
   - Prevents SQL injection (parameterized queries)
@@ -119,6 +123,7 @@ SpendBook (Next.js 15 App Router)
 ### Validation & Data Integrity
 
 #### **`zod`** ^3.24.1
+
 - **What:** TypeScript-first schema validation library
 - **Why:**
   - Validates all form inputs before server action processing
@@ -141,6 +146,7 @@ SpendBook (Next.js 15 App Router)
 ### UI Components & Styling
 
 #### **`@radix-ui/react-dialog`** ^1.1.6
+
 - **What:** Unstyled, accessible modal dialog primitive
 - **Why:** W3C-compliant ARIA attributes, keyboard navigation, focus management
 - **Where used:** [src/components/ui/dialog.tsx](../src/components/ui/dialog.tsx)
@@ -149,6 +155,7 @@ SpendBook (Next.js 15 App Router)
 - **Alternates:** Headless UI, Ark UI
 
 #### **`@radix-ui/react-select`** ^2.1.6
+
 - **What:** Unstyled accessible select/dropdown primitive
 - **Why:** Custom styling + native accessibility
 - **Where used:** [src/components/ui/select.tsx](../src/components/ui/select.tsx)
@@ -156,18 +163,21 @@ SpendBook (Next.js 15 App Router)
 - **Alternates:** Headless UI `Listbox`, Downshift
 
 #### **`@radix-ui/react-label`** ^2.1.2
+
 - **What:** Associated label primitive
 - **Why:** Proper `htmlFor` linking for form accessibility
 - **Where used:** [src/components/ui/label.tsx](../src/components/ui/label.tsx) → Form fields
 - **Alternates:** Native HTML `<label>` (sufficient, but less composable)
 
 #### **`@radix-ui/react-separator`** ^1.1.2
+
 - **What:** Unstyled separator/divider primitive
 - **Why:** Semantic `<hr>` replacement with ARIA role
 - **Where used:** [src/components/ui/separator.tsx](../src/components/ui/separator.tsx) → Visual dividers
 - **Alternates:** Native `<hr>` (sufficient)
 
 #### **`@radix-ui/react-slot`** ^1.1.2
+
 - **What:** Polymorphic slot primitive (enables `asChild` pattern)
 - **Why:** Allows components to delegate to child without wrapper div
 - **Where used:** [src/components/ui/button.tsx](../src/components/ui/button.tsx) — `asChild` prop
@@ -176,6 +186,7 @@ SpendBook (Next.js 15 App Router)
 ---
 
 #### **`tailwindcss`** ^4.0.9 (in devDependencies)
+
 - **What:** Utility-first CSS framework
 - **Why:**
   - No CSS file writing — class-based styling
@@ -188,6 +199,7 @@ SpendBook (Next.js 15 App Router)
 - **Alternates:** CSS Modules, styled-components, UnoCSS
 
 #### **`class-variance-authority`** ^0.7.1
+
 - **What:** Library for creating component variants with Tailwind classes
 - **Why:**
   - Syntax sugar for conditional class combinations
@@ -200,6 +212,7 @@ SpendBook (Next.js 15 App Router)
 - **Alternates:** `tailwind-variants` (lighter), manual ternaries
 
 #### **`clsx`** ^2.1.1 + **`tailwind-merge`** ^2.6.0
+
 - **What:** Conditional class merging utilities
 - **Why:** Prevents Tailwind class conflicts (e.g., `bg-red-500` + `bg-blue-500`)
   - `clsx` — conditional class list builder
@@ -214,6 +227,7 @@ SpendBook (Next.js 15 App Router)
 ### Icons & Visuals
 
 #### **`lucide-react`** ^0.469.0
+
 - **What:** Tree-shakable SVG icon library
 - **Why:**
   - ~400+ icons with consistent design
@@ -231,6 +245,7 @@ SpendBook (Next.js 15 App Router)
 ### User Feedback
 
 #### **`sonner`** ^1.7.4
+
 - **What:** Rich toast notification library (built on Radix)
 - **Why:**
   - Minimal, fast notifications for form success/error
@@ -252,6 +267,7 @@ SpendBook (Next.js 15 App Router)
 ### Build & Database Tools
 
 #### **`prisma`** ^6.4.1
+
 - **What:** Prisma CLI for migrations, codegen, and IDE
 - **How used:**
   - `pnpm db:migrate` — Run pending migrations
@@ -260,11 +276,13 @@ SpendBook (Next.js 15 App Router)
 - **Scripts:** `build` step runs `prisma generate && prisma migrate deploy`
 
 #### **`typescript`** ^5.7.3
+
 - **What:** TypeScript compiler
 - **Why:** Type safety throughout (strict mode)
 - **Used by:** IDE, `pnpm type-check`, `pnpm build`
 
 #### **`@tailwindcss/postcss`** ^4.0.9
+
 - **What:** Tailwind's PostCSS plugin (CSS preprocessor)
 - **Why:** Compiles `@apply`, `@layer` directives in `globals.css`
 
@@ -273,6 +291,7 @@ SpendBook (Next.js 15 App Router)
 ### Linting & Formatting
 
 #### **`eslint`** ^9.0.0 + **`eslint-config-next`** ^15.2.0
+
 - **What:** JavaScript/TypeScript linter with Next.js rules
 - **Enforces:**
   - No `<img>` without `<Image>` (Next.js optimization)
@@ -282,10 +301,12 @@ SpendBook (Next.js 15 App Router)
 - **Used:** `pnpm lint`
 
 #### **`@eslint/eslintrc`** ^3.3.4
+
 - **What:** ESLint flat config compatibility layer
 - **Why:** Enables modern flat config format in `eslint.config.mjs`
 
 #### **`prettier`** ^3.4.2 + **`prettier-plugin-tailwindcss`** ^0.6.11
+
 - **What:** Code formatter + Tailwind class sorter
 - **Why:**
   - Consistent code style (brackets, quotes, semicolons)
@@ -293,6 +314,7 @@ SpendBook (Next.js 15 App Router)
 - **Used:** `pnpm format`, git pre-commit hook
 
 #### **`husky`** ^9.1.7 + **`lint-staged`** ^15.4.3
+
 - **What:** Git hooks + staged file runner
 - **What it does:** Before every commit:
   - Run eslint --fix on `*.ts, *.tsx` files
@@ -305,6 +327,7 @@ SpendBook (Next.js 15 App Router)
 ### Testing
 
 #### **`vitest`** ^3.0.5 + **`@vitejs/plugin-react`** ^4.3.4
+
 - **What:** Fast unit test runner built on Vite
 - **Why:**
   - ~10x faster than Jest (no JSDOM overhead by default)
@@ -315,6 +338,7 @@ SpendBook (Next.js 15 App Router)
 - **Alternates:** Jest (heavier), Vitest (chosen for speed)
 
 #### **`@playwright/test`** ^1.50.1
+
 - **What:** End-to-end browser testing framework
 - **Why:**
   - Tests real browser behavior (clicks, navigation, forms)
@@ -329,11 +353,13 @@ SpendBook (Next.js 15 App Router)
 ### Utilities
 
 #### **`tsx`** ^4.19.2
+
 - **What:** TypeScript executor for Node.js
 - **Why:** Run `prisma/seed.ts` as TypeScript directly (no ts-node)
 - **Used:** `pnpm db:seed`, `postinstall` hook for Prisma generation
 
 #### **Type Definitions**
+
 - **`@types/node`** ^20.17.17 — Node.js API types
 - **`@types/react`** ^19.0.0 — React API types
 - **`@types/react-dom`** ^19.0.0 — React DOM API types
@@ -345,39 +371,39 @@ SpendBook (Next.js 15 App Router)
 **Date removed:** March 4, 2026  
 **Reason:** Speculatively added for future features not yet implemented
 
-| Package | Size | Reason for Removal |
-|---|---|---|
-| `@radix-ui/react-avatar` | 2.1 KB | Avatar component UI not planned |
-| `@radix-ui/react-dropdown-menu` | 4.2 KB | No context menus implemented yet |
-| `@radix-ui/react-popover` | 3.8 KB | No popovers/date-pickers used |
-| `@radix-ui/react-tabs` | 3.5 KB | No tabbed interfaces in current design |
-| `@radix-ui/react-toast` | 2.3 KB | `sonner` provides all toast functionality |
-| `@radix-ui/react-toggle` | 1.9 KB | Toggle buttons not in design |
-| `@radix-ui/react-tooltip` | 2.8 KB | Tooltips not implemented |
-| `date-fns` | 13.4 KB | Custom utils in [src/lib/utils.ts](../src/lib/utils.ts) sufficient |
-| `recharts` | 18.2 KB | Analytics charts phase not built yet |
-| **Total saved** | **~52 KB (gzip ~13 KB)** | |
+| Package                         | Size                     | Reason for Removal                                                 |
+| ------------------------------- | ------------------------ | ------------------------------------------------------------------ |
+| `@radix-ui/react-avatar`        | 2.1 KB                   | Avatar component UI not planned                                    |
+| `@radix-ui/react-dropdown-menu` | 4.2 KB                   | No context menus implemented yet                                   |
+| `@radix-ui/react-popover`       | 3.8 KB                   | No popovers/date-pickers used                                      |
+| `@radix-ui/react-tabs`          | 3.5 KB                   | No tabbed interfaces in current design                             |
+| `@radix-ui/react-toast`         | 2.3 KB                   | `sonner` provides all toast functionality                          |
+| `@radix-ui/react-toggle`        | 1.9 KB                   | Toggle buttons not in design                                       |
+| `@radix-ui/react-tooltip`       | 2.8 KB                   | Tooltips not implemented                                           |
+| `date-fns`                      | 13.4 KB                  | Custom utils in [src/lib/utils.ts](../src/lib/utils.ts) sufficient |
+| `recharts`                      | 18.2 KB                  | Analytics charts phase not built yet                               |
+| **Total saved**                 | **~52 KB (gzip ~13 KB)** |                                                                    |
 
 ### Removed Auth Packages (Earlier Migration)
 
-| Package | Why Removed |
-|---|---|
-| `next-auth` | Replaced with Neon Auth |
-| `@auth/prisma-adapter` | Neon Auth uses native PostgreSQL |
-| `bcryptjs` | Neon Auth handles password hashing |
+| Package                | Why Removed                        |
+| ---------------------- | ---------------------------------- |
+| `next-auth`            | Replaced with Neon Auth            |
+| `@auth/prisma-adapter` | Neon Auth uses native PostgreSQL   |
+| `bcryptjs`             | Neon Auth handles password hashing |
 
 ---
 
 ## Packages to Re-add (Future Phases)
 
-| Package | When | Phase | Reason |
-|---|---|---|---|
-| `recharts` | Analytics page implementation | Phase 3 | Charts for spending trends, category breakdown |
-| `@radix-ui/react-tooltip` | Hover help text | Phase 2 | Icon explanations, balance help |
-| `@radix-ui/react-dropdown-menu` | User menu | Phase 2 | Account settings, sign out menu |
-| `@radix-ui/react-tabs` | Settings tab panels | Phase 2 | If multi-tab settings layout |
-| `@radix-ui/react-avatar` | User avatars | Phase 2 | If avatar support added |
-| `@radix-ui/react-popover` | Advanced filters | Phase 3 | Date range, category filter popovers |
+| Package                         | When                          | Phase   | Reason                                         |
+| ------------------------------- | ----------------------------- | ------- | ---------------------------------------------- |
+| `recharts`                      | Analytics page implementation | Phase 3 | Charts for spending trends, category breakdown |
+| `@radix-ui/react-tooltip`       | Hover help text               | Phase 2 | Icon explanations, balance help                |
+| `@radix-ui/react-dropdown-menu` | User menu                     | Phase 2 | Account settings, sign out menu                |
+| `@radix-ui/react-tabs`          | Settings tab panels           | Phase 2 | If multi-tab settings layout                   |
+| `@radix-ui/react-avatar`        | User avatars                  | Phase 2 | If avatar support added                        |
+| `@radix-ui/react-popover`       | Advanced filters              | Phase 3 | Date range, category filter popovers           |
 
 **Recommendation:** Add these only when actively implementing the feature. No speculative dependencies.
 
@@ -386,6 +412,7 @@ SpendBook (Next.js 15 App Router)
 ## Custom Utilities & Helpers
 
 ### [src/lib/utils.ts](../src/lib/utils.ts)
+
 ```typescript
 // Class merging (clsx + tailwind-merge)
 cn(...inputs: ClassValue[]): string
@@ -410,6 +437,7 @@ addDays(date: Date, days: number): Date        // Date arithmetic
 [prisma/schema.prisma](../prisma/schema.prisma) — 214 lines
 
 **Core models:**
+
 - **User** — Linked to Neon Auth via `neonAuthId`
 - **Family** — Multi-tenant isolation root
 - **UserFamily** — Bridge; `role` (Admin/Family/Person)
@@ -421,6 +449,7 @@ addDays(date: Date, days: number): Date        // Date arithmetic
 - **DailyBalance** — Cached daily totals per person
 
 **Financial Calculations:**
+
 - Loan impact driven by: payment mode owner + "paid towards" field
 - Atomic `prisma.$transaction()` for multi-step updates
 - Uses `Decimal` type (Prisma) for money math (no floating-point errors)
@@ -431,14 +460,14 @@ addDays(date: Date, days: number): Date        // Date arithmetic
 
 ### Why Neon Auth over Auth.js?
 
-| Factor | Neon Auth | Auth.js |
-|---|---|---|
-| **Bundle size** | ~50 KB | ~150 KB+ |
-| **External API calls** | None (DB-native) | OAuth flows (external) |
-| **Database** | Tight PostgreSQL integration | Adapter system (loose coupling) |
-| **Hosting** | Neon-native, Vercel-ready | Universal (more flexible) |
-| **Vendor lock-in** | Yes (Neon-specific) | No |
-| **Learning curve** | Lower (simple API) | Higher (many options) |
+| Factor                 | Neon Auth                    | Auth.js                         |
+| ---------------------- | ---------------------------- | ------------------------------- |
+| **Bundle size**        | ~50 KB                       | ~150 KB+                        |
+| **External API calls** | None (DB-native)             | OAuth flows (external)          |
+| **Database**           | Tight PostgreSQL integration | Adapter system (loose coupling) |
+| **Hosting**            | Neon-native, Vercel-ready    | Universal (more flexible)       |
+| **Vendor lock-in**     | Yes (Neon-specific)          | No                              |
+| **Learning curve**     | Lower (simple API)           | Higher (many options)           |
 
 **Result:** Auth.js removed entirely. Neon Auth is baked into [src/lib/auth/server.ts](../src/lib/auth/server.ts) and [src/lib/auth/session.ts](../src/lib/auth/session.ts).
 
@@ -472,15 +501,15 @@ addDays(date: Date, days: number): Date        // Date arithmetic
 
 ### Bundle Sizes (Production)
 
-| Category | Size (gzip) | Notes |
-|---|---|---|
-| Next.js runtime | ~45 KB | Framework core |
-| React + Hooks | ~40 KB | Library core |
-| Tailwind CSS | ~30 KB | Utility classes (purged) |
-| Radix primitives | ~25 KB | Dialog, Select, Label, Separator, Slot |
-| Lucide icons | ~8 KB | Used icons only (tree-shakable) |
-| Sonner toasts | ~3 KB | Toast library |
-| **Total JS (with deps)** | **~180 KB** | (gzip, one-time download) |
+| Category                 | Size (gzip) | Notes                                  |
+| ------------------------ | ----------- | -------------------------------------- |
+| Next.js runtime          | ~45 KB      | Framework core                         |
+| React + Hooks            | ~40 KB      | Library core                           |
+| Tailwind CSS             | ~30 KB      | Utility classes (purged)               |
+| Radix primitives         | ~25 KB      | Dialog, Select, Label, Separator, Slot |
+| Lucide icons             | ~8 KB       | Used icons only (tree-shakable)        |
+| Sonner toasts            | ~3 KB       | Toast library                          |
+| **Total JS (with deps)** | **~180 KB** | (gzip, one-time download)              |
 
 ### Runtime Performance
 
@@ -512,6 +541,7 @@ NEON_AUTH_COOKIE_SECRET="..."                      # 32-byte base64 secret for s
 **Host:** Vercel (serverless)
 
 **Build command:** `pnpm build`
+
 ```
 1. Generate Prisma client types (`prisma generate`)
 2. Run pending migrations (`prisma migrate deploy`)
@@ -533,6 +563,6 @@ SpendBook's tech stack is **modern, lean, and production-ready**:
 ✅ **Zero vendor lock-in on auth** — Neon Auth is PostgreSQL-native  
 ✅ **Accessibility-first UI** — Radix primitives + Tailwind  
 ✅ **Optimized performance** — Server-first, code splitting, image optimization  
-✅ **Developer experience** — Hot reloading, easy migrations, Prisma Studio  
+✅ **Developer experience** — Hot reloading, easy migrations, Prisma Studio
 
 **Next steps:** Continue building Phase 2 (settings, analytics) without speculatively adding packages.

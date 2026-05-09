@@ -8,14 +8,14 @@ Next.js 15 · TypeScript · Tailwind CSS · shadcn/ui · PostgreSQL · Prisma ·
 
 ## Documentation
 
-| Document | Description |
-|---|---|
-| [docs/PRD.md](docs/PRD.md) | Full Product Requirements Document |
-| [docs/requirements.md](docs/requirements.md) | Original idea notes |
-| [docs/tech-stack.md](docs/tech-stack.md) | Tech stack evaluation with pros/cons |
+| Document                                                   | Description                             |
+| ---------------------------------------------------------- | --------------------------------------- |
+| [docs/PRD.md](docs/PRD.md)                                 | Full Product Requirements Document      |
+| [docs/requirements.md](docs/requirements.md)               | Original idea notes                     |
+| [docs/tech-stack.md](docs/tech-stack.md)                   | Tech stack evaluation with pros/cons    |
 | [docs/implementation-plan.md](docs/implementation-plan.md) | Phased rollout plan — MVP to full scale |
-| [docs/memory.md](docs/memory.md) | Progress tracker (updated each session) |
-| [docs/journal.md](docs/journal.md) | Decision log & learning journal |
+| [docs/memory.md](docs/memory.md)                           | Progress tracker (updated each session) |
+| [docs/journal.md](docs/journal.md)                         | Decision log & learning journal         |
 
 ## Project Structure
 

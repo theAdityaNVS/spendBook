@@ -9,12 +9,14 @@
 I want an expense tracker web app to track my and my family's expenses. Currently I use the Notes app on my iPad, writing with Apple Pencil — each page is one day of the month.
 
 **Current iPad layout (per page/day):**
+
 - **Top:** Date
 - **Left columns:** Three categories — Debits, Credits, Payments
 - **Within each category:** Grouped by person (Person 1, Person 2, Family)
 - **Bottom:** Balance calculation for selected person/family
 
 **Balance formula:**
+
 ```
 Previous day balance = ...
 My debits today      = ...
@@ -30,14 +32,15 @@ The balance represents **what the person owes**. Personal spends increase it; pa
 
 **Person 1's day:**
 
-| # | Transaction | Type | Amount |
-|---|---|---|---|
-| A | Spent using card — personal use | Debit | ₹200 |
-| B | Spent using cash — for family | Credit (repayment) | ₹150 |
-| C | Spent using wallet — personal use | Debit | ₹10 |
-| D | Credit card payment | Payment | ₹300 |
+| #   | Transaction                       | Type               | Amount |
+| --- | --------------------------------- | ------------------ | ------ |
+| A   | Spent using card — personal use   | Debit              | ₹200   |
+| B   | Spent using cash — for family     | Credit (repayment) | ₹150   |
+| C   | Spent using wallet — personal use | Debit              | ₹10    |
+| D   | Credit card payment               | Payment            | ₹300   |
 
 **Balance calculation:**
+
 ```
 Previous balance = ₹500 (owed)
 Debits today     = A + C = ₹210
@@ -62,4 +65,3 @@ New balance      = 500 + 210 − 450 = ₹260
 
 - Credit card bill payments, bill settlements
 - These reduce the owed balance directly
-
