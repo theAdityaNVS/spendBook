@@ -6,11 +6,9 @@
 
 ---
 
-## Overall Status: ⚠️ PARTIALLY FUNCTIONAL (Phase 1 & Phase 2 Complete)
+## Overall Status: ✅ FUNCTIONAL (Phase 2 Complete, Phase 3 in Progress)
 
-The application has a complete database schema, a working auth system (Neon Auth), a functional daily ledger, person management, configurable category tags, configurable payment modes, and a complete monthly summary with category breakdowns. A premium UI redesign is underway, beginning with shell, navigation, design tokens, and base primitives.
-
-**Build validation note:** `pnpm build` runs `prisma migrate deploy` before `next build`, so it can be blocked by local Prisma file locks or remote Neon advisory-lock timeouts. Stop the local dev server before running the build gate. If Neon advisory lock acquisition times out, validate code with `pnpm exec next build` and retry the full build once the database lock clears.
+The application has a complete database schema, a working auth system (Neon Auth), a functional daily ledger, person management, configurable category tags, configurable payment modes, and a complete monthly summary with category breakdowns. The premium UI redesign is now largely complete across the dashboard shell, ledger, transactions, summary, and settings. A functional analytics preview is also live.
 
 ---
 
@@ -23,15 +21,16 @@ The application has a complete database schema, a working auth system (Neon Auth
 | **Neon Auth**          | ✅ Implemented | Server/client/session modules in `lib/auth/`, middleware protection, API route handler                                    |
 | **Session Bridging**   | ✅ Working     | `getAppSession()` maps Neon Auth → internal User → UserFamily → active family                                             |
 | **Onboarding Flow**    | ✅ Working     | `/onboarding` page creates family + Family Account + default tags + default payment modes in atomic transaction           |
-| **Dashboard Layout**   | ✅ Working     | Sidebar (desktop) + Header + BottomNav (mobile), auth/onboarding guards                                                   |
-| **Daily Ledger Page**  | ✅ Working     | Server component fetches transactions + balances for selected date, renders groups                                        |
-| **Transaction CRUD**   | ✅ Working     | Create/update/delete with Zod validation, session auth, balance recalculation                                             |
+| **Dashboard Layout**   | ✅ Working     | Sidebar (desktop) + Header + BottomNav (mobile), auth/onboarding guards. Premium UI shell active.                         |
+| **Daily Ledger Page**  | ✅ Working     | Server component fetches transactions + balances for selected date, renders groups. Fully redesigned with Premium UI.    |
+| **Transaction CRUD**   | ✅ Working     | Create/update/delete with Zod validation, session auth, balance recalculation. Components fully redesigned.               |
 | **Balance Engine**     | ✅ Working     | `computeLoanDelta()` implements the Loan Impact Matrix; `recalculateBalancesForDate()` upserts DailyBalance + LoanBalance |
 | **Person Management**  | ✅ Working     | Add/edit/delete (soft archive) in Settings, ADMIN-only                                                                    |
 | **Category Tags**      | ✅ Working     | `CategoryTagList.tsx` with drag-and-drop reordering, color picker, and full CRUD.                                        |
 | **Payment Modes**      | ✅ Working     | `PaymentModeList.tsx` with owner selection and full CRUD.                                                                 |
 | **Member Invites**     | ✅ Working     | `InviteMember.tsx` and server actions generating secure one-time invite links.                                            |
 | **Monthly Summary**    | ✅ Working     | `SummaryView.tsx` with member-specific ledger summary and Recharts pie chart for category breakdowns.                     |
+| **Analytics Preview**  | ✅ Working     | `/analytics` provides a functional preview with custom SVG charts for trends, category pressure, and rhythm.            |
 
 ---
 
