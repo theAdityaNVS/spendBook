@@ -1,15 +1,16 @@
 # State of Project — SpendBook
 
-> **Last verified**: 2026-05-05 — analysis based on actual source code at commit `5721da7`  
+> **Last verified**: 2026-05-08 — analysis based on actual source code
 > **Project**: `C:\Users\nadam\Coding\Web Projects\spendBook`  
 > **Repo**: https://github.com/theAdityaNVS/spendBook  
-> **Confidence level**: HIGH — every source file was read and cross-referenced.
 
 ---
 
-## Overall Status: ⚠️ PARTIALLY FUNCTIONAL (Phase 1 MVP ~90% complete)
+## Overall Status: ⚠️ PARTIALLY FUNCTIONAL (Phase 1 & Phase 2 Complete)
 
-The application **builds locally**, has a complete database schema, a working auth system (Neon Auth), a functional daily ledger with CRUD operations, balance/loan calculations, and person management. However, **deployment is blocked** by unset Vercel environment variables, and several planned features are placeholders.
+The application **builds locally**, has a complete database schema, a working auth system (Neon Auth), a functional daily ledger, person management, configurable category tags, configurable payment modes, and a complete monthly summary with category breakdowns. 
+
+**Deployment remains blocked** by unset Vercel environment variables and the `seed.ts` import issue.
 
 ---
 
@@ -22,25 +23,15 @@ The application **builds locally**, has a complete database schema, a working au
 | **Neon Auth**          | ✅ Implemented | Server/client/session modules in `lib/auth/`, middleware protection, API route handler                                    |
 | **Session Bridging**   | ✅ Working     | `getAppSession()` maps Neon Auth → internal User → UserFamily → active family                                             |
 | **Onboarding Flow**    | ✅ Working     | `/onboarding` page creates family + Family Account + default tags + default payment modes in atomic transaction           |
-| **Middleware**         | ✅ Working     | Protects all dashboard routes, excludes auth/API/static paths                                                             |
 | **Dashboard Layout**   | ✅ Working     | Sidebar (desktop) + Header + BottomNav (mobile), auth/onboarding guards                                                   |
 | **Daily Ledger Page**  | ✅ Working     | Server component fetches transactions + balances for selected date, renders groups                                        |
-| **Date Navigation**    | ✅ Working     | Previous/next day, "Today" badge, URL-based date param                                                                    |
 | **Transaction CRUD**   | ✅ Working     | Create/update/delete with Zod validation, session auth, balance recalculation                                             |
-| **Transaction Form**   | ✅ Working     | Dialog with type/person/name/description/amount/category/paymentMode/paidTowards/date fields                              |
-| **Transaction Card**   | ✅ Working     | Displays amount, category badge, payment mode, edit/delete actions                                                        |
-| **Transaction Groups** | ✅ Working     | Groups by DEBIT/CREDIT/PAYMENT with color-coded headers and totals                                                        |
-| **Balance Cards**      | ✅ Working     | Per-person cards showing opening/closing balance, debits/credits/payments, loan balance                                   |
 | **Balance Engine**     | ✅ Working     | `computeLoanDelta()` implements the Loan Impact Matrix; `recalculateBalancesForDate()` upserts DailyBalance + LoanBalance |
 | **Person Management**  | ✅ Working     | Add/edit/delete (soft archive) in Settings, ADMIN-only                                                                    |
-| **Settings Page**      | ✅ Working     | PersonList component with add/edit/delete dialogs                                                                         |
-| **Validation**         | ✅ Working     | Zod schemas for all mutations (person, transaction, category tag, payment mode)                                           |
-| **UI Components**      | ✅ Working     | 9 shadcn/ui components: button, input, card, label, select, dialog, badge, separator, textarea                            |
-| **CSS Design System**  | ✅ Working     | Tailwind v4 + CSS vars with light/dark mode, domain colors (debit/credit/payment)                                         |
-| **Seed Script**        | ✅ Working     | Creates demo user, family, persons, category tags, payment modes                                                          |
-| **PWA Manifest**       | ✅ Present     | `public/manifest.json` with icons and metadata                                                                            |
-| **Utility Functions**  | ✅ Working     | `cn()`, `formatCurrency()`, `formatDate()`, `toDateParam()`, `fromDateParam()`, `today()`, `addDays()`                    |
-| **Git**                | ✅ Clean       | Working tree clean, connected to GitHub origin                                                                            |
+| **Category Tags**      | ✅ Working     | `CategoryTagList.tsx` with drag-and-drop reordering, color picker, and full CRUD.                                        |
+| **Payment Modes**      | ✅ Working     | `PaymentModeList.tsx` with owner selection and full CRUD.                                                                 |
+| **Member Invites**     | ✅ Working     | `InviteMember.tsx` and server actions generating secure one-time invite links.                                            |
+| **Monthly Summary**    | ✅ Working     | `SummaryView.tsx` with member-specific ledger summary and Recharts pie chart for category breakdowns.                     |
 
 ---
 
@@ -57,85 +48,26 @@ Per `docs/memory.md` "In Progress / Blockers":
 - `NEON_AUTH_COOKIE_SECRET` — needs a NEW production secret
 - Old `AUTH_SECRET` and `AUTH_URL` — need to be removed from Vercel
 
-The code in `lib/auth/server.ts` explicitly `throw new Error()` if these are missing — so the app will **fail to start** on Vercel.
+### 2. `build` Script Runs `prisma migrate deploy` (Risky)
 
-### 2. `.env` File Contains Real Credentials Committed to Repo
-
-> [!CAUTION]
-> The `.env` file contains real database credentials and auth secrets:
->
-> ```
-> DATABASE_URL="postgresql://neondb_owner:[REDACTED]@..."
-> NEON_AUTH_BASE_URL="https://ep-sweet-waterfall-a14zhs84..."
-> NEON_AUTH_COOKIE_SECRET="[REDACTED]"
-> ```
->
-> While `.env` is in `.gitignore`, the `.env.local` file (377 bytes) is also present. **Verify neither is committed to git.** The git status shows clean working tree, so they likely aren't tracked — but this should be double-checked.
-
-### 3. `seed.ts` Imports From Wrong Path
-
-```typescript
-// prisma/seed.ts
-import { PrismaClient, PaymentModeType, Role } from "@prisma/client";
-```
-
-But the Prisma client output is configured to `../src/generated/prisma`:
-
-```prisma
-generator client {
-  provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
-}
-```
-
-All app code imports from `@/generated/prisma`. The seed script imports from `@prisma/client` which **may or may not resolve** depending on whether Prisma also generates to the default location. This could cause seed failures.
-
-### 4. `build` Script Runs `prisma migrate deploy` (Risky)
-
-```json
-"build": "prisma generate && prisma migrate deploy && next build"
-```
-
-Running `migrate deploy` as part of the build means **every Vercel build triggers pending migrations against production**. This is standard for simple deployments but risky if a migration is broken — it will block all deploys.
+Running `migrate deploy` as part of the build means every Vercel build triggers pending migrations against production. This is risky if a migration is broken — it will block all deploys.
 
 ---
 
 ## ⚠️ Incomplete / Placeholder Features
 
-### 5. Summary Page — Placeholder
-
-```tsx
-// src/app/(dashboard)/summary/page.tsx
-<p>Monthly summary — coming in Phase 2.</p>
-```
-
-### 6. Analytics Page — Placeholder
+### 1. Analytics Page — Placeholder
 
 ```tsx
 // src/app/(dashboard)/analytics/page.tsx
 <p>Charts & insights — coming in Phase 3.</p>
 ```
 
-### 7. Category Tag Management — Not Implemented
+### 2. Tests — All Empty
 
-`createCategoryTagSchema` exists in `validators.ts`, but there is **no server action** to create/update/delete category tags, and no UI in Settings for managing them. Only the default seeded tags are available.
+Vitest and Playwright are configured but **zero tests exist** in the `tests/` directory.
 
-### 8. Payment Mode Management — Not Implemented
-
-`createPaymentModeSchema` exists in `validators.ts`, but there is **no server action** or UI for managing payment modes. Only the onboarding-seeded modes (Family Cash, Family UPI) are available.
-
-### 9. Tests — All Empty
-
-```
-tests/setup.ts      → only imports '@testing-library/jest-dom'
-tests/unit/.gitkeep → empty
-tests/integration/.gitkeep → empty
-tests/e2e/.gitkeep → empty
-```
-
-Vitest and Playwright are configured but **zero tests exist**.
-
-### 10. No Dark Mode Toggle
+### 3. No Dark Mode Toggle
 
 CSS variables for `.dark` mode are defined but there's no toggle mechanism. The app always uses light mode unless the system preference is dark.
 
