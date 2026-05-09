@@ -30,19 +30,19 @@ export function TransactionGroup({
     type === "DEBIT" ? "bg-debit/10" : type === "CREDIT" ? "bg-credit/10" : "bg-payment/10";
 
   return (
-    <section>
+    <section className="mb-8">
       {/* Section header */}
-      <div className={`flex items-center justify-between rounded-t-lg px-3 py-2 ${bgClass}`}>
-        <span className={`text-xs font-semibold tracking-wider uppercase ${colorClass}`}>
+      <div className={`mb-3 flex items-center justify-between rounded-2xl px-5 py-3 ${bgClass}`}>
+        <span className={`text-xs font-bold tracking-widest uppercase ${colorClass}`}>
           {TRANSACTION_TYPE_LABELS[type]}
         </span>
-        <span className={`text-sm font-semibold tabular-nums ${colorClass}`}>
+        <span className={`text-sm font-bold tabular-nums ${colorClass}`}>
           {formatCurrency(total.toString())}
         </span>
       </div>
 
       {/* Transactions */}
-      <div className="divide-border divide-y rounded-b-lg border border-t-0 px-3">
+      <div className="flex flex-col gap-2">
         {transactions.map((tx) => (
           <TransactionCard
             key={tx.id}
