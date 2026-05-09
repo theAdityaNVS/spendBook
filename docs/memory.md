@@ -10,9 +10,9 @@
 | Field                 | Value                                        |
 | --------------------- | -------------------------------------------- |
 | **Current Phase**     | Phase 3 — Cross-Family Analytics & Export    |
-| **Current Sub-Phase** | Pending                                      |
-| **Status**            | Phase 2 is 100% complete. Ready for Phase 3. |
-| **Last Updated**      | 2026-05-05                                   |
+| **Current Sub-Phase** | Premium UI redesign and stabilization        |
+| **Status**            | Redesign checkpoint 1 in progress.           |
+| **Last Updated**      | 2026-05-09                                   |
 
 ---
 
@@ -244,6 +244,19 @@ Comprehensive documentation:
 - [x] **Session Engine:** Updated `getAppSession()` and `isAuthenticated()` in `src/lib/auth/session.ts` to support a `dev_user_id` cookie for session-based account switching.
 - [x] **Account Picker:** Built `DevAccountPicker` component and integrated it into the `Header` to allow researchers to switch between users instantly.
 - [x] **Seeding:** Fixed `prisma/seed.ts` import issue to allow database population with demo users.
+
+### Session 9 — Premium UI Redesign Checkpoint 1 (2026-05-09)
+
+- [x] Replaced the noisy glass/blob visual baseline with a calmer fintech palette in `src/app/globals.css`.
+- [x] Redesigned the protected dashboard shell: app canvas, sidebar, header, and mobile bottom navigation.
+- [x] Updated base UI primitives for buttons, inputs, textareas, selects, and dialogs to use the new surface language.
+- [x] Restored mobile pinch zoom by removing `maximumScale` from the root viewport config.
+- [x] Added `aria-current` and nav labels to desktop/mobile navigation.
+- [x] Added reduced-motion handling and temporary compatibility aliases for legacy `glass`/`glass-panel` classes during the staged redesign.
+- [x] Fixed unit-test tooling by adding `jsdom` and `@testing-library/jest-dom`, separating Vitest unit tests from Playwright e2e tests, and adding a utility smoke test.
+- [x] Updated the Playwright smoke test to match the active development-auth bypass and installed the missing WebKit runtime for mobile verification.
+- [x] Verified `pnpm exec next build`; full `pnpm build` is currently blocked by a remote Neon advisory-lock timeout in `prisma migrate deploy`.
+- [ ] Next: redesign ledger, transaction cards/forms, summary, analytics, settings, and dev-login pages using the new system.
 
 ## Notes for Next Session
 

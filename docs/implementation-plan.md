@@ -168,6 +168,17 @@
 - [ ] Add Dark mode toggle
 - [ ] Add animations and haptic feedback
 
+### 4.3 Premium UI Redesign
+
+- [x] Establish updated design tokens, surface primitives, app shell, navigation, and base form controls
+- [ ] Redesign daily ledger as a polished finance workspace
+- [ ] Redesign transaction cards and transaction form interactions
+- [ ] Redesign summary reports and category breakdowns
+- [ ] Replace analytics placeholder with useful insight cards/charts
+- [ ] Redesign settings management surfaces and empty states
+- [ ] Verify desktop/mobile responsiveness with browser screenshots
+- [ ] Keep design-system documentation current in `docs/design-system.md`
+
 ---
 
 ## Phase 5 — Scale & Enhancements (FUTURE)

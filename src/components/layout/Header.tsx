@@ -1,5 +1,5 @@
 import { getAppSession } from "@/lib/auth/session";
-import { Wallet } from "lucide-react";
+import { CalendarDays, Wallet } from "lucide-react";
 import { UserButton, SignedIn } from "@neondatabase/auth/react";
 import { db } from "@/lib/db";
 import { DevAccountPicker } from "./DevAccountPicker";
@@ -14,38 +14,38 @@ export async function Header() {
     : [];
 
   return (
-    <header className="glass-panel z-20 mx-4 mt-4 relative flex h-20 items-center justify-between rounded-[2rem] px-6 shadow-xl md:mx-8 md:mt-6 md:px-8">
-      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
-      <div className="absolute inset-0 rounded-[2rem] ring-1 ring-inset ring-white/10 pointer-events-none" />
-
-      {/* Mobile: show logo */}
-      <div className="flex items-center gap-3 md:hidden relative z-10">
-        <div className="bg-primary/20 text-primary relative flex h-10 w-10 items-center justify-center rounded-xl shadow-inner ring-1 ring-white/20 backdrop-blur-md">
+    <header className="surface-panel relative z-20 mx-4 mt-4 flex min-h-16 items-center justify-between rounded-lg px-4 md:mx-8 md:mt-6 md:px-6">
+      <div className="relative z-10 flex items-center gap-3 md:hidden">
+        <div className="relative flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
           <Wallet className="h-5 w-5" />
         </div>
-        <span className="from-foreground to-foreground/70 bg-gradient-to-br bg-clip-text text-xl font-extrabold tracking-tight text-transparent">
-          SpendBook
-        </span>
+        <span className="text-xl font-black tracking-tight">SpendBook</span>
       </div>
 
-      {/* Desktop: show page context or empty spacer */}
-      <div className="hidden md:block relative z-10" />
+      <div className="relative z-10 hidden items-center gap-3 md:flex">
+        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent text-accent-foreground">
+          <CalendarDays className="h-4 w-4" />
+        </div>
+        <div>
+          <p className="text-xs font-bold uppercase text-muted-foreground">Workspace</p>
+          <p className="text-sm font-semibold">Household money, clearly arranged</p>
+        </div>
+      </div>
 
-      {/* User info + sign out */}
-      <div className="flex items-center gap-4 relative z-10">
+      <div className="relative z-10 flex items-center gap-3">
         {session?.isDevelopmentBypass && (
           <DevAccountPicker users={allUsers} currentUserId={session.user.id} />
         )}
 
         {session?.user && !session.isDevelopmentBypass && (
-          <span className="text-muted-foreground hidden text-sm font-semibold tracking-wide sm:inline bg-foreground/5 px-3 py-1.5 rounded-full ring-1 ring-white/10 shadow-sm backdrop-blur-sm">
+          <span className="hidden rounded-lg border bg-surface-soft px-3 py-2 text-sm font-semibold text-muted-foreground sm:inline">
             {session.user.name}
           </span>
         )}
 
         {!session?.isDevelopmentBypass && (
           <SignedIn>
-            <div className="ring-1 ring-white/20 rounded-full shadow-lg overflow-hidden">
+            <div className="overflow-hidden rounded-full ring-1 ring-border">
               <UserButton />
             </div>
           </SignedIn>
