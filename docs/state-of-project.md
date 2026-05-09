@@ -1,6 +1,6 @@
 # State of Project — SpendBook
 
-> **Last verified**: 2026-05-08 — analysis based on actual source code
+> **Last verified**: 2026-05-09 — analysis based on actual source code
 > **Project**: `C:\Users\nadam\Coding\Web Projects\spendBook`  
 > **Repo**: https://github.com/theAdityaNVS/spendBook  
 
@@ -8,9 +8,9 @@
 
 ## Overall Status: ⚠️ PARTIALLY FUNCTIONAL (Phase 1 & Phase 2 Complete)
 
-The application **builds locally**, has a complete database schema, a working auth system (Neon Auth), a functional daily ledger, person management, configurable category tags, configurable payment modes, and a complete monthly summary with category breakdowns. 
+The application has a complete database schema, a working auth system (Neon Auth), a functional daily ledger, person management, configurable category tags, configurable payment modes, and a complete monthly summary with category breakdowns. A premium UI redesign is underway, beginning with shell, navigation, design tokens, and base primitives.
 
-**Deployment remains blocked** by unset Vercel environment variables and the `seed.ts` import issue.
+**Build validation note:** `pnpm build` runs `prisma migrate deploy` before `next build`, so it can be blocked by local Prisma file locks or remote Neon advisory-lock timeouts. Stop the local dev server before running the build gate. If Neon advisory lock acquisition times out, validate code with `pnpm exec next build` and retry the full build once the database lock clears.
 
 ---
 
@@ -63,9 +63,9 @@ Running `migrate deploy` as part of the build means every Vercel build triggers 
 <p>Charts & insights — coming in Phase 3.</p>
 ```
 
-### 2. Tests — All Empty
+### 2. Tests
 
-Vitest and Playwright are configured but **zero tests exist** in the `tests/` directory.
+Vitest and Playwright are configured. Unit tests now live under `tests/unit/**/*.test.ts`, while Playwright e2e specs live under `tests/e2e`.
 
 ### 3. No Dark Mode Toggle
 
