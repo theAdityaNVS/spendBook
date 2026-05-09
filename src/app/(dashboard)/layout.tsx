@@ -14,10 +14,12 @@ export default async function DashboardLayout({ children }: { children: React.Re
   if (!session) redirect("/onboarding");
 
   return (
-    <div className="bg-background/50 relative flex h-screen overflow-hidden dark:bg-[#0a0a0f]">
-      {/* Subtle ambient background */}
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden opacity-30 dark:opacity-20">
-        <div className="bg-primary/20 absolute -top-[10%] left-[-10%] h-[500px] w-[500px] rounded-full mix-blend-screen blur-[120px] filter" />
+    <div className="bg-background bg-mesh relative flex h-screen overflow-hidden dark:bg-[#0a0a0f]">
+      {/* Subtle ambient background with animated floats */}
+      <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden opacity-40 dark:opacity-30">
+        <div className="bg-primary/20 animate-float absolute -top-[10%] left-[-10%] h-[600px] w-[600px] rounded-full mix-blend-screen blur-[120px] filter" />
+        <div className="animate-float-delayed absolute top-[40%] right-[-5%] h-[500px] w-[500px] rounded-full bg-blue-500/10 mix-blend-screen blur-[120px] filter" />
+        <div className="animate-float absolute bottom-[-10%] left-[20%] h-[600px] w-[600px] rounded-full bg-purple-500/10 mix-blend-screen blur-[150px] filter" />
       </div>
 
       {/* Desktop sidebar */}
