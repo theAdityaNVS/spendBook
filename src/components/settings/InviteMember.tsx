@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -53,18 +52,21 @@ export function InviteMember() {
 
   return (
     <>
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-lg">Invite Members</CardTitle>
-          <CardDescription>Invite family members to join your SpendBook account.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Button onClick={() => setIsOpen(true)} className="w-full sm:w-auto">
-            <UserPlus className="mr-2 h-4 w-4" />
-            Generate Invite Link
-          </Button>
-        </CardContent>
-      </Card>
+      <div className="glass-panel dark:hover:shadow-primary/5 rounded-[2rem] p-6 transition-all hover:shadow-lg sm:p-8">
+        <div className="mb-6">
+          <h2 className="text-xl font-bold tracking-tight">Invite Members</h2>
+          <p className="text-muted-foreground mt-1 text-sm">
+            Invite family members to join your SpendBook account.
+          </p>
+        </div>
+        <Button
+          onClick={() => setIsOpen(true)}
+          className="shadow-primary/20 h-12 w-full rounded-xl font-semibold shadow-md sm:w-auto"
+        >
+          <UserPlus className="mr-2 h-4 w-4" />
+          Generate Invite Link
+        </Button>
+      </div>
 
       <Dialog open={isOpen} onOpenChange={(o) => !o && setIsOpen(false)}>
         <DialogContent>

@@ -12,7 +12,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { Person, ActionResult } from "@/types";
 
@@ -131,55 +130,59 @@ export function PersonList({ persons }: PersonListProps) {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Family Members</h2>
-        <Button size="sm" onClick={() => setAddOpen(true)}>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between px-2">
+        <h2 className="text-foreground/90 text-2xl font-semibold tracking-tight">Family Members</h2>
+        <Button size="sm" className="rounded-xl px-4" onClick={() => setAddOpen(true)}>
           <Plus className="mr-2 h-4 w-4" />
           Add Person
         </Button>
       </div>
 
-      <div className="space-y-2">
+      <div className="grid gap-3 sm:grid-cols-2">
         {persons.map((person) => (
-          <Card key={person.id}>
-            <CardContent className="flex items-center justify-between px-4 py-3">
-              <div className="flex items-center gap-3">
-                <div className="bg-muted flex h-9 w-9 items-center justify-center rounded-full">
-                  <User className="text-muted-foreground h-4 w-4" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium">{person.name}</p>
-                  {person.isFamilyAccount && (
-                    <Badge variant="secondary" className="mt-0.5 text-xs">
-                      Family Account
-                    </Badge>
-                  )}
-                </div>
+          <div
+            key={person.id}
+            className="glass-panel group dark:hover:bg-foreground/5 relative flex items-center justify-between rounded-3xl p-5 transition-all duration-300 hover:shadow-lg"
+          >
+            <div className="flex items-center gap-4">
+              <div className="bg-primary/10 flex h-12 w-12 items-center justify-center rounded-2xl shadow-inner">
+                <User className="text-primary h-5 w-5" />
               </div>
+              <div>
+                <p className="text-base font-semibold">{person.name}</p>
+                {person.isFamilyAccount && (
+                  <Badge
+                    variant="secondary"
+                    className="bg-muted/50 mt-1 text-[10px] tracking-wider uppercase"
+                  >
+                    Family Account
+                  </Badge>
+                )}
+              </div>
+            </div>
 
-              {!person.isFamilyAccount && (
-                <div className="flex gap-1">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8"
-                    onClick={() => setEditPerson(person)}
-                  >
-                    <Pencil className="h-3.5 w-3.5" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="text-muted-foreground hover:text-destructive h-8 w-8"
-                    onClick={() => handleDelete(person)}
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </Button>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+            {!person.isFamilyAccount && (
+              <div className="flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="hover:bg-primary/10 hover:text-primary h-8 w-8 rounded-full"
+                  onClick={() => setEditPerson(person)}
+                >
+                  <Pencil className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive h-8 w-8 rounded-full"
+                  onClick={() => handleDelete(person)}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
+          </div>
         ))}
       </div>
 
