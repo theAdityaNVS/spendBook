@@ -22,12 +22,12 @@ sequenceDiagram
         B->>NA: User signs in
         NA-->>B: Set auth cookie, redirect
     end
-    
+
     MW-->>DL: Proceed (authenticated)
     DL->>S: isAuthenticated()
     S->>NA: auth.getSession()
     NA-->>S: Neon session (email, name, id)
-    
+
     DL->>S: getAppSession()
     S->>S: Find/create User by email
     S->>S: Find UserFamily
@@ -41,6 +41,7 @@ sequenceDiagram
 ```
 
 ### Key Details:
+
 - **Middleware** ([middleware.ts](file:///C:/Users/nadam/Coding/Web%20Projects/spendBook/src/middleware.ts)) runs on every non-excluded route
 - **Neon Auth** handles all credential storage, OAuth, and session tokens externally
 - **Session bridging** ([session.ts](file:///C:/Users/nadam/Coding/Web%20Projects/spendBook/src/lib/auth/session.ts)) maps external identity to internal User/Family model
@@ -64,7 +65,7 @@ sequenceDiagram
     SA->>SA: Validate with Zod
     SA->>DB: Find/create User
     SA->>DB: Check existing family
-    
+
     alt Already has family
         SA-->>B: Error "You already have a family"
     else No family
@@ -81,6 +82,7 @@ sequenceDiagram
 ```
 
 ### Default Data Seeded:
+
 - **Family Account** — built-in Person that represents the household
 - **10 Category Tags** — Food Delivery, Groceries, Shopping, Subscriptions, Utilities, Transport, Entertainment, Healthcare, Education, Miscellaneous
 - **2 Payment Modes** — Family Cash, Family UPI (both family-owned)
@@ -98,7 +100,7 @@ sequenceDiagram
 
     B->>LP: GET /ledger?date=2026-03-15
     LP->>LP: Parse date param (or default to today)
-    
+
     par Parallel queries
         LP->>Q: getDailyLedger(date)
         Q->>DB: transactions + person + categoryTag + paymentMode
@@ -134,10 +136,10 @@ sequenceDiagram
 
     B->>TF: User fills form, clicks "Add transaction"
     TF->>SA: formAction(formData)
-    
+
     SA->>SA: getAppSession() → verify auth
     SA->>SA: Zod validate formData
-    
+
     alt Validation fails
         SA-->>TF: { success: false, error: "..." }
         TF-->>B: Show error toast
@@ -145,9 +147,9 @@ sequenceDiagram
 
     SA->>DB: Verify person belongs to family
     SA->>DB: $transaction { create Transaction }
-    
+
     SA->>BE: recalculateBalancesForDate(familyId, personId, date)
-    
+
     Note over BE,DB: DailyBalance Calculation
     BE->>DB: Fetch all transactions for person+date
     BE->>BE: Sum debits, credits, payments
@@ -175,6 +177,7 @@ sequenceDiagram
 ## 5. Transaction Update Flow
 
 Same as creation, with these differences:
+
 1. Finds existing transaction, verifies it belongs to the family
 2. Updates the transaction record
 3. Recalculates balances for the **new date**
@@ -203,13 +206,13 @@ flowchart TD
     B -->|Add| C[AddPersonDialog]
     B -->|Edit| D[EditPersonDialog]
     B -->|Delete| E[Confirm Dialog]
-    
+
     C -->|createPersonAction| F[Create Person in family]
     D -->|updatePersonAction| G[Update Person name]
     E -->|deletePersonAction| H[Set isArchived=true]
-    
+
     F & G & H --> I[revalidatePath /settings + /ledger]
-    
+
     G -.->|Guard| J{isFamilyAccount?}
     J -->|Yes| K[Reject: Cannot rename]
     H -.->|Guard| J
@@ -217,6 +220,7 @@ flowchart TD
 ```
 
 ### Role enforcement:
+
 - All person mutations require `ADMIN` role
 - Family Account cannot be renamed or deleted
 - "Delete" is a soft archive — transactions are preserved
@@ -245,12 +249,15 @@ flowchart TD
 ```
 
 ### DailyBalance formula:
+
 ```
 closingBalance = openingBalance + totalDebits - totalCredits - totalPayments
 ```
+
 where `openingBalance` = previous day's `closingBalance` (or 0 if first day).
 
 ### LoanBalance formula:
+
 ```
 closingLoan = openingLoan + loanIncreases - loanDecreases
 ```
@@ -268,7 +275,7 @@ Browser Request
   ├─ Static assets (.css, .js, images)
   │   └→ Served directly by Next.js / Vercel CDN
   │
-  ├─ /api/auth/* 
+  ├─ /api/auth/*
   │   └→ Neon Auth handler (GET, POST)
   │
   └─ All other routes
