@@ -1,20 +1,20 @@
-import { getMonthlySummary } from "@/server/queries/summary"
-import { SummaryView } from "@/components/summary/SummaryView"
+import { getMonthlySummary } from "@/server/queries/summary";
+import { SummaryView } from "@/components/summary/SummaryView";
 
-export const dynamic = "force-dynamic"
+export const dynamic = "force-dynamic";
 
 export default async function SummaryPage({
   searchParams,
 }: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const params = await searchParams
-  
-  const now = new Date()
-  const year = params.year ? parseInt(params.year as string) : now.getFullYear()
-  const month = params.month ? parseInt(params.month as string) : now.getMonth() + 1
+  const params = await searchParams;
 
-  const { summaries, familyAggregate, categoryBreakdown } = await getMonthlySummary(year, month)
+  const now = new Date();
+  const year = params.year ? parseInt(params.year as string) : now.getFullYear();
+  const month = params.month ? parseInt(params.month as string) : now.getMonth() + 1;
+
+  const { summaries, familyAggregate, categoryBreakdown } = await getMonthlySummary(year, month);
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-6">
@@ -26,5 +26,5 @@ export default async function SummaryPage({
         categoryBreakdown={categoryBreakdown}
       />
     </div>
-  )
+  );
 }
