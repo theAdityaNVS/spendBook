@@ -84,22 +84,35 @@ export async function getAppSession(): Promise<AppSession | null> {
     });
   }
 
-  // Load the user's first (active) family
-  const userFamily = await db.userFamily.findFirst({
+  // Load all of the user's families
+  const userFamilies = await db.userFamily.findMany({
     where: { userId: user.id },
     orderBy: { createdAt: "asc" },
   });
 
-  if (!userFamily) return null; // No family yet — needs onboarding
+  if (userFamilies.length === 0) return null; // No family yet — needs onboarding
+
+  // Check for the active_family_id cookie
+  const cookieStore = await cookies();
+  const activeFamilyCookie = cookieStore.get("active_family_id")?.value;
+
+  // Determine the active family
+  let activeUserFamily = userFamilies[0];
+  if (activeFamilyCookie) {
+    const matchedFamily = userFamilies.find((f) => f.familyId === activeFamilyCookie);
+    if (matchedFamily) {
+      activeUserFamily = matchedFamily;
+    }
+  }
 
   return {
     user: {
       id: user.id,
       email: user.email,
       name: user.name,
-      activeFamilyId: userFamily.familyId,
-      activeRole: userFamily.role,
-      activePersonId: userFamily.personId,
+      activeFamilyId: activeUserFamily.familyId,
+      activeRole: activeUserFamily.role,
+      activePersonId: activeUserFamily.personId,
     },
   };
 }
