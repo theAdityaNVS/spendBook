@@ -14,26 +14,17 @@ export default async function DashboardLayout({ children }: { children: React.Re
   if (!session) redirect("/onboarding");
 
   return (
-    <div className="bg-background bg-mesh relative flex h-screen overflow-hidden dark:bg-[#0a0a0f]">
-      {/* Subtle ambient background with animated floats */}
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden opacity-40 dark:opacity-30">
-        <div className="bg-primary/20 animate-float absolute -top-[10%] left-[-10%] h-[600px] w-[600px] rounded-full mix-blend-screen blur-[120px] filter" />
-        <div className="animate-float-delayed absolute top-[40%] right-[-5%] h-[500px] w-[500px] rounded-full bg-blue-500/10 mix-blend-screen blur-[120px] filter" />
-        <div className="animate-float absolute bottom-[-10%] left-[20%] h-[600px] w-[600px] rounded-full bg-purple-500/10 mix-blend-screen blur-[150px] filter" />
-      </div>
-
-      {/* Desktop sidebar */}
+    <div className="app-canvas relative flex h-screen overflow-hidden">
+      <div className="pointer-events-none absolute inset-0 fine-grid opacity-70" />
       <Sidebar />
 
-      {/* Main content area */}
       <div className="relative z-10 flex flex-1 flex-col overflow-hidden">
         <Header />
-        <main className="flex-1 overflow-y-auto px-4 pt-6 pb-24 md:px-8 md:pb-8 lg:px-12">
-          <div className="mx-auto max-w-6xl">{children}</div>
+        <main className="flex-1 overflow-y-auto px-4 pb-24 pt-5 md:px-8 md:pb-8 md:pt-6 lg:px-10">
+          <div className="mx-auto max-w-7xl">{children}</div>
         </main>
       </div>
 
-      {/* Mobile bottom nav */}
       <BottomNav />
     </div>
   );

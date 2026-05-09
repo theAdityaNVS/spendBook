@@ -1,6 +1,6 @@
 # Architecture — SpendBook
 
-> **Last verified**: 2026-05-05 — based on commit `5721da7`
+> **Last verified**: 2026-05-09 — based on current source during the premium UI redesign
 
 ---
 
@@ -266,3 +266,6 @@ pnpm test:e2e     # Playwright (no tests yet)
 - **Domain colors**: `debit` (red), `credit` (green), `payment` (blue) — each with foreground and muted variants
 - **Neon Auth UI** styles imported via `@import "@neondatabase/auth/ui/tailwind"`
 - **Inter** font from Google Fonts
+- **Redesign surface primitives**: `app-canvas`, `surface-panel`, `paper-panel`, `ink-panel`, `fine-grid`, and `lift`
+- **Accessibility baseline**: mobile zoom remains enabled, navigation exposes `aria-current`, and global reduced-motion handling is defined in CSS
+- **Compatibility note**: legacy `glass` and `glass-panel` aliases remain temporarily while ledger, summary, settings, and auth/dev-login screens are migrated to the new surface system
