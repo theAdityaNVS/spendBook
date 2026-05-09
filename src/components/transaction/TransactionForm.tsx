@@ -239,18 +239,20 @@ export function TransactionForm({
 
           {/* Paid Towards */}
           <input type="hidden" name="paidTowards" value={paidTowards} />
-          <div className="space-y-2">
-            <Label>Paid Towards</Label>
-            <div className="grid grid-cols-2 gap-2">
+          <div className="space-y-3">
+            <Label className="text-muted-foreground text-xs tracking-widest uppercase">
+              Paid Towards
+            </Label>
+            <div className="bg-muted/50 border-border/50 flex gap-2 rounded-2xl border p-1">
               {(["PERSONAL", "FAMILY"] as const).map((t) => (
                 <button
                   key={t}
                   type="button"
                   onClick={() => setPaidTowards(t)}
-                  className={`rounded-md border px-3 py-2 text-sm font-medium transition-colors ${
+                  className={`flex-1 rounded-xl py-2.5 text-xs font-bold transition-all duration-300 ${
                     paidTowards === t
-                      ? "border-primary bg-primary/10 text-primary"
-                      : "border-input bg-background text-muted-foreground hover:bg-accent"
+                      ? "bg-primary text-primary-foreground shadow-primary/30 scale-[1.02] shadow-lg"
+                      : "text-muted-foreground hover:bg-foreground/5 hover:text-foreground"
                   }`}
                 >
                   {PAID_TOWARDS_LABELS[t]}
@@ -277,18 +279,27 @@ export function TransactionForm({
 
           <input type="hidden" name="currency" value="INR" />
 
-          <div className="flex gap-3 pt-2">
-            <Button type="button" variant="outline" className="flex-1" onClick={onClose}>
+          <div className="border-border/50 mt-4 flex gap-3 border-t pt-6">
+            <Button
+              type="button"
+              variant="outline"
+              className="h-12 flex-1 rounded-xl font-semibold"
+              onClick={onClose}
+            >
               Cancel
             </Button>
-            <Button type="submit" className="flex-1" disabled={isPending}>
+            <Button
+              type="submit"
+              className="shadow-primary/20 h-12 flex-1 rounded-xl font-semibold shadow-lg"
+              disabled={isPending}
+            >
               {isPending
                 ? isEdit
                   ? "Saving…"
                   : "Adding…"
                 : isEdit
-                  ? "Save changes"
-                  : "Add transaction"}
+                  ? "Save Changes"
+                  : "Add Transaction"}
             </Button>
           </div>
         </form>
