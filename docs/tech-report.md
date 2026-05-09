@@ -38,7 +38,7 @@ SpendBook (Next.js 15 App Router)
 
 ---
 
-## Production Dependencies (14 packages)
+## Production Dependencies (15 packages)
 
 ### Core Framework & Runtime
 
@@ -242,6 +242,17 @@ SpendBook (Next.js 15 App Router)
 
 ---
 
+### Visualization & Analytics
+
+#### **`recharts`** ^3.8.1
+
+- **What:** Composable charting library built on React components
+- **Why:** Used for complex visualizations like the category spending pie chart in the monthly summary.
+- **Where used:** [src/components/summary/SummaryView.tsx](../src/components/summary/SummaryView.tsx)
+- **Note:** The analytics page uses custom SVG charts for lighter weight and sharper aesthetics, but Recharts remains for specific complex data views.
+
+---
+
 ### User Feedback
 
 #### **`sonner`** ^1.7.4
@@ -381,8 +392,7 @@ SpendBook (Next.js 15 App Router)
 | `@radix-ui/react-toggle`        | 1.9 KB                   | Toggle buttons not in design                                       |
 | `@radix-ui/react-tooltip`       | 2.8 KB                   | Tooltips not implemented                                           |
 | `date-fns`                      | 13.4 KB                  | Custom utils in [src/lib/utils.ts](../src/lib/utils.ts) sufficient |
-| `recharts`                      | 18.2 KB                  | Analytics charts phase not built yet                               |
-| **Total saved**                 | **~52 KB (gzip ~13 KB)** |                                                                    |
+| **Total saved**                 | **~34 KB (gzip ~8 KB)**  |                                                                    |
 
 ### Removed Auth Packages (Earlier Migration)
 
@@ -396,14 +406,13 @@ SpendBook (Next.js 15 App Router)
 
 ## Packages to Re-add (Future Phases)
 
-| Package                         | When                          | Phase   | Reason                                         |
-| ------------------------------- | ----------------------------- | ------- | ---------------------------------------------- |
-| `recharts`                      | Analytics page implementation | Phase 3 | Charts for spending trends, category breakdown |
-| `@radix-ui/react-tooltip`       | Hover help text               | Phase 2 | Icon explanations, balance help                |
-| `@radix-ui/react-dropdown-menu` | User menu                     | Phase 2 | Account settings, sign out menu                |
-| `@radix-ui/react-tabs`          | Settings tab panels           | Phase 2 | If multi-tab settings layout                   |
-| `@radix-ui/react-avatar`        | User avatars                  | Phase 2 | If avatar support added                        |
-| `@radix-ui/react-popover`       | Advanced filters              | Phase 3 | Date range, category filter popovers           |
+| Package                         | When                | Phase   | Reason                               |
+| ------------------------------- | ------------------- | ------- | ------------------------------------ |
+| `@radix-ui/react-tooltip`       | Hover help text     | Phase 2 | Icon explanations, balance help      |
+| `@radix-ui/react-dropdown-menu` | User menu           | Phase 2 | Account settings, sign out menu      |
+| `@radix-ui/react-tabs`          | Settings tab panels | Phase 2 | If multi-tab settings layout         |
+| `@radix-ui/react-avatar`        | User avatars        | Phase 2 | If avatar support added              |
+| `@radix-ui/react-popover`       | Advanced filters    | Phase 3 | Date range, category filter popovers |
 
 **Recommendation:** Add these only when actively implementing the feature. No speculative dependencies.
 

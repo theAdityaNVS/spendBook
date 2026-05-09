@@ -11,7 +11,7 @@
 | --------------------- | -------------------------------------------- |
 | **Current Phase**     | Phase 3 — Cross-Family Analytics & Export    |
 | **Current Sub-Phase** | Premium UI redesign and stabilization        |
-| **Status**            | Redesign checkpoint 1 in progress.           |
+| **Status**            | Redesign complete; Analytics preview live.   |
 | **Last Updated**      | 2026-05-09                                   |
 
 ---
@@ -54,11 +54,11 @@
 
 ---
 
-## Package Cleanup: Removed Unused Dependencies (Completed 2026-03-04)
+## Package Cleanup & Re-additions
 
-**Status:** 9 unused packages removed. Build passes. No code changes needed.
+**Status:** `recharts` re-added for Phase 2 summaries.
 
-### What Was Removed
+### What Was Removed (Session 3)
 
 Removed 9 packages that were speculatively added but never imported in `src/`:
 
@@ -72,23 +72,11 @@ Removed 9 packages that were speculatively added but never imported in `src/`:
 | `@radix-ui/react-toggle`        | 1.9 KB     | Toggle buttons not in design   |
 | `@radix-ui/react-tooltip`       | 2.8 KB     | Tooltips not implemented       |
 | `date-fns`                      | 13.4 KB    | Custom date helpers sufficient |
-| `recharts`                      | 18.2 KB    | Analytics phase not built yet  |
-| **Total Saved**                 | **~52 KB** | **(~13 KB gzip)**              |
+| **Total Saved**                 | **~34 KB** | **(~8 KB gzip)**               |
 
-### Why?
+### What Was Re-added
 
-- **Smaller bundle:** Faster initial load on mobile networks
-- **Faster installs:** pnpm lock.yaml reduced (~100 transitive deps removed)
-- **Cleaner deps:** Only what's actively used
-- **Future-proof:** Re-add from docs when actually implementing features
-
-### When to Re-add
-
-See `docs/tech-report.md` → "Packages to Re-add (Future Phases)"
-
-- `recharts` → Phase 3 (Analytics charts)
-- `@radix-ui/react-tooltip` → Phase 2 (Hover help text)
-- etc.
+- `recharts` → Re-added for `SummaryView` (Phase 2) to provide category distribution pie charts.
 
 ### Tech Report Created
 
@@ -96,7 +84,7 @@ See `docs/tech-report.md` → "Packages to Re-add (Future Phases)"
 
 Comprehensive documentation:
 
-- Production (14) & development (15) dependency breakdown
+- Production (15) & development (15) dependency breakdown
 - What each package does, why, and where used
 - Alternates considered
 - Removed packages and re-add schedule
@@ -256,7 +244,25 @@ Comprehensive documentation:
 - [x] Fixed unit-test tooling by adding `jsdom` and `@testing-library/jest-dom`, separating Vitest unit tests from Playwright e2e tests, and adding a utility smoke test.
 - [x] Updated the Playwright smoke test to match the active development-auth bypass and installed the missing WebKit runtime for mobile verification.
 - [x] Verified `pnpm exec next build`; full `pnpm build` is currently blocked by a remote Neon advisory-lock timeout in `prisma migrate deploy`.
-- [ ] Next: redesign ledger, transaction cards/forms, summary, analytics, settings, and dev-login pages using the new system.
+
+### Session 10 — UI Redesign Completion & Analytics Preview (2026-05-09)
+
+- [x] **Ledger Redesign**: Completed the full redesign of the Ledger page (`/ledger`) with the new high-contrast "Premium UI" aesthetic.
+- [x] **Transaction Components**: Updated `TransactionCard` and `TransactionForm` with the new design tokens, including `font-black` headings, uppercase labels, and updated spacing.
+- [x] **Analytics Preview**: Implemented a functional preview of the Analytics page (`/analytics`) with custom SVG charts for six-month flow, category pressure, and weekly rhythm.
+- [x] **Visual Consistency**: Applied `ink-panel`, `surface-panel`, and `paper-panel` patterns across all main dashboard views.
+- [x] **Summary Polish**: Refined the `SummaryView` with cleaner typography and maintained Recharts integration for the category breakdown pie chart.
+- [x] **Settings Refinement**: Updated the Settings page UI to match the new design system, including cleaner list layouts and action buttons.
+
+### Session 11 — Infrastructure & Governance Hardening (2026-05-09)
+
+- [x] **GitHub CI/CD**: Added `.github/workflows/ci.yml` for automated linting, type-checking, and build verification on PRs.
+- [x] **Dependabot**: Added `.github/dependabot.yml` for automated weekly dependency security updates.
+- [x] **Vercel Observability**: (Manual) Enabled Vercel Speed Insights for real-user Core Web Vitals monitoring.
+- [x] **Branch Protection**: (Manual) Recommended GitHub Branch Protection rules for `main` to require CI passes and reviews.
+- [x] **PWA Install**: Implemented `PWAInstallPrompt` component in Settings to allow users to install the app on their home screen.
+- [x] **Security Headers**: Configured custom `headers()` in `next.config.ts` to implement a strict Content Security Policy (CSP), XSS protection, and frame protection.
+- [x] **Neon Governance**: (Manual) Configured autoscaling limits (0.25 - 1.0 CU) and recommended the Neon GitHub Action for preview database branching.
 
 ## Notes for Next Session
 
