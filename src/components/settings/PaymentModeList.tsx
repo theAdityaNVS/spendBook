@@ -23,7 +23,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -148,35 +147,39 @@ export function PaymentModeList({
   }
 
   return (
-    <Card>
-      <div className="flex items-center justify-between p-6 pb-4">
+    <div className="space-y-6">
+      <div className="flex items-center justify-between px-2">
         <div>
-          <h2 className="text-xl font-semibold">Payment Modes</h2>
-          <p className="text-muted-foreground text-sm">Manage your payment accounts and cards.</p>
+          <h2 className="text-foreground/90 text-2xl font-semibold tracking-tight">
+            Payment Modes
+          </h2>
+          <p className="text-muted-foreground mt-1 text-sm">
+            Manage your payment accounts and cards.
+          </p>
         </div>
-        <Button onClick={() => openModal()} disabled={isPending}>
+        <Button className="rounded-xl px-4" onClick={() => openModal()} disabled={isPending}>
           <Plus className="mr-2 h-4 w-4" />
-          Add Payment Mode
+          Add Mode
         </Button>
       </div>
 
-      <CardContent>
+      <div>
         {modes.length === 0 ? (
-          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
-            <div className="bg-primary/10 rounded-full p-3">
+          <div className="glass-panel flex flex-col items-center justify-center rounded-3xl border-dashed p-10 text-center">
+            <div className="bg-primary/10 flex h-12 w-12 items-center justify-center rounded-2xl shadow-inner">
               <CreditCard className="text-primary h-6 w-6" />
             </div>
-            <h3 className="mt-4 font-semibold">No payment modes</h3>
+            <h3 className="mt-5 text-lg font-semibold">No payment modes</h3>
             <p className="text-muted-foreground mt-1 text-sm">
               Add a payment mode to track where your money comes from and goes.
             </p>
-            <Button className="mt-4" onClick={() => openModal()} disabled={isPending}>
+            <Button className="mt-5 rounded-xl" onClick={() => openModal()} disabled={isPending}>
               <Plus className="mr-2 h-4 w-4" />
-              Add Payment Mode
+              Add Mode
             </Button>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="grid gap-3 sm:grid-cols-2">
             {modes.map((mode) => {
               const TypeIcon =
                 PAYMENT_MODE_TYPES.find((t) => t.value === mode.type)?.icon || CreditCard;
@@ -186,28 +189,32 @@ export function PaymentModeList({
               return (
                 <div
                   key={mode.id}
-                  className="bg-card flex items-center justify-between gap-4 rounded-lg border p-4 shadow-sm"
+                  className="glass-panel group dark:hover:bg-foreground/5 relative flex items-center justify-between gap-4 rounded-3xl p-5 transition-all duration-300 hover:shadow-lg"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-full">
+                    <div className="bg-primary/10 flex h-12 w-12 items-center justify-center rounded-2xl shadow-inner">
                       <TypeIcon className="text-primary h-5 w-5" />
                     </div>
                     <div>
-                      <p className="font-medium">{mode.name}</p>
+                      <p className="text-base font-semibold">{mode.name}</p>
                       <div className="mt-1 flex items-center gap-2">
-                        <Badge variant="outline" className="text-xs font-normal">
+                        <Badge
+                          variant="outline"
+                          className="bg-background/50 text-[10px] tracking-wider uppercase"
+                        >
                           {typeLabel}
                         </Badge>
-                        <span className="text-muted-foreground text-xs">
+                        <span className="text-muted-foreground text-xs font-medium">
                           • {mode.ownerPerson ? mode.ownerPerson.name : "Family"}
                         </span>
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
                     <Button
                       variant="ghost"
                       size="icon"
+                      className="hover:bg-primary/10 hover:text-primary h-8 w-8 rounded-full"
                       onClick={() => openModal(mode)}
                       disabled={isPending}
                     >
@@ -216,7 +223,7 @@ export function PaymentModeList({
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                      className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive h-8 w-8 rounded-full"
                       onClick={() => {
                         if (confirm("Are you sure you want to archive this payment mode?")) {
                           handleArchive(mode);
@@ -232,7 +239,7 @@ export function PaymentModeList({
             })}
           </div>
         )}
-      </CardContent>
+      </div>
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent>
@@ -304,6 +311,6 @@ export function PaymentModeList({
           </form>
         </DialogContent>
       </Dialog>
-    </Card>
+    </div>
   );
 }
