@@ -1,6 +1,6 @@
-import { PrismaClient, PaymentModeType, Role } from "../src/generated/prisma"
+import { PrismaClient, PaymentModeType, Role } from "../src/generated/prisma";
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 const DEFAULT_CATEGORY_TAGS = [
   { name: "Food Delivery", color: "#f97316", sortOrder: 0 },
@@ -13,10 +13,10 @@ const DEFAULT_CATEGORY_TAGS = [
   { name: "Healthcare", color: "#14b8a6", sortOrder: 7 },
   { name: "Education", color: "#0ea5e9", sortOrder: 8 },
   { name: "Miscellaneous", color: "#94a3b8", sortOrder: 9 },
-]
+];
 
 async function main() {
-  console.log("🌱 Seeding database...")
+  console.log("🌱 Seeding database...");
 
   // Create demo admin user
   const admin = await prisma.user.upsert({
@@ -26,7 +26,7 @@ async function main() {
       email: "admin@spendbook.app",
       name: "Aditya (Admin)",
     },
-  })
+  });
 
   const user2 = await prisma.user.upsert({
     where: { email: "rahul@spendbook.app" },
@@ -35,7 +35,7 @@ async function main() {
       email: "rahul@spendbook.app",
       name: "Rahul",
     },
-  })
+  });
 
   const user3 = await prisma.user.upsert({
     where: { email: "priya@spendbook.app" },
@@ -44,7 +44,7 @@ async function main() {
       email: "priya@spendbook.app",
       name: "Priya",
     },
-  })
+  });
 
   // Create demo family
   const family = await prisma.family.upsert({
@@ -55,14 +55,14 @@ async function main() {
       name: "Nadamuni Household",
       defaultCurrency: "INR",
     },
-  })
+  });
 
   // Link users to family
   const roles = [
     { userId: admin.id, role: Role.ADMIN, name: "Family Account" },
     { userId: user2.id, role: Role.FAMILY, name: "Rahul" },
     { userId: user3.id, role: Role.PERSON, name: "Priya" },
-  ]
+  ];
 
   for (const r of roles) {
     const person = await prisma.person.upsert({
@@ -74,7 +74,7 @@ async function main() {
         familyId: family.id,
         isFamilyAccount: r.role === Role.ADMIN,
       },
-    })
+    });
 
     await prisma.userFamily.upsert({
       where: { userId_familyId: { userId: r.userId, familyId: family.id } },
@@ -85,7 +85,7 @@ async function main() {
         role: r.role,
         personId: person.id,
       },
-    })
+    });
   }
 
   // Seed default category tags
@@ -100,7 +100,7 @@ async function main() {
         ...tag,
         familyId: family.id,
       },
-    })
+    });
   }
 
   // Seed default family-owned payment modes
@@ -114,7 +114,7 @@ async function main() {
       familyId: family.id,
       ownerPersonId: null, // family-owned
     },
-  })
+  });
 
   await prisma.paymentMode.upsert({
     where: { id: "demo-mode-upi" },
@@ -126,7 +126,7 @@ async function main() {
       familyId: family.id,
       ownerPersonId: null,
     },
-  })
+  });
 
   // Seed a person-owned mode
   await prisma.paymentMode.upsert({
@@ -139,15 +139,15 @@ async function main() {
       familyId: family.id,
       ownerPersonId: "demo-person-rahul",
     },
-  })
+  });
 
-  console.log("✅ Seed complete.")
-  console.log(`   Demo user: demo@spendbook.app (sign up via Neon Auth)`)
+  console.log("✅ Seed complete.");
+  console.log(`   Demo user: demo@spendbook.app (sign up via Neon Auth)`);
 }
 
 main()
   .catch((e) => {
-    console.error(e)
-    process.exit(1)
+    console.error(e);
+    process.exit(1);
   })
-  .finally(() => void prisma.$disconnect())
+  .finally(() => void prisma.$disconnect());

@@ -151,6 +151,7 @@ erDiagram
 ```
 
 ### Key Design Decisions:
+
 - **Family Account** is a special `Person` with `isFamilyAccount: true` — acts as the joint/household account
 - **Payment Mode ownership** determines loan impact: `ownerPersonId = null` means family-owned
 - **DailyBalance + LoanBalance** are cached computations, derived from transactions; can be fully recalculated
@@ -161,6 +162,7 @@ erDiagram
 ## Key Data Flows
 
 ### Authentication Flow
+
 ```
 Browser → /auth/sign-in (Neon Auth UI)
   → Neon Auth handles credentials/OAuth
@@ -174,6 +176,7 @@ Browser → /auth/sign-in (Neon Auth UI)
 ```
 
 ### Transaction Creation Flow
+
 ```
 User fills TransactionForm → formAction (useActionState)
   → createTransactionAction (server action):
@@ -189,6 +192,7 @@ User fills TransactionForm → formAction (useActionState)
 ```
 
 ### Loan Impact Matrix
+
 ```
 | Payment Mode Owner | Paid Towards | Loan Effect              |
 |--------------------|--------------|--------------------------|
@@ -204,22 +208,23 @@ User fills TransactionForm → formAction (useActionState)
 
 ## Build & Development
 
-| Tool | Version | Role |
-|------|---------|------|
-| **Next.js** | 15.5.12 | Full-stack framework |
-| **React** | 19.0.0 | UI library |
-| **TypeScript** | 5.7.3 | Type safety |
-| **Prisma** | 6.4.1 | ORM + migrations |
-| **pnpm** | 10.30.3 | Package manager |
-| **Tailwind CSS** | 4.0.9 | Styling (with PostCSS) |
-| **ESLint** | 9.0.0 | Linting |
-| **Prettier** | 3.4.2 | Formatting |
-| **Vitest** | 3.0.5 | Unit testing (not yet used) |
-| **Playwright** | 1.50.1 | E2E testing (not yet used) |
-| **Husky** | 9.1.7 | Git hooks |
-| **lint-staged** | 15.4.3 | Pre-commit formatting |
+| Tool             | Version | Role                        |
+| ---------------- | ------- | --------------------------- |
+| **Next.js**      | 15.5.12 | Full-stack framework        |
+| **React**        | 19.0.0  | UI library                  |
+| **TypeScript**   | 5.7.3   | Type safety                 |
+| **Prisma**       | 6.4.1   | ORM + migrations            |
+| **pnpm**         | 10.30.3 | Package manager             |
+| **Tailwind CSS** | 4.0.9   | Styling (with PostCSS)      |
+| **ESLint**       | 9.0.0   | Linting                     |
+| **Prettier**     | 3.4.2   | Formatting                  |
+| **Vitest**       | 3.0.5   | Unit testing (not yet used) |
+| **Playwright**   | 1.50.1  | E2E testing (not yet used)  |
+| **Husky**        | 9.1.7   | Git hooks                   |
+| **lint-staged**  | 15.4.3  | Pre-commit formatting       |
 
 ### Scripts
+
 ```bash
 pnpm dev          # Start dev server
 pnpm build        # prisma generate + migrate deploy + next build
@@ -244,11 +249,12 @@ pnpm test:e2e     # Playwright (no tests yet)
 - **Domain**: spendbook.adityanvs.in (per memory.md)
 
 ### Required Environment Variables (Vercel)
-| Variable | Source |
-|----------|--------|
-| `DATABASE_URL` | Neon Console → Connection string (pooler) |
-| `NEON_AUTH_BASE_URL` | Neon Console → Auth → Configuration |
-| `NEON_AUTH_COOKIE_SECRET` | `openssl rand -base64 32` |
+
+| Variable                  | Source                                    |
+| ------------------------- | ----------------------------------------- |
+| `DATABASE_URL`            | Neon Console → Connection string (pooler) |
+| `NEON_AUTH_BASE_URL`      | Neon Console → Auth → Configuration       |
+| `NEON_AUTH_COOKIE_SECRET` | `openssl rand -base64 32`                 |
 
 ---
 
