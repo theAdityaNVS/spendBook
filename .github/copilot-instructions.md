@@ -20,12 +20,12 @@
 
 ### Loan Impact Matrix (Critical Business Logic)
 
-| Payment Mode Owner | Paid Towards | Loan Effect |
-|---|---|---|
-| Family mode | Personal | +Loan (person owes more) |
-| Family mode | Family | No change (family expense) |
-| Person's own mode | Personal | No change (stats only) |
-| Person's own mode | Family | −Loan (repayment) |
+| Payment Mode Owner | Paid Towards | Loan Effect                |
+| ------------------ | ------------ | -------------------------- |
+| Family mode        | Personal     | +Loan (person owes more)   |
+| Family mode        | Family       | No change (family expense) |
+| Person's own mode  | Personal     | No change (stats only)     |
+| Person's own mode  | Family       | −Loan (repayment)          |
 
 **This matrix must be implemented exactly. It is the core financial logic of the app.**
 
@@ -33,20 +33,20 @@
 
 ## Tech Stack
 
-| Layer | Technology | Version |
-|---|---|---|
-| Framework | Next.js (App Router) | 15+ |
-| Language | TypeScript | 5.x |
-| Styling | Tailwind CSS | 4.x |
-| UI Components | shadcn/ui (Radix primitives) | latest |
-| Backend | Next.js Server Actions + API Routes | — |
-| Database | PostgreSQL (Supabase or Neon) | 16+ |
-| ORM | Prisma | 6.x |
-| Auth | Auth.js (NextAuth v5) | 5.x |
-| Charts | Recharts | 2.x |
-| PWA | Serwist | latest |
-| Hosting | Vercel | — |
-| Package Manager | pnpm | 9.x |
+| Layer           | Technology                          | Version |
+| --------------- | ----------------------------------- | ------- |
+| Framework       | Next.js (App Router)                | 15+     |
+| Language        | TypeScript                          | 5.x     |
+| Styling         | Tailwind CSS                        | 4.x     |
+| UI Components   | shadcn/ui (Radix primitives)        | latest  |
+| Backend         | Next.js Server Actions + API Routes | —       |
+| Database        | PostgreSQL (Supabase or Neon)       | 16+     |
+| ORM             | Prisma                              | 6.x     |
+| Auth            | Auth.js (NextAuth v5)               | 5.x     |
+| Charts          | Recharts                            | 2.x     |
+| PWA             | Serwist                             | latest  |
+| Hosting         | Vercel                              | —       |
+| Package Manager | pnpm                                | 9.x     |
 
 ---
 
@@ -112,6 +112,7 @@ spendBook/
 ## Coding Standards
 
 ### TypeScript
+
 - **Strict mode** — always. No `any` types unless absolutely unavoidable (document why with `// eslint-disable-next-line`).
 - Prefer `interface` for object shapes; use `type` for unions, intersections, and mapped types.
 - Use `const` by default; `let` only when reassignment is necessary. Never `var`.
@@ -119,6 +120,7 @@ spendBook/
 - Use `Decimal` (via Prisma) or integer cents for money — never floating-point arithmetic for financial calculations.
 
 ### React & Next.js
+
 - **Server Components by default** — only add `"use client"` when the component needs browser APIs, event handlers, or React hooks.
 - Use Next.js **Server Actions** for mutations (forms, creates, updates, deletes). Defined in `src/server/actions/`.
 - Use query functions in `src/server/queries/` for data fetching — called from Server Components.
@@ -128,6 +130,7 @@ spendBook/
 - Prefer `<Link>` from `next/link` for navigation; programmatic navigation via `useRouter` only when necessary.
 
 ### Styling
+
 - **Tailwind CSS only** — no inline styles, no CSS modules, no styled-components.
 - Use the `cn()` utility (from `src/lib/utils.ts`) for conditional class merging.
 - Follow shadcn/ui patterns: use CSS variables for theming (`--primary`, `--background`, etc.).
@@ -135,6 +138,7 @@ spendBook/
 - Support dark mode using Tailwind's `dark:` variant.
 
 ### Database & Prisma
+
 - All database access goes through Prisma — no raw SQL unless for complex analytics queries (document why).
 - Every query must be scoped to the current family (`WHERE family_id = ?`). **Never leak data across families.**
 - Use Prisma transactions (`prisma.$transaction`) for operations that modify multiple tables.
@@ -142,6 +146,7 @@ spendBook/
 - Index frequently queried columns: `family_id`, `person_id`, `date`, `type`.
 
 ### Auth & Security
+
 - All dashboard routes require authentication — enforced in middleware.
 - Role-based access (Admin/Family/Person) checked in Server Actions and queries.
 - Never trust client-side role checks alone — always validate on the server.
@@ -149,6 +154,7 @@ spendBook/
 - Never expose sensitive data (passwords, tokens) in client components or API responses.
 
 ### Error Handling
+
 - Server Actions return `{ success: boolean; data?: T; error?: string }` — never throw from Server Actions.
 - Use try/catch in all database operations.
 - Show user-friendly error messages via toast (sonner) — not raw error strings.
@@ -168,17 +174,17 @@ Use **Conventional Commits** — single-line, imperative mood. Each commit messa
 
 ### Types
 
-| Type | When to use |
-|---|---|
-| `feat` | New feature or functionality |
-| `fix` | Bug fix |
-| `refactor` | Code restructuring without behavior change |
-| `style` | Formatting, whitespace, missing semicolons (no logic change) |
-| `docs` | Documentation only changes |
-| `test` | Adding or updating tests |
-| `chore` | Build config, dependencies, tooling, CI |
-| `perf` | Performance improvement |
-| `ci` | CI/CD pipeline changes |
+| Type       | When to use                                                  |
+| ---------- | ------------------------------------------------------------ |
+| `feat`     | New feature or functionality                                 |
+| `fix`      | Bug fix                                                      |
+| `refactor` | Code restructuring without behavior change                   |
+| `style`    | Formatting, whitespace, missing semicolons (no logic change) |
+| `docs`     | Documentation only changes                                   |
+| `test`     | Adding or updating tests                                     |
+| `chore`    | Build config, dependencies, tooling, CI                      |
+| `perf`     | Performance improvement                                      |
+| `ci`       | CI/CD pipeline changes                                       |
 
 ### Scope (Optional but Preferred)
 
@@ -212,18 +218,18 @@ ci(vercel): add preview deployment for PRs
 
 ## File Naming Conventions
 
-| Type | Convention | Example |
-|---|---|---|
-| React components | PascalCase | `BalanceCard.tsx`, `TransactionForm.tsx` |
-| Pages (App Router) | `page.tsx` in route folder | `src/app/(dashboard)/ledger/page.tsx` |
-| Layouts | `layout.tsx` in route folder | `src/app/(dashboard)/layout.tsx` |
-| Server Actions | camelCase | `src/server/actions/createTransaction.ts` |
-| Queries | camelCase | `src/server/queries/getDailyLedger.ts` |
-| Hooks | camelCase with `use` prefix | `src/hooks/useTransaction.ts` |
-| Types | PascalCase | `src/types/transaction.ts` |
-| Utils/lib | camelCase | `src/lib/utils.ts` |
-| Tests | `*.test.ts` / `*.test.tsx` | `tests/unit/balance.test.ts` |
-| Docs | kebab-case | `docs/implementation-plan.md` |
+| Type               | Convention                   | Example                                   |
+| ------------------ | ---------------------------- | ----------------------------------------- |
+| React components   | PascalCase                   | `BalanceCard.tsx`, `TransactionForm.tsx`  |
+| Pages (App Router) | `page.tsx` in route folder   | `src/app/(dashboard)/ledger/page.tsx`     |
+| Layouts            | `layout.tsx` in route folder | `src/app/(dashboard)/layout.tsx`          |
+| Server Actions     | camelCase                    | `src/server/actions/createTransaction.ts` |
+| Queries            | camelCase                    | `src/server/queries/getDailyLedger.ts`    |
+| Hooks              | camelCase with `use` prefix  | `src/hooks/useTransaction.ts`             |
+| Types              | PascalCase                   | `src/types/transaction.ts`                |
+| Utils/lib          | camelCase                    | `src/lib/utils.ts`                        |
+| Tests              | `*.test.ts` / `*.test.tsx`   | `tests/unit/balance.test.ts`              |
+| Docs               | kebab-case                   | `docs/implementation-plan.md`             |
 
 ---
 
@@ -252,50 +258,55 @@ ci(vercel): add preview deployment for PRs
 ## Common Patterns
 
 ### Server Action Pattern
-```typescript
-"use server"
 
-import { auth } from "@/lib/auth"
-import { db } from "@/lib/db"
-import { createTransactionSchema } from "@/lib/validators"
+```typescript
+"use server";
+
+import { auth } from "@/lib/auth";
+import { db } from "@/lib/db";
+import { createTransactionSchema } from "@/lib/validators";
 
 export async function createTransaction(formData: FormData): Promise<ActionResult<Transaction>> {
   try {
-    const session = await auth()
-    if (!session?.user) return { success: false, error: "Unauthorized" }
+    const session = await auth();
+    if (!session?.user) return { success: false, error: "Unauthorized" };
 
-    const parsed = createTransactionSchema.safeParse(Object.fromEntries(formData))
-    if (!parsed.success) return { success: false, error: parsed.error.message }
+    const parsed = createTransactionSchema.safeParse(Object.fromEntries(formData));
+    if (!parsed.success) return { success: false, error: parsed.error.message };
 
-    const transaction = await db.transaction.create({ data: { ...parsed.data, familyId: session.activeFamilyId } })
+    const transaction = await db.transaction.create({
+      data: { ...parsed.data, familyId: session.activeFamilyId },
+    });
     // Recalculate balances...
-    revalidatePath("/ledger")
-    return { success: true, data: transaction }
+    revalidatePath("/ledger");
+    return { success: true, data: transaction };
   } catch (error) {
-    console.error("createTransaction failed:", error)
-    return { success: false, error: "Failed to create transaction" }
+    console.error("createTransaction failed:", error);
+    return { success: false, error: "Failed to create transaction" };
   }
 }
 ```
 
 ### Query Pattern
+
 ```typescript
-import { auth } from "@/lib/auth"
-import { db } from "@/lib/db"
+import { auth } from "@/lib/auth";
+import { db } from "@/lib/db";
 
 export async function getDailyLedger(date: Date) {
-  const session = await auth()
-  if (!session?.user) throw new Error("Unauthorized")
+  const session = await auth();
+  if (!session?.user) throw new Error("Unauthorized");
 
   return db.transaction.findMany({
     where: { familyId: session.activeFamilyId, date },
     include: { person: true, categoryTag: true, paymentMode: true },
     orderBy: { createdAt: "asc" },
-  })
+  });
 }
 ```
 
 ### Component Pattern
+
 ```typescript
 // Server Component (default)
 import { getDailyLedger } from "@/server/queries/getDailyLedger"
