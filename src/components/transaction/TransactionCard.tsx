@@ -38,33 +38,40 @@ export function TransactionCard({
 
   return (
     <>
-      <div className="glass group dark:hover:bg-foreground/5 relative flex items-center justify-between gap-4 rounded-2xl p-4 transition-all duration-300 hover:shadow-md">
-        <div className="flex min-w-0 flex-1 flex-col gap-1.5">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-foreground/90 truncate text-base font-semibold">
+      <div className="glass group relative flex items-center justify-between gap-4 rounded-[1.5rem] p-5 transition-all duration-500 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/5">
+        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+        <div className="absolute inset-0 rounded-[1.5rem] ring-1 ring-inset ring-white/5 pointer-events-none group-hover:ring-white/10 transition-colors" />
+
+        <div className="flex min-w-0 flex-1 flex-col gap-2 relative z-10">
+          <div className="flex flex-wrap items-center gap-2.5">
+            <span className="text-foreground/90 truncate text-lg font-bold tracking-tight">
               {transaction.name}
             </span>
             {transaction.categoryTag && (
               <span
-                className="inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-bold tracking-wide uppercase"
+                className="inline-flex items-center rounded-full px-3 py-0.5 text-[10px] font-extrabold tracking-widest uppercase shadow-sm"
                 style={{
                   backgroundColor: `${transaction.categoryTag.color}15`,
                   color: transaction.categoryTag.color,
-                  border: `1px solid ${transaction.categoryTag.color}30`,
+                  border: `1px solid ${transaction.categoryTag.color}40`,
                 }}
               >
+                <span 
+                  className="w-1.5 h-1.5 rounded-full mr-1.5 animate-pulse" 
+                  style={{ backgroundColor: transaction.categoryTag.color }}
+                />
                 {transaction.categoryTag.name}
               </span>
             )}
-            <Badge variant={typeBadgeVariant} className="text-[10px] tracking-wide uppercase">
+            <Badge variant={typeBadgeVariant} className="text-[10px] tracking-widest uppercase font-bold shadow-sm">
               {transaction.paidTowards === "FAMILY" ? "Family" : "Personal"}
             </Badge>
           </div>
-          <div className="text-muted-foreground flex flex-wrap items-center gap-2 text-xs">
-            {transaction.description && <span className="truncate">{transaction.description}</span>}
+          <div className="text-muted-foreground flex flex-wrap items-center gap-3 text-sm font-medium">
+            {transaction.description && <span className="truncate opacity-90">{transaction.description}</span>}
             {transaction.paymentMode && (
-              <span className="flex items-center gap-1 opacity-70">
-                <span className="bg-muted-foreground h-1 w-1 rounded-full" />
+              <span className="flex items-center gap-1.5 bg-foreground/5 px-2 py-0.5 rounded-md ring-1 ring-foreground/10 shadow-sm backdrop-blur-sm">
+                <span className="bg-primary/60 h-1.5 w-1.5 rounded-full" />
                 {transaction.paymentMode.name}
                 {transaction.paymentMode.ownerPersonId === null ? " (Family)" : ""}
               </span>
@@ -72,9 +79,9 @@ export function TransactionCard({
           </div>
         </div>
 
-        <div className="flex shrink-0 flex-col items-end gap-1">
+        <div className="flex shrink-0 flex-col items-end gap-1.5 relative z-10">
           <span
-            className={`text-lg font-bold tracking-tight tabular-nums ${
+            className={`text-xl md:text-2xl font-black tracking-tighter tabular-nums drop-shadow-sm ${
               transaction.type === "DEBIT"
                 ? "text-debit"
                 : transaction.type === "CREDIT"
@@ -85,22 +92,22 @@ export function TransactionCard({
             {transaction.type === "DEBIT" ? "−" : "+"}
             {formatCurrency(transaction.amount.toString())}
           </span>
-          <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+          <div className="flex items-center gap-1.5 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
             <Button
               variant="ghost"
               size="icon"
-              className="hover:bg-primary/10 hover:text-primary h-7 w-7 rounded-full"
+              className="hover:bg-primary/20 hover:text-primary h-8 w-8 rounded-full shadow-sm ring-1 ring-white/10"
               onClick={() => setEditOpen(true)}
             >
-              <Pencil className="h-3.5 w-3.5" />
+              <Pencil className="h-4 w-4" />
             </Button>
             <Button
               variant="ghost"
               size="icon"
-              className="hover:bg-destructive/10 hover:text-destructive text-muted-foreground h-7 w-7 rounded-full"
+              className="hover:bg-destructive/20 hover:text-destructive text-muted-foreground h-8 w-8 rounded-full shadow-sm ring-1 ring-white/10"
               onClick={handleDelete}
             >
-              <Trash2 className="h-3.5 w-3.5" />
+              <Trash2 className="h-4 w-4" />
             </Button>
           </div>
         </div>
