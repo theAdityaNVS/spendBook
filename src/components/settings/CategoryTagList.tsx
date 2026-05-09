@@ -31,7 +31,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent } from "@/components/ui/card";
 import type { CategoryTag } from "@/types";
 import {
   createCategoryTag,
@@ -217,31 +216,33 @@ export function CategoryTagList({ initialTags }: { initialTags: CategoryTag[] })
   }
 
   return (
-    <Card>
-      <div className="flex items-center justify-between p-6 pb-4">
+    <div className="space-y-6">
+      <div className="flex items-center justify-between px-2">
         <div>
-          <h2 className="text-xl font-semibold">Category Tags</h2>
-          <p className="text-muted-foreground text-sm">
+          <h2 className="text-foreground/90 text-2xl font-semibold tracking-tight">
+            Category Tags
+          </h2>
+          <p className="text-muted-foreground mt-1 text-sm">
             Manage your custom spending categories. Drag to reorder.
           </p>
         </div>
-        <Button onClick={() => openModal()} disabled={isPending}>
+        <Button className="rounded-xl px-4" onClick={() => openModal()} disabled={isPending}>
           <Plus className="mr-2 h-4 w-4" />
           Add Tag
         </Button>
       </div>
 
-      <CardContent>
+      <div>
         {tags.length === 0 ? (
-          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
-            <div className="bg-primary/10 rounded-full p-3">
+          <div className="glass-panel flex flex-col items-center justify-center rounded-3xl border-dashed p-10 text-center">
+            <div className="bg-primary/10 flex h-12 w-12 items-center justify-center rounded-2xl shadow-inner">
               <Tag className="text-primary h-6 w-6" />
             </div>
-            <h3 className="mt-4 font-semibold">No category tags</h3>
+            <h3 className="mt-5 text-lg font-semibold">No category tags</h3>
             <p className="text-muted-foreground mt-1 text-sm">
               Add your first category tag to organize your expenses.
             </p>
-            <Button className="mt-4" onClick={() => openModal()} disabled={isPending}>
+            <Button className="mt-5 rounded-xl" onClick={() => openModal()} disabled={isPending}>
               <Plus className="mr-2 h-4 w-4" />
               Add Tag
             </Button>
@@ -267,7 +268,7 @@ export function CategoryTagList({ initialTags }: { initialTags: CategoryTag[] })
             </SortableContext>
           </DndContext>
         )}
-      </CardContent>
+      </div>
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent>
@@ -316,6 +317,6 @@ export function CategoryTagList({ initialTags }: { initialTags: CategoryTag[] })
           </form>
         </DialogContent>
       </Dialog>
-    </Card>
+    </div>
   );
 }
