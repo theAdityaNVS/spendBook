@@ -3,6 +3,8 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { ArrowRight, Wallet } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export default async function DevLoginPage() {
   const users = await db.user.findMany({
     orderBy: { createdAt: "asc" },
