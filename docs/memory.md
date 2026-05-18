@@ -172,7 +172,7 @@ Comprehensive documentation:
 - **Endpoint ID**: `ep-sweet-waterfall-a14zhs84`
 - **Region**: `ap-southeast-1`
 - **Neon Auth URL**: `https://ep-sweet-waterfall-a14zhs84.neonauth.ap-southeast-1.aws.neon.tech/neondb/auth`
-- **Database URL (Pooled)**: `***REMOVED***
+- **Database URL (Pooled)**: `[REDACTED]`
 
 ---
 
